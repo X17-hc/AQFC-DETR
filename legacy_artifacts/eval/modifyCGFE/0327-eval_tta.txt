@@ -1,0 +1,254 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/eval_tta.py --output_dir logs/tta_eval -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AITODv2 --checkpoint /workspace/DQDetr/logs/DQDETR_ver4/0325-接着0324的12个epoch/checkpoint0011.pth --scales 736 800 864 --flip --wbf_iou_thr 0.55 --wbf_skip_thr 0.001
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+[TTA] Loaded checkpoint: /workspace/DQDetr/logs/DQDETR_ver4/0325-接着0324的12个epoch/checkpoint0011.pth
+[TTA] Variants: [(736, False), (736, True), (800, False), (800, True), (864, False), (864, True)]
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=4.53s)
+creating index...
+index created!
+[TTA] Running augmentation: scale736
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.77s)
+creating index...
+index created!
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/functional.py:513: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3609.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+[TTA]   → 14018 images predicted
+[TTA] Running augmentation: scale736_flip
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.99s)
+creating index...
+index created!
+[TTA]   → 14018 images predicted
+[TTA] Running augmentation: scale800
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.86s)
+creating index...
+index created!
+[TTA]   → 14018 images predicted
+[TTA] Running augmentation: scale800_flip
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.96s)
+creating index...
+index created!
+[TTA]   → 14018 images predicted
+[TTA] Running augmentation: scale864
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=3.94s)
+creating index...
+index created!
+[TTA]   → 14018 images predicted
+[TTA] Running augmentation: scale864_flip
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.48s)
+creating index...
+index created!
+[TTA]   → 14018 images predicted
+[TTA] Merging predictions with WBF ...
+[TTA] Running COCO evaluation ...
+Accumulating evaluation results...
+DONE (t=202.81s).
+IoU metric: bbox
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.320
+Average Precision  (AP) @[ IoU=0.25      | area=   all | maxDets=1500 ] = -1.000
+Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.691
+Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1500 ] = 0.256
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.168
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.328
+Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.377
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.456
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.088
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.425
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.460
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.264
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.476
+Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.498
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.564
+Optimal LRP             @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.708
+Optimal LRP Loc         @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.252
+Optimal LRP FP          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.255
+Optimal LRP FN          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.293
+# Class-specific LRP-Optimal Thresholds #
+ [0.274 0.346 0.361 0.301 0.378 0.147 0.313 0.261]
+[TTA] Saved merged results to logs/tta_eval/tta_merged_results.json
+[TTA] Done.
+
+进程已结束，退出代码为 0

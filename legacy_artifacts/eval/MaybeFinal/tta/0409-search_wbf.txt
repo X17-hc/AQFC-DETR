@@ -1,0 +1,97 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/search_wbf_params.py --variants_path /workspace/DQDetr/logs/tta_variants_ver8/iou80/variants_raw.pt --ann_file /workspace/DQDetr/data/path/AITODv2/annotations/aitodv2_test.json --dataset_file aitodv2 --coco_path /workspace/DQDetr/data/path/AITODv2 -c config/DQ_5scale.py
+[Search] Loading variants from /workspace/DQDetr/logs/tta_variants_ver8/iou80/variants_raw.pt ...
+[Search]   6 variants loaded, 14018 images each
+[Search] Loading COCO GT from /workspace/DQDetr/data/path/AITODv2/annotations/aitodv2_test.json ...
+[Search]   14018 images in GT
+
+[Search] 🚀 Randomly subsampling 1000 images for fast grid search...
+creating index...
+index created!
+
+[Search] Grid: 1 iou_thrs × 5 skip_thrs × 1 nms_ious = 5 combinations
+
+   #  iou_thr  skip_thr  nms_iou   AP(Sub)   time
+-------------------------------------------------
+   1     0.80     0.065     None    0.3498  268.1s ★
+   2     0.80     0.070     None    0.3504  248.7s ★
+   3     0.80     0.075     None    0.3504  232.0s ★
+   4     0.80     0.800     None    0.2415  42.8s
+   5     0.80     0.850     None    0.2108  30.5s
+
+============================================================
+🌟 Fast search complete. Evaluating best parameters on FULL dataset (14018 images)...
+✅ Full Dataset Eval Done in 3792.6s
+👑 FINAL FULL DATASET AP = 0.3332
+  wbf_iou_thr  = 0.8
+  wbf_skip_thr = 0.075
+  cls_nms_iou  = None
+
+Run command for eval_tta.py:
+  python eval_tta.py \
+    -c config/DQ_5scale_v6.py \
+    --checkpoint <your_checkpoint> \
+    --coco_path /workspace/DQDetr/data/path/AITODv2 \
+    --dataset_file aitodv2 \
+    --output_dir logs/tta_eval_best \
+    --scales 736 800 864 \
+    --flip \
+    --wbf_iou_thr 0.8 \
+    --wbf_skip_thr 0.075 \
+    --no_cls_nms \
+    --no_cls_threshold
+
+[Search] Full results saved → /workspace/DQDetr/logs/tta_variants_ver8/iou80/wbf_search_results.txt
+
+
+
+
+
+
+
+
+
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/search_wbf_params.py --variants_path /workspace/DQDetr/logs/tta_variants_ver8/iou80/variants_raw.pt --ann_file /workspace/DQDetr/data/path/AITODv2/annotations/aitodv2_test.json --dataset_file aitodv2 --coco_path /workspace/DQDetr/data/path/AITODv2 -c config/DQ_5scale.py
+[Search] Loading variants from /workspace/DQDetr/logs/tta_variants_ver8/iou80/variants_raw.pt ...
+[Search]   6 variants loaded, 14018 images each
+[Search] Loading COCO GT from /workspace/DQDetr/data/path/AITODv2/annotations/aitodv2_test.json ...
+[Search]   14018 images in GT
+
+[Search] 🚀 Randomly subsampling 1000 images for fast grid search...
+creating index...
+index created!
+
+[Search] Grid: 1 iou_thrs × 4 skip_thrs × 1 nms_ious = 4 combinations
+
+   #  iou_thr  skip_thr  nms_iou   AP(Sub)   time
+-------------------------------------------------
+   1     0.80     0.080     None    0.3505  217.4s ★
+   2     0.80     0.085     None    0.3504  221.1s
+   3     0.80     0.090     None    0.3502  204.1s
+   4     0.80     0.095     None    0.3503  187.7s
+
+============================================================
+🌟 Fast search complete. Evaluating best parameters on FULL dataset (14018 images)...
+✅ Full Dataset Eval Done in 3695.1s
+👑 FINAL FULL DATASET AP = 0.3333
+  wbf_iou_thr  = 0.8
+  wbf_skip_thr = 0.08
+  cls_nms_iou  = None
+
+Run command for eval_tta.py:
+  python eval_tta.py \
+    -c config/DQ_5scale_v6.py \
+    --checkpoint <your_checkpoint> \
+    --coco_path /workspace/DQDetr/data/path/AITODv2 \
+    --dataset_file aitodv2 \
+    --output_dir logs/tta_eval_best \
+    --scales 736 800 864 \
+    --flip \
+    --wbf_iou_thr 0.8 \
+    --wbf_skip_thr 0.08 \
+    --no_cls_nms \
+    --no_cls_threshold
+
+[Search] Full results saved → /workspace/DQDetr/logs/tta_variants_ver8/iou80/wbf_search_results.txt
+
+进程已结束，退出代码为 0
+

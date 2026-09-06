@@ -1,0 +1,934 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver1 -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AITODv2 --pretrain_model_path /workspace/DQDetr/models/dqdetr_best305.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=False dn_box_noise_scale=1.0
+Not using distributed mode
+data_aug_scales [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+data_aug_max_size 1333
+data_aug_scales2_resize [400, 500, 600]
+data_aug_scales2_crop [384, 600]
+data_aug_scale_overlap None
+num_classes 9
+lr 0.0001
+param_dict_type default
+lr_backbone 1e-05
+lr_backbone_names ['backbone.0']
+lr_linear_proj_names ['reference_points', 'sampling_offsets']
+lr_linear_proj_mult 0.1
+ddetr_lr_param False
+batch_size 1
+weight_decay 0.0001
+epochs 1
+lr_drop 11
+save_checkpoint_interval 1
+clip_max_norm 0.1
+onecyclelr False
+multi_step_lr True
+lr_drop_list [13, 23]
+val_epoch [0]
+ccm_params [10, 100, 500]
+ccm_cls_num 4
+dynamic_query_list [300, 500, 900, 1500]
+find_unused_parameters False
+modelname dqdetr
+frozen_weights None
+backbone resnet50
+use_checkpoint False
+dilation False
+position_embedding sine
+pe_temperatureH 20
+pe_temperatureW 20
+return_interm_indices [0, 1, 2, 3]
+backbone_freeze_keywords None
+enc_layers 6
+dec_layers 6
+unic_layers 0
+pre_norm False
+dim_feedforward 2048
+hidden_dim 256
+dropout 0.0
+nheads 8
+num_queries 900
+query_dim 4
+num_patterns 0
+pdetr3_bbox_embed_diff_each_layer False
+pdetr3_refHW -1
+random_refpoints_xy False
+fix_refpoints_hw -1
+dabdetr_yolo_like_anchor_update False
+dabdetr_deformable_encoder False
+dabdetr_deformable_decoder False
+use_deformable_box_attn False
+box_attn_type roi_align
+dec_layer_number None
+num_feature_levels 5
+enc_n_points 4
+dec_n_points 4
+decoder_layer_noise False
+dln_xy_noise 0.2
+dln_hw_noise 0.2
+add_channel_attention False
+add_pos_value False
+two_stage_type standard
+two_stage_pat_embed 0
+two_stage_add_query_num 0
+two_stage_bbox_embed_share False
+two_stage_class_embed_share False
+two_stage_learn_wh False
+two_stage_default_hw 0.05
+two_stage_keep_all_tokens False
+num_select 300
+transformer_activation relu
+batch_norm_type FrozenBatchNorm2d
+masks False
+aux_loss True
+set_cost_class 2.0
+set_cost_bbox 5.0
+set_cost_giou 2.0
+cls_loss_coef 1.0
+mask_loss_coef 1.0
+dice_loss_coef 1.0
+bbox_loss_coef 5.0
+giou_loss_coef 2.0
+enc_loss_coef 1.0
+interm_loss_coef 1.0
+no_interm_box_loss False
+focal_alpha 0.25
+decoder_sa_type sa
+matcher_type HungarianMatcher
+decoder_module_seq ['sa', 'ca', 'ffn']
+nms_iou_threshold -1
+dec_pred_bbox_embed_share True
+dec_pred_class_embed_share True
+use_dn True
+dn_number 100
+dn_box_noise_scale 1.0
+dn_label_noise_ratio 0.5
+embed_init_tgt False
+dn_labelbook_size 91
+match_unstable_error True
+use_ema False
+ema_decay 0.9997
+ema_epoch 0
+use_detached_boxes_dec_out False
+coverage_loss_coef 1.0
+interval_loss_coef 1.0
+spacing_loss_coef 1.0
+dn_scalar 100
+dn_bbox_coef 1.0
+dn_label_coef 1.0
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[01/10 03:13:12.900]: git:
+  sha: N/A, status: clean, branch: N/A
+
+[01/10 03:13:12.900]: Command: /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver1 -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AITODv2 --pretrain_model_path /workspace/DQDetr/models/dqdetr_best305.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=False dn_box_noise_scale=1.0
+[01/10 03:13:12.901]: Full config saved to logs/DQDETR_ver1/config_args_all.json
+[01/10 03:13:12.901]: world size: 1
+[01/10 03:13:12.901]: rank: 0
+[01/10 03:13:12.901]: local_rank: 0
+[01/10 03:13:12.901]: args: Namespace(config_file='config/DQ_5scale.py', options={'dn_scalar': 100, 'embed_init_tgt': False, 'dn_bbox_coef': 1.0, 'dn_label_coef': 1.0, 'use_ema': False, 'dn_box_noise_scale': 1.0}, dataset_file='aitodv2', coco_path='/workspace/DQDetr/data/path/AITODv2', coco_panoptic_path=None, remove_difficult=False, fix_size=False, output_dir='logs/DQDETR_ver1', note='', device='cuda', seed=42, resume='', pretrain_model_path='/workspace/DQDetr/models/dqdetr_best305.pth', finetune_ignore=None, start_epoch=0, eval=False, num_workers=10, test=False, debug=False, find_unused_params=False, save_results=False, save_log=False, world_size=1, dist_url='env://', rank=0, local_rank=0, amp=True, distributed=False, data_aug_scales=[480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800], data_aug_max_size=1333, data_aug_scales2_resize=[400, 500, 600], data_aug_scales2_crop=[384, 600], data_aug_scale_overlap=None, num_classes=9, lr=0.0001, param_dict_type='default', lr_backbone=1e-05, lr_backbone_names=['backbone.0'], lr_linear_proj_names=['reference_points', 'sampling_offsets'], lr_linear_proj_mult=0.1, ddetr_lr_param=False, batch_size=1, weight_decay=0.0001, epochs=1, lr_drop=11, save_checkpoint_interval=1, clip_max_norm=0.1, onecyclelr=False, multi_step_lr=True, lr_drop_list=[13, 23], val_epoch=[0], ccm_params=[10, 100, 500], ccm_cls_num=4, dynamic_query_list=[300, 500, 900, 1500], find_unused_parameters=False, modelname='dqdetr', frozen_weights=None, backbone='resnet50', use_checkpoint=False, dilation=False, position_embedding='sine', pe_temperatureH=20, pe_temperatureW=20, return_interm_indices=[0, 1, 2, 3], backbone_freeze_keywords=None, enc_layers=6, dec_layers=6, unic_layers=0, pre_norm=False, dim_feedforward=2048, hidden_dim=256, dropout=0.0, nheads=8, num_queries=900, query_dim=4, num_patterns=0, pdetr3_bbox_embed_diff_each_layer=False, pdetr3_refHW=-1, random_refpoints_xy=False, fix_refpoints_hw=-1, dabdetr_yolo_like_anchor_update=False, dabdetr_deformable_encoder=False, dabdetr_deformable_decoder=False, use_deformable_box_attn=False, box_attn_type='roi_align', dec_layer_number=None, num_feature_levels=5, enc_n_points=4, dec_n_points=4, decoder_layer_noise=False, dln_xy_noise=0.2, dln_hw_noise=0.2, add_channel_attention=False, add_pos_value=False, two_stage_type='standard', two_stage_pat_embed=0, two_stage_add_query_num=0, two_stage_bbox_embed_share=False, two_stage_class_embed_share=False, two_stage_learn_wh=False, two_stage_default_hw=0.05, two_stage_keep_all_tokens=False, num_select=300, transformer_activation='relu', batch_norm_type='FrozenBatchNorm2d', masks=False, aux_loss=True, set_cost_class=2.0, set_cost_bbox=5.0, set_cost_giou=2.0, cls_loss_coef=1.0, mask_loss_coef=1.0, dice_loss_coef=1.0, bbox_loss_coef=5.0, giou_loss_coef=2.0, enc_loss_coef=1.0, interm_loss_coef=1.0, no_interm_box_loss=False, focal_alpha=0.25, decoder_sa_type='sa', matcher_type='HungarianMatcher', decoder_module_seq=['sa', 'ca', 'ffn'], nms_iou_threshold=-1, dec_pred_bbox_embed_share=True, dec_pred_class_embed_share=True, use_dn=True, dn_number=100, dn_box_noise_scale=1.0, dn_label_noise_ratio=0.5, embed_init_tgt=False, dn_labelbook_size=91, match_unstable_error=True, use_ema=False, ema_decay=0.9997, ema_epoch=0, use_detached_boxes_dec_out=False, coverage_loss_coef=1.0, interval_loss_coef=1.0, spacing_loss_coef=1.0, dn_scalar=100, dn_bbox_coef=1.0, dn_label_coef=1.0)
+
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+[01/10 03:13:15.084]: number of params:58772247
+[01/10 03:13:15.086]: params:
+{
+  "transformer.level_embed": 1280,
+  "transformer.CCM.density_conv1.weight": 131072,
+  "transformer.CCM.density_conv1.bias": 512,
+  "transformer.CCM.ccm_backbone.0.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.0.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.0.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.1.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.1.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.1.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.2.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.2.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.2.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.3.conv.weight": 1179648,
+  "transformer.CCM.ccm_backbone.3.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.3.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.4.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.4.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.4.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.5.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.5.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.5.gn.bias": 256,
+  "transformer.CCM.boundary_head.1.weight": 32768,
+  "transformer.CCM.boundary_head.1.bias": 128,
+  "transformer.CCM.boundary_head.2.weight": 128,
+  "transformer.CCM.boundary_head.2.bias": 128,
+  "transformer.CCM.boundary_head.5.weight": 384,
+  "transformer.CCM.boundary_head.5.bias": 3,
+  "transformer.CCM.count_regressor.2.weight": 32768,
+  "transformer.CCM.count_regressor.2.bias": 128,
+  "transformer.CCM.count_regressor.3.weight": 128,
+  "transformer.CCM.count_regressor.3.bias": 128,
+  "transformer.CCM.count_regressor.6.weight": 128,
+  "transformer.CCM.count_regressor.6.bias": 1,
+  "transformer.CCM.ccm_classifier.weight": 1024,
+  "transformer.CCM.ccm_classifier.bias": 4,
+  "transformer.CCM.ref_point_conv.weight": 256,
+  "transformer.CCM.ref_point_conv.bias": 1,
+  "transformer.CGFE.ChannelGate.mlp.1.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.1.bias": 16,
+  "transformer.CGFE.ChannelGate.mlp.3.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.3.bias": 256,
+  "transformer.CGFE.SpatialGate.spatial.conv.weight": 98,
+  "transformer.CGFE.SpatialGate.spatial.bn.weight": 1,
+  "transformer.CGFE.SpatialGate.spatial.bn.bias": 1,
+  "transformer.multiscale.conv1.conv.weight": 589824,
+  "transformer.multiscale.conv1.gn.weight": 256,
+  "transformer.multiscale.conv1.gn.bias": 256,
+  "transformer.multiscale.conv2.conv.weight": 589824,
+  "transformer.multiscale.conv2.gn.weight": 256,
+  "transformer.multiscale.conv2.gn.bias": 256,
+  "transformer.multiscale.conv3.conv.weight": 589824,
+  "transformer.multiscale.conv3.gn.weight": 256,
+  "transformer.multiscale.conv3.gn.bias": 256,
+  "transformer.multiscale.conv4.conv.weight": 589824,
+  "transformer.multiscale.conv4.gn.weight": 256,
+  "transformer.multiscale.conv4.gn.bias": 256,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.0.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.0.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.0.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.0.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.0.norm1.weight": 256,
+  "transformer.encoder.layers.0.norm1.bias": 256,
+  "transformer.encoder.layers.0.linear1.weight": 524288,
+  "transformer.encoder.layers.0.linear1.bias": 2048,
+  "transformer.encoder.layers.0.linear2.weight": 524288,
+  "transformer.encoder.layers.0.linear2.bias": 256,
+  "transformer.encoder.layers.0.norm2.weight": 256,
+  "transformer.encoder.layers.0.norm2.bias": 256,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.1.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.1.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.1.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.1.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.1.norm1.weight": 256,
+  "transformer.encoder.layers.1.norm1.bias": 256,
+  "transformer.encoder.layers.1.linear1.weight": 524288,
+  "transformer.encoder.layers.1.linear1.bias": 2048,
+  "transformer.encoder.layers.1.linear2.weight": 524288,
+  "transformer.encoder.layers.1.linear2.bias": 256,
+  "transformer.encoder.layers.1.norm2.weight": 256,
+  "transformer.encoder.layers.1.norm2.bias": 256,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.2.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.2.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.2.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.2.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.2.norm1.weight": 256,
+  "transformer.encoder.layers.2.norm1.bias": 256,
+  "transformer.encoder.layers.2.linear1.weight": 524288,
+  "transformer.encoder.layers.2.linear1.bias": 2048,
+  "transformer.encoder.layers.2.linear2.weight": 524288,
+  "transformer.encoder.layers.2.linear2.bias": 256,
+  "transformer.encoder.layers.2.norm2.weight": 256,
+  "transformer.encoder.layers.2.norm2.bias": 256,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.3.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.3.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.3.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.3.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.3.norm1.weight": 256,
+  "transformer.encoder.layers.3.norm1.bias": 256,
+  "transformer.encoder.layers.3.linear1.weight": 524288,
+  "transformer.encoder.layers.3.linear1.bias": 2048,
+  "transformer.encoder.layers.3.linear2.weight": 524288,
+  "transformer.encoder.layers.3.linear2.bias": 256,
+  "transformer.encoder.layers.3.norm2.weight": 256,
+  "transformer.encoder.layers.3.norm2.bias": 256,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.4.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.4.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.4.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.4.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.4.norm1.weight": 256,
+  "transformer.encoder.layers.4.norm1.bias": 256,
+  "transformer.encoder.layers.4.linear1.weight": 524288,
+  "transformer.encoder.layers.4.linear1.bias": 2048,
+  "transformer.encoder.layers.4.linear2.weight": 524288,
+  "transformer.encoder.layers.4.linear2.bias": 256,
+  "transformer.encoder.layers.4.norm2.weight": 256,
+  "transformer.encoder.layers.4.norm2.bias": 256,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.5.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.5.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.5.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.5.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.5.norm1.weight": 256,
+  "transformer.encoder.layers.5.norm1.bias": 256,
+  "transformer.encoder.layers.5.linear1.weight": 524288,
+  "transformer.encoder.layers.5.linear1.bias": 2048,
+  "transformer.encoder.layers.5.linear2.weight": 524288,
+  "transformer.encoder.layers.5.linear2.bias": 256,
+  "transformer.encoder.layers.5.norm2.weight": 256,
+  "transformer.encoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.0.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.0.norm1.weight": 256,
+  "transformer.decoder.layers.0.norm1.bias": 256,
+  "transformer.decoder.layers.0.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.0.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.0.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.0.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.0.norm2.weight": 256,
+  "transformer.decoder.layers.0.norm2.bias": 256,
+  "transformer.decoder.layers.0.linear1.weight": 524288,
+  "transformer.decoder.layers.0.linear1.bias": 2048,
+  "transformer.decoder.layers.0.linear2.weight": 524288,
+  "transformer.decoder.layers.0.linear2.bias": 256,
+  "transformer.decoder.layers.0.norm3.weight": 256,
+  "transformer.decoder.layers.0.norm3.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.1.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.1.norm1.weight": 256,
+  "transformer.decoder.layers.1.norm1.bias": 256,
+  "transformer.decoder.layers.1.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.1.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.1.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.1.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.1.norm2.weight": 256,
+  "transformer.decoder.layers.1.norm2.bias": 256,
+  "transformer.decoder.layers.1.linear1.weight": 524288,
+  "transformer.decoder.layers.1.linear1.bias": 2048,
+  "transformer.decoder.layers.1.linear2.weight": 524288,
+  "transformer.decoder.layers.1.linear2.bias": 256,
+  "transformer.decoder.layers.1.norm3.weight": 256,
+  "transformer.decoder.layers.1.norm3.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.2.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.2.norm1.weight": 256,
+  "transformer.decoder.layers.2.norm1.bias": 256,
+  "transformer.decoder.layers.2.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.2.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.2.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.2.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.2.norm2.weight": 256,
+  "transformer.decoder.layers.2.norm2.bias": 256,
+  "transformer.decoder.layers.2.linear1.weight": 524288,
+  "transformer.decoder.layers.2.linear1.bias": 2048,
+  "transformer.decoder.layers.2.linear2.weight": 524288,
+  "transformer.decoder.layers.2.linear2.bias": 256,
+  "transformer.decoder.layers.2.norm3.weight": 256,
+  "transformer.decoder.layers.2.norm3.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.3.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.3.norm1.weight": 256,
+  "transformer.decoder.layers.3.norm1.bias": 256,
+  "transformer.decoder.layers.3.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.3.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.3.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.3.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.3.norm2.weight": 256,
+  "transformer.decoder.layers.3.norm2.bias": 256,
+  "transformer.decoder.layers.3.linear1.weight": 524288,
+  "transformer.decoder.layers.3.linear1.bias": 2048,
+  "transformer.decoder.layers.3.linear2.weight": 524288,
+  "transformer.decoder.layers.3.linear2.bias": 256,
+  "transformer.decoder.layers.3.norm3.weight": 256,
+  "transformer.decoder.layers.3.norm3.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.4.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.4.norm1.weight": 256,
+  "transformer.decoder.layers.4.norm1.bias": 256,
+  "transformer.decoder.layers.4.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.4.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.4.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.4.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.4.norm2.weight": 256,
+  "transformer.decoder.layers.4.norm2.bias": 256,
+  "transformer.decoder.layers.4.linear1.weight": 524288,
+  "transformer.decoder.layers.4.linear1.bias": 2048,
+  "transformer.decoder.layers.4.linear2.weight": 524288,
+  "transformer.decoder.layers.4.linear2.bias": 256,
+  "transformer.decoder.layers.4.norm3.weight": 256,
+  "transformer.decoder.layers.4.norm3.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.5.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.5.norm1.weight": 256,
+  "transformer.decoder.layers.5.norm1.bias": 256,
+  "transformer.decoder.layers.5.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.5.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.5.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.5.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.5.norm2.weight": 256,
+  "transformer.decoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.5.linear1.weight": 524288,
+  "transformer.decoder.layers.5.linear1.bias": 2048,
+  "transformer.decoder.layers.5.linear2.weight": 524288,
+  "transformer.decoder.layers.5.linear2.bias": 256,
+  "transformer.decoder.layers.5.norm3.weight": 256,
+  "transformer.decoder.layers.5.norm3.bias": 256,
+  "transformer.decoder.norm.weight": 256,
+  "transformer.decoder.norm.bias": 256,
+  "transformer.decoder.ref_point_head.layers.0.weight": 131072,
+  "transformer.decoder.ref_point_head.layers.0.bias": 256,
+  "transformer.decoder.ref_point_head.layers.1.weight": 65536,
+  "transformer.decoder.ref_point_head.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.0.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.0.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.1.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.2.weight": 1024,
+  "transformer.decoder.bbox_embed.0.layers.2.bias": 4,
+  "transformer.decoder.class_embed.0.weight": 2304,
+  "transformer.decoder.class_embed.0.bias": 9,
+  "transformer.enc_output.weight": 65536,
+  "transformer.enc_output.bias": 256,
+  "transformer.enc_output_norm.weight": 256,
+  "transformer.enc_output_norm.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.0.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.0.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.1.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.1.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.2.weight": 1024,
+  "transformer.enc_out_bbox_embed.layers.2.bias": 4,
+  "transformer.enc_out_class_embed.weight": 2304,
+  "transformer.enc_out_class_embed.bias": 9,
+  "label_enc.weight": 23552,
+  "input_proj.0.0.weight": 65536,
+  "input_proj.0.0.bias": 256,
+  "input_proj.0.1.weight": 256,
+  "input_proj.0.1.bias": 256,
+  "input_proj.1.0.weight": 131072,
+  "input_proj.1.0.bias": 256,
+  "input_proj.1.1.weight": 256,
+  "input_proj.1.1.bias": 256,
+  "input_proj.2.0.weight": 262144,
+  "input_proj.2.0.bias": 256,
+  "input_proj.2.1.weight": 256,
+  "input_proj.2.1.bias": 256,
+  "input_proj.3.0.weight": 524288,
+  "input_proj.3.0.bias": 256,
+  "input_proj.3.1.weight": 256,
+  "input_proj.3.1.bias": 256,
+  "input_proj.4.0.weight": 4718592,
+  "input_proj.4.0.bias": 256,
+  "input_proj.4.1.weight": 256,
+  "input_proj.4.1.bias": 256,
+  "backbone.0.body.layer2.0.conv1.weight": 32768,
+  "backbone.0.body.layer2.0.conv2.weight": 147456,
+  "backbone.0.body.layer2.0.conv3.weight": 65536,
+  "backbone.0.body.layer2.0.downsample.0.weight": 131072,
+  "backbone.0.body.layer2.1.conv1.weight": 65536,
+  "backbone.0.body.layer2.1.conv2.weight": 147456,
+  "backbone.0.body.layer2.1.conv3.weight": 65536,
+  "backbone.0.body.layer2.2.conv1.weight": 65536,
+  "backbone.0.body.layer2.2.conv2.weight": 147456,
+  "backbone.0.body.layer2.2.conv3.weight": 65536,
+  "backbone.0.body.layer2.3.conv1.weight": 65536,
+  "backbone.0.body.layer2.3.conv2.weight": 147456,
+  "backbone.0.body.layer2.3.conv3.weight": 65536,
+  "backbone.0.body.layer3.0.conv1.weight": 131072,
+  "backbone.0.body.layer3.0.conv2.weight": 589824,
+  "backbone.0.body.layer3.0.conv3.weight": 262144,
+  "backbone.0.body.layer3.0.downsample.0.weight": 524288,
+  "backbone.0.body.layer3.1.conv1.weight": 262144,
+  "backbone.0.body.layer3.1.conv2.weight": 589824,
+  "backbone.0.body.layer3.1.conv3.weight": 262144,
+  "backbone.0.body.layer3.2.conv1.weight": 262144,
+  "backbone.0.body.layer3.2.conv2.weight": 589824,
+  "backbone.0.body.layer3.2.conv3.weight": 262144,
+  "backbone.0.body.layer3.3.conv1.weight": 262144,
+  "backbone.0.body.layer3.3.conv2.weight": 589824,
+  "backbone.0.body.layer3.3.conv3.weight": 262144,
+  "backbone.0.body.layer3.4.conv1.weight": 262144,
+  "backbone.0.body.layer3.4.conv2.weight": 589824,
+  "backbone.0.body.layer3.4.conv3.weight": 262144,
+  "backbone.0.body.layer3.5.conv1.weight": 262144,
+  "backbone.0.body.layer3.5.conv2.weight": 589824,
+  "backbone.0.body.layer3.5.conv3.weight": 262144,
+  "backbone.0.body.layer4.0.conv1.weight": 524288,
+  "backbone.0.body.layer4.0.conv2.weight": 2359296,
+  "backbone.0.body.layer4.0.conv3.weight": 1048576,
+  "backbone.0.body.layer4.0.downsample.0.weight": 2097152,
+  "backbone.0.body.layer4.1.conv1.weight": 1048576,
+  "backbone.0.body.layer4.1.conv2.weight": 2359296,
+  "backbone.0.body.layer4.1.conv3.weight": 1048576,
+  "backbone.0.body.layer4.2.conv1.weight": 1048576,
+  "backbone.0.body.layer4.2.conv2.weight": 2359296,
+  "backbone.0.body.layer4.2.conv3.weight": 1048576
+}
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=3.03s)
+creating index...
+index created!
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=3.24s)
+creating index...
+index created!
+/workspace/DQDetr/main_aitod.py:255: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(args.pretrain_model_path, map_location='cpu')['model']
+[01/10 03:13:22.020]: Ignore keys: []
+[01/10 03:13:22.146]: _IncompatibleKeys(missing_keys=['transformer.CCM.training_steps', 'transformer.CCM.density_conv1.weight', 'transformer.CCM.density_conv1.bias', 'transformer.CCM.ccm_backbone.0.conv.weight', 'transformer.CCM.ccm_backbone.0.gn.weight', 'transformer.CCM.ccm_backbone.0.gn.bias', 'transformer.CCM.ccm_backbone.1.conv.weight', 'transformer.CCM.ccm_backbone.1.gn.weight', 'transformer.CCM.ccm_backbone.1.gn.bias', 'transformer.CCM.ccm_backbone.2.conv.weight', 'transformer.CCM.ccm_backbone.2.gn.weight', 'transformer.CCM.ccm_backbone.2.gn.bias', 'transformer.CCM.ccm_backbone.3.conv.weight', 'transformer.CCM.ccm_backbone.3.gn.weight', 'transformer.CCM.ccm_backbone.3.gn.bias', 'transformer.CCM.ccm_backbone.4.conv.weight', 'transformer.CCM.ccm_backbone.4.gn.weight', 'transformer.CCM.ccm_backbone.4.gn.bias', 'transformer.CCM.ccm_backbone.5.conv.weight', 'transformer.CCM.ccm_backbone.5.gn.weight', 'transformer.CCM.ccm_backbone.5.gn.bias', 'transformer.CCM.boundary_head.1.weight', 'transformer.CCM.boundary_head.1.bias', 'transformer.CCM.boundary_head.2.weight', 'transformer.CCM.boundary_head.2.bias', 'transformer.CCM.boundary_head.5.weight', 'transformer.CCM.boundary_head.5.bias', 'transformer.CCM.count_regressor.2.weight', 'transformer.CCM.count_regressor.2.bias', 'transformer.CCM.count_regressor.3.weight', 'transformer.CCM.count_regressor.3.bias', 'transformer.CCM.count_regressor.6.weight', 'transformer.CCM.count_regressor.6.bias', 'transformer.CCM.ccm_classifier.weight', 'transformer.CCM.ccm_classifier.bias', 'transformer.CCM.ref_point_conv.weight', 'transformer.CCM.ref_point_conv.bias'], unexpected_keys=['transformer.CCM.conv1.weight', 'transformer.CCM.conv1.bias', 'transformer.CCM.ccm.0.weight', 'transformer.CCM.ccm.0.bias', 'transformer.CCM.ccm.2.weight', 'transformer.CCM.ccm.2.bias', 'transformer.CCM.ccm.4.weight', 'transformer.CCM.ccm.4.bias', 'transformer.CCM.ccm.6.weight', 'transformer.CCM.ccm.6.bias', 'transformer.CCM.ccm.8.weight', 'transformer.CCM.ccm.8.bias', 'transformer.CCM.ccm.10.weight', 'transformer.CCM.ccm.10.bias', 'transformer.CCM.linear.weight', 'transformer.CCM.linear.bias'])
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/functional.py:513: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3609.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/nn/modules/loss.py:942: UserWarning: Using a target size (torch.Size([1])) that is different to the input size (torch.Size([])). This will likely lead to incorrect results due to broadcasting. Please ensure they have the same size.
+  return F.smooth_l1_loss(input, target, reduction=self.reduction, beta=self.beta)
+
+============================================================
+[CCM SOTA] E0 Iter0 | Warmup:0.00 | Weight:0.00
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [105.7, 174.2, 287.2]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [959.3%, 868.1%, 858.5%]
+  Coverage:   [0.991, 0.994, 0.997]
+  Losses: CCM=0.000 Cov=0.306 Guide=1.797
+  DETR Loss: 15.7871 | CCM%: 0.0%
+============================================================
+Epoch: [0]  [    0/14018]  eta: 13:29:09  lr: 0.000100  ccm_weight: 0.000  class_error: 0.00  loss: 34.3716 (34.3716)  loss_ce_dn: 2.7436 (2.7436)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce: 0.0001 (0.0001)  loss_bbox: 0.0085 (0.0085)  loss_giou: 0.1873 (0.1873)  loss_ce_0: 0.0473 (0.0473)  loss_bbox_0: 0.0096 (0.0096)  loss_giou_0: 0.2002 (0.2002)  loss_ce_dn_0: 1.1700 (1.1700)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0003 (0.0003)  loss_bbox_1: 0.0088 (0.0088)  loss_giou_1: 0.1749 (0.1749)  loss_ce_dn_1: 2.4252 (2.4252)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0001 (0.0001)  loss_bbox_2: 0.0083 (0.0083)  loss_giou_2: 0.1938 (0.1938)  loss_ce_dn_2: 2.5755 (2.5755)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0002 (0.0002)  loss_bbox_3: 0.0082 (0.0082)  loss_giou_3: 0.1791 (0.1791)  loss_ce_dn_3: 2.6377 (2.6377)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0001 (0.0001)  loss_bbox_4: 0.0083 (0.0083)  loss_giou_4: 0.1844 (0.1844)  loss_ce_dn_4: 2.6751 (2.6751)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1232 (0.1232)  loss_bbox_interm: 0.0078 (0.0078)  loss_giou_interm: 0.2097 (0.2097)  loss_coverage: 0.3062 (0.3062)  loss_interval: 1.8150 (1.8150)  loss_count: 1.2354 (1.2354)  loss_spacing: 13.4311 (13.4311)  loss_boundary_guide: 1.7968 (1.7968)  ccm_loss: 0.0000 (0.0000)  loss_ce_dn_unscaled: 2.7436 (2.7436)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 199.0000 (199.0000)  loss_ce_unscaled: 0.0001 (0.0001)  class_error_unscaled: 0.0000 (0.0000)  loss_bbox_unscaled: 0.0017 (0.0017)  loss_giou_unscaled: 0.0937 (0.0937)  loss_xy_unscaled: 0.0007 (0.0007)  loss_hw_unscaled: 0.0010 (0.0010)  cardinality_error_unscaled: 525.0000 (525.0000)  loss_ce_0_unscaled: 0.0473 (0.0473)  loss_bbox_0_unscaled: 0.0019 (0.0019)  loss_giou_0_unscaled: 0.1001 (0.1001)  loss_xy_0_unscaled: 0.0008 (0.0008)  loss_hw_0_unscaled: 0.0011 (0.0011)  cardinality_error_0_unscaled: 525.0000 (525.0000)  loss_ce_dn_0_unscaled: 1.1700 (1.1700)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 199.0000 (199.0000)  loss_ce_1_unscaled: 0.0003 (0.0003)  loss_bbox_1_unscaled: 0.0018 (0.0018)  loss_giou_1_unscaled: 0.0874 (0.0874)  loss_xy_1_unscaled: 0.0007 (0.0007)  loss_hw_1_unscaled: 0.0011 (0.0011)  cardinality_error_1_unscaled: 525.0000 (525.0000)  loss_ce_dn_1_unscaled: 2.4252 (2.4252)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 199.0000 (199.0000)  loss_ce_2_unscaled: 0.0001 (0.0001)  loss_bbox_2_unscaled: 0.0017 (0.0017)  loss_giou_2_unscaled: 0.0969 (0.0969)  loss_xy_2_unscaled: 0.0008 (0.0008)  loss_hw_2_unscaled: 0.0009 (0.0009)  cardinality_error_2_unscaled: 525.0000 (525.0000)  loss_ce_dn_2_unscaled: 2.5755 (2.5755)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 199.0000 (199.0000)  loss_ce_3_unscaled: 0.0002 (0.0002)  loss_bbox_3_unscaled: 0.0016 (0.0016)  loss_giou_3_unscaled: 0.0895 (0.0895)  loss_xy_3_unscaled: 0.0007 (0.0007)  loss_hw_3_unscaled: 0.0009 (0.0009)  cardinality_error_3_unscaled: 525.0000 (525.0000)  loss_ce_dn_3_unscaled: 2.6377 (2.6377)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 199.0000 (199.0000)  loss_ce_4_unscaled: 0.0001 (0.0001)  loss_bbox_4_unscaled: 0.0017 (0.0017)  loss_giou_4_unscaled: 0.0922 (0.0922)  loss_xy_4_unscaled: 0.0007 (0.0007)  loss_hw_4_unscaled: 0.0009 (0.0009)  cardinality_error_4_unscaled: 525.0000 (525.0000)  loss_ce_dn_4_unscaled: 2.6751 (2.6751)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 199.0000 (199.0000)  loss_ce_interm_unscaled: 0.1232 (0.1232)  loss_bbox_interm_unscaled: 0.0016 (0.0016)  loss_giou_interm_unscaled: 0.1048 (0.1048)  loss_xy_interm_unscaled: 0.0008 (0.0008)  loss_hw_interm_unscaled: 0.0008 (0.0008)  cardinality_error_interm_unscaled: 525.0000 (525.0000)  loss_coverage_unscaled: 0.3062 (0.3062)  loss_interval_unscaled: 1.8150 (1.8150)  loss_count_unscaled: 1.2354 (1.2354)  loss_spacing_unscaled: 13.4311 (13.4311)  loss_boundary_guide_unscaled: 1.7968 (1.7968)  ccm_loss_unscaled: 0.0000 (0.0000)  time: 3.4634  data: 1.0331  max mem: 5830
+Error idx: 1522
+
+============================================================
+[CCM SOTA] E0 Iter500 | Warmup:0.02 | Weight:0.01
+  Batch: N∈[2, 2], μ=2.0
+  Boundaries: [10.3, 17.5, 29.6]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [3.5%, 2.9%, 1.1%]
+  Coverage:   [0.838, 0.897, 0.937]
+  Losses: CCM=0.002 Cov=0.136 Guide=0.000
+  DETR Loss: 4.9258 | CCM%: 0.0%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter1000 | Warmup:0.10 | Weight:0.02
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [9.4, 18.1, 36.8]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [5.8%, 0.8%, 22.9%]
+  Coverage:   [0.904, 0.948, 0.974]
+  Losses: CCM=0.003 Cov=0.205 Guide=0.008
+  DETR Loss: 8.1865 | CCM%: 0.0%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter1500 | Warmup:0.21 | Weight:0.04
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [8.2, 15.1, 29.6]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [17.8%, 16.2%, 1.3%]
+  Coverage:   [0.891, 0.938, 0.967]
+  Losses: CCM=0.005 Cov=0.191 Guide=0.012
+  DETR Loss: 4.8836 | CCM%: 0.1%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter2000 | Warmup:0.35 | Weight:0.05
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [9.3, 17.6, 33.2]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [6.7%, 2.2%, 10.9%]
+  Coverage:   [0.903, 0.946, 0.971]
+  Losses: CCM=0.010 Cov=0.203 Guide=0.003
+  DETR Loss: 2.3418 | CCM%: 0.4%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter2500 | Warmup:0.50 | Weight:0.06
+  Batch: N∈[7, 7], μ=7.0
+  Boundaries: [10.8, 19.1, 33.4]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [8.6%, 6.1%, 11.4%]
+  Coverage:   [0.608, 0.732, 0.827]
+  Losses: CCM=0.021 Cov=0.021 Guide=0.004
+  DETR Loss: 5.4121 | CCM%: 0.4%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter3000 | Warmup:0.65 | Weight:0.07
+  Batch: N∈[33, 33], μ=33.0
+  Boundaries: [12.6, 21.5, 37.0]px
+  Targets:    [15.0, 27.1, 49.9]px
+  Errors:     [16.0%, 20.5%, 25.8%]
+  Coverage:   [0.277, 0.395, 0.529]
+  Losses: CCM=0.030 Cov=0.246 Guide=0.029
+  DETR Loss: 5.9131 | CCM%: 0.5%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter3500 | Warmup:0.79 | Weight:0.08
+  Batch: N∈[2, 2], μ=2.0
+  Boundaries: [9.7, 16.8, 29.2]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [3.0%, 6.4%, 2.4%]
+  Coverage:   [0.829, 0.894, 0.936]
+  Losses: CCM=0.017 Cov=0.129 Guide=0.001
+  DETR Loss: 6.8681 | CCM%: 0.3%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter4000 | Warmup:0.90 | Weight:0.10
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [9.7, 17.1, 29.6]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [3.2%, 4.9%, 1.3%]
+  Coverage:   [0.906, 0.945, 0.967]
+  Losses: CCM=0.015 Cov=0.205 Guide=0.001
+  DETR Loss: 12.7455 | CCM%: 0.1%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter4500 | Warmup:0.98 | Weight:0.11
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [9.4, 19.6, 35.5]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [5.8%, 9.0%, 18.5%]
+  Coverage:   [0.904, 0.952, 0.973]
+  Losses: CCM=0.019 Cov=0.206 Guide=0.007
+  DETR Loss: 4.1912 | CCM%: 0.4%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter5000 | Warmup:1.00 | Weight:0.12
+  Batch: N∈[8, 8], μ=8.0
+  Boundaries: [12.2, 20.5, 35.0]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [22.4%, 13.9%, 16.8%]
+  Coverage:   [0.604, 0.719, 0.814]
+  Losses: CCM=0.045 Cov=0.023 Guide=0.014
+  DETR Loss: 6.6597 | CCM%: 0.7%
+============================================================
+Epoch: [0]  [ 5000/14018]  eta: 1:07:58  lr: 0.000100  ccm_weight: 0.119  class_error: 0.00  loss: 9.6356 (9.4507)  loss_ce_dn: 0.0456 (0.0477)  loss_bbox_dn: 0.0161 (0.0143)  loss_giou_dn: 0.3436 (0.2832)  loss_ce: 0.1073 (0.0986)  loss_bbox: 0.0284 (0.0358)  loss_giou: 0.6629 (0.6439)  loss_ce_0: 0.1304 (0.1327)  loss_bbox_0: 0.0285 (0.0368)  loss_giou_0: 0.6545 (0.6557)  loss_ce_dn_0: 0.0658 (0.0644)  loss_bbox_dn_0: 0.0241 (0.0201)  loss_giou_dn_0: 0.4640 (0.3682)  loss_ce_1: 0.1283 (0.1126)  loss_bbox_1: 0.0286 (0.0363)  loss_giou_1: 0.6845 (0.6484)  loss_ce_dn_1: 0.0527 (0.0577)  loss_bbox_dn_1: 0.0173 (0.0153)  loss_giou_dn_1: 0.3567 (0.2990)  loss_ce_2: 0.1156 (0.1018)  loss_bbox_2: 0.0281 (0.0359)  loss_giou_2: 0.6480 (0.6442)  loss_ce_dn_2: 0.0502 (0.0531)  loss_bbox_dn_2: 0.0168 (0.0144)  loss_giou_dn_2: 0.3491 (0.2849)  loss_ce_3: 0.1127 (0.0990)  loss_bbox_3: 0.0282 (0.0357)  loss_giou_3: 0.6548 (0.6422)  loss_ce_dn_3: 0.0453 (0.0503)  loss_bbox_dn_3: 0.0157 (0.0142)  loss_giou_dn_3: 0.3400 (0.2817)  loss_ce_4: 0.1261 (0.0986)  loss_bbox_4: 0.0283 (0.0358)  loss_giou_4: 0.6592 (0.6431)  loss_ce_dn_4: 0.0467 (0.0479)  loss_bbox_dn_4: 0.0157 (0.0142)  loss_giou_dn_4: 0.3409 (0.2822)  loss_ce_interm: 0.1376 (0.1375)  loss_bbox_interm: 0.0329 (0.0393)  loss_giou_interm: 0.7448 (0.6902)  loss_coverage: 0.1315 (0.1863)  loss_interval: 1.0635 (0.8936)  loss_count: 0.0394 (0.4036)  loss_spacing: 0.0000 (0.0963)  loss_boundary_guide: 0.0045 (0.0337)  ccm_loss: 0.0367 (0.0203)  loss_ce_dn_unscaled: 0.0456 (0.0477)  loss_bbox_dn_unscaled: 0.0032 (0.0029)  loss_giou_dn_unscaled: 0.1718 (0.1416)  loss_xy_dn_unscaled: 0.0012 (0.0011)  loss_hw_dn_unscaled: 0.0021 (0.0018)  cardinality_error_dn_unscaled: 190.0000 (177.6767)  loss_ce_unscaled: 0.1073 (0.0986)  class_error_unscaled: 0.0000 (0.7525)  loss_bbox_unscaled: 0.0057 (0.0072)  loss_giou_unscaled: 0.3314 (0.3220)  loss_xy_unscaled: 0.0019 (0.0024)  loss_hw_unscaled: 0.0037 (0.0047)  cardinality_error_unscaled: 1113.0000 (1092.6065)  loss_ce_0_unscaled: 0.1304 (0.1327)  loss_bbox_0_unscaled: 0.0057 (0.0074)  loss_giou_0_unscaled: 0.3273 (0.3279)  loss_xy_0_unscaled: 0.0019 (0.0025)  loss_hw_0_unscaled: 0.0039 (0.0049)  cardinality_error_0_unscaled: 1113.0000 (1090.5263)  loss_ce_dn_0_unscaled: 0.0658 (0.0644)  loss_bbox_dn_0_unscaled: 0.0048 (0.0040)  loss_giou_dn_0_unscaled: 0.2320 (0.1841)  loss_xy_dn_0_unscaled: 0.0015 (0.0014)  loss_hw_dn_0_unscaled: 0.0031 (0.0026)  cardinality_error_dn_0_unscaled: 190.0000 (177.6767)  loss_ce_1_unscaled: 0.1283 (0.1126)  loss_bbox_1_unscaled: 0.0057 (0.0073)  loss_giou_1_unscaled: 0.3422 (0.3242)  loss_xy_1_unscaled: 0.0018 (0.0025)  loss_hw_1_unscaled: 0.0040 (0.0048)  cardinality_error_1_unscaled: 1113.0000 (1092.6065)  loss_ce_dn_1_unscaled: 0.0527 (0.0577)  loss_bbox_dn_1_unscaled: 0.0035 (0.0031)  loss_giou_dn_1_unscaled: 0.1783 (0.1495)  loss_xy_dn_1_unscaled: 0.0012 (0.0012)  loss_hw_dn_1_unscaled: 0.0023 (0.0019)  cardinality_error_dn_1_unscaled: 190.0000 (177.6747)  loss_ce_2_unscaled: 0.1156 (0.1018)  loss_bbox_2_unscaled: 0.0056 (0.0072)  loss_giou_2_unscaled: 0.3240 (0.3221)  loss_xy_2_unscaled: 0.0018 (0.0024)  loss_hw_2_unscaled: 0.0037 (0.0047)  cardinality_error_2_unscaled: 1113.0000 (1092.6065)  loss_ce_dn_2_unscaled: 0.0502 (0.0531)  loss_bbox_dn_2_unscaled: 0.0034 (0.0029)  loss_giou_dn_2_unscaled: 0.1746 (0.1424)  loss_xy_dn_2_unscaled: 0.0012 (0.0011)  loss_hw_dn_2_unscaled: 0.0021 (0.0018)  cardinality_error_dn_2_unscaled: 190.0000 (177.6767)  loss_ce_3_unscaled: 0.1127 (0.0990)  loss_bbox_3_unscaled: 0.0056 (0.0071)  loss_giou_3_unscaled: 0.3274 (0.3211)  loss_xy_3_unscaled: 0.0019 (0.0024)  loss_hw_3_unscaled: 0.0037 (0.0047)  cardinality_error_3_unscaled: 1113.0000 (1092.6065)  loss_ce_dn_3_unscaled: 0.0453 (0.0503)  loss_bbox_dn_3_unscaled: 0.0031 (0.0028)  loss_giou_dn_3_unscaled: 0.1700 (0.1408)  loss_xy_dn_3_unscaled: 0.0011 (0.0011)  loss_hw_dn_3_unscaled: 0.0021 (0.0018)  cardinality_error_dn_3_unscaled: 190.0000 (177.6767)  loss_ce_4_unscaled: 0.1261 (0.0986)  loss_bbox_4_unscaled: 0.0057 (0.0072)  loss_giou_4_unscaled: 0.3296 (0.3215)  loss_xy_4_unscaled: 0.0019 (0.0024)  loss_hw_4_unscaled: 0.0037 (0.0047)  cardinality_error_4_unscaled: 1113.0000 (1092.6065)  loss_ce_dn_4_unscaled: 0.0467 (0.0479)  loss_bbox_dn_4_unscaled: 0.0031 (0.0028)  loss_giou_dn_4_unscaled: 0.1704 (0.1411)  loss_xy_dn_4_unscaled: 0.0011 (0.0011)  loss_hw_dn_4_unscaled: 0.0021 (0.0018)  cardinality_error_dn_4_unscaled: 190.0000 (177.6767)  loss_ce_interm_unscaled: 0.1376 (0.1375)  loss_bbox_interm_unscaled: 0.0066 (0.0079)  loss_giou_interm_unscaled: 0.3724 (0.3451)  loss_xy_interm_unscaled: 0.0022 (0.0027)  loss_hw_interm_unscaled: 0.0045 (0.0052)  cardinality_error_interm_unscaled: 1113.0000 (1092.6015)  loss_coverage_unscaled: 0.1315 (0.1863)  loss_interval_unscaled: 1.0635 (0.8936)  loss_count_unscaled: 0.0394 (0.4036)  loss_spacing_unscaled: 0.0000 (0.0963)  loss_boundary_guide_unscaled: 0.0045 (0.0337)  ccm_loss_unscaled: 0.0367 (0.0203)  time: 0.4436  data: 0.0016  max mem: 11282
+
+============================================================
+[CCM SOTA] E0 Iter5500 | Warmup:1.00 | Weight:0.13
+  Batch: N∈[14, 14], μ=14.0
+  Boundaries: [12.5, 21.3, 36.9]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [25.0%, 18.5%, 23.0%]
+  Coverage:   [0.471, 0.604, 0.725]
+  Losses: CCM=0.047 Cov=0.060 Guide=0.020
+  DETR Loss: 8.0575 | CCM%: 0.6%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter6000 | Warmup:1.00 | Weight:0.14
+  Batch: N∈[2, 2], μ=2.0
+  Boundaries: [12.6, 21.2, 35.9]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [26.3%, 17.6%, 19.7%]
+  Coverage:   [0.863, 0.914, 0.947]
+  Losses: CCM=0.048 Cov=0.159 Guide=0.019
+  DETR Loss: 4.1898 | CCM%: 1.1%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter6500 | Warmup:1.00 | Weight:0.15
+  Batch: N∈[25, 25], μ=25.0
+  Boundaries: [13.2, 22.9, 39.1]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [32.6%, 27.1%, 30.6%]
+  Coverage:   [0.346, 0.478, 0.610]
+  Losses: CCM=0.069 Cov=0.194 Guide=0.035
+  DETR Loss: 9.9705 | CCM%: 0.7%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter7000 | Warmup:1.00 | Weight:0.17
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [10.3, 18.1, 30.9]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [3.3%, 0.5%, 3.1%]
+  Coverage:   [0.911, 0.948, 0.969]
+  Losses: CCM=0.033 Cov=0.211 Guide=0.000
+  DETR Loss: 4.1582 | CCM%: 0.8%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter7500 | Warmup:1.00 | Weight:0.18
+  Batch: N∈[3, 3], μ=3.0
+  Boundaries: [9.0, 16.0, 27.3]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [10.1%, 10.9%, 9.0%]
+  Coverage:   [0.749, 0.842, 0.901]
+  Losses: CCM=0.053 Cov=0.071 Guide=0.006
+  DETR Loss: 8.5967 | CCM%: 0.6%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter8000 | Warmup:1.00 | Weight:0.19
+  Batch: N∈[15, 15], μ=15.0
+  Boundaries: [11.7, 20.1, 35.2]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [17.2%, 11.7%, 17.4%]
+  Coverage:   [0.438, 0.573, 0.701]
+  Losses: CCM=0.068 Cov=0.083 Guide=0.011
+  DETR Loss: 6.9331 | CCM%: 1.0%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter8500 | Warmup:1.00 | Weight:0.20
+  Batch: N∈[5, 5], μ=5.0
+  Boundaries: [10.9, 18.5, 31.6]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [9.5%, 3.0%, 5.4%]
+  Coverage:   [0.686, 0.788, 0.863]
+  Losses: CCM=0.059 Cov=0.039 Guide=0.002
+  DETR Loss: 9.1124 | CCM%: 0.6%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter9000 | Warmup:1.00 | Weight:0.21
+  Batch: N∈[17, 17], μ=17.0
+  Boundaries: [10.6, 18.2, 31.3]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [6.3%, 1.4%, 4.5%]
+  Coverage:   [0.384, 0.518, 0.648]
+  Losses: CCM=0.092 Cov=0.141 Guide=0.001
+  DETR Loss: 8.5564 | CCM%: 1.1%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter9500 | Warmup:1.00 | Weight:0.23
+  Batch: N∈[141, 141], μ=141.0
+  Boundaries: [12.2, 21.4, 38.7]px
+  Targets:    [25.0, 49.9, 100.5]px
+  Errors:     [51.2%, 57.1%, 61.5%]
+  Coverage:   [0.080, 0.132, 0.215]
+  Losses: CCM=0.097 Cov=0.273 Guide=0.089
+  DETR Loss: 12.2770 | CCM%: 0.8%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter10000 | Warmup:1.00 | Weight:0.24
+  Batch: N∈[2, 2], μ=2.0
+  Boundaries: [8.9, 16.6, 29.5]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [10.5%, 7.8%, 1.4%]
+  Coverage:   [0.817, 0.892, 0.937]
+  Losses: CCM=0.074 Cov=0.121 Guide=0.003
+  DETR Loss: 4.9117 | CCM%: 1.5%
+============================================================
+Epoch: [0]  [10000/14018]  eta: 0:29:49  lr: 0.000100  ccm_weight: 0.238  class_error: 0.00  loss: 8.6995 (9.3856)  loss_ce_dn: 0.0489 (0.0440)  loss_bbox_dn: 0.0122 (0.0146)  loss_giou_dn: 0.2571 (0.2883)  loss_ce: 0.0781 (0.1024)  loss_bbox: 0.0301 (0.0371)  loss_giou: 0.5964 (0.6538)  loss_ce_0: 0.1359 (0.1387)  loss_bbox_0: 0.0314 (0.0380)  loss_giou_0: 0.5292 (0.6638)  loss_ce_dn_0: 0.0655 (0.0611)  loss_bbox_dn_0: 0.0180 (0.0206)  loss_giou_dn_0: 0.3292 (0.3747)  loss_ce_1: 0.0857 (0.1169)  loss_bbox_1: 0.0350 (0.0374)  loss_giou_1: 0.5799 (0.6571)  loss_ce_dn_1: 0.0549 (0.0531)  loss_bbox_dn_1: 0.0137 (0.0157)  loss_giou_dn_1: 0.2884 (0.3045)  loss_ce_2: 0.0867 (0.1061)  loss_bbox_2: 0.0317 (0.0370)  loss_giou_2: 0.5863 (0.6534)  loss_ce_dn_2: 0.0523 (0.0488)  loss_bbox_dn_2: 0.0115 (0.0148)  loss_giou_dn_2: 0.2629 (0.2899)  loss_ce_3: 0.0764 (0.1031)  loss_bbox_3: 0.0295 (0.0369)  loss_giou_3: 0.5946 (0.6516)  loss_ce_dn_3: 0.0485 (0.0465)  loss_bbox_dn_3: 0.0120 (0.0146)  loss_giou_dn_3: 0.2570 (0.2867)  loss_ce_4: 0.0765 (0.1023)  loss_bbox_4: 0.0302 (0.0370)  loss_giou_4: 0.5960 (0.6523)  loss_ce_dn_4: 0.0491 (0.0443)  loss_bbox_dn_4: 0.0122 (0.0146)  loss_giou_dn_4: 0.2571 (0.2873)  loss_ce_interm: 0.1502 (0.1433)  loss_bbox_interm: 0.0350 (0.0405)  loss_giou_interm: 0.6207 (0.7000)  loss_coverage: 0.1268 (0.1806)  loss_interval: 0.6885 (0.8671)  loss_count: 0.0692 (0.2931)  loss_spacing: 0.0000 (0.0493)  loss_boundary_guide: 0.0032 (0.0249)  ccm_loss: 0.0600 (0.0380)  loss_ce_dn_unscaled: 0.0489 (0.0440)  loss_bbox_dn_unscaled: 0.0024 (0.0029)  loss_giou_dn_unscaled: 0.1286 (0.1441)  loss_xy_dn_unscaled: 0.0011 (0.0011)  loss_hw_dn_unscaled: 0.0016 (0.0018)  cardinality_error_dn_unscaled: 198.0000 (177.2037)  loss_ce_unscaled: 0.0781 (0.1024)  class_error_unscaled: 0.0000 (0.7747)  loss_bbox_unscaled: 0.0060 (0.0074)  loss_giou_unscaled: 0.2982 (0.3269)  loss_xy_unscaled: 0.0019 (0.0025)  loss_hw_unscaled: 0.0043 (0.0049)  cardinality_error_unscaled: 1120.0000 (1096.8201)  loss_ce_0_unscaled: 0.1359 (0.1387)  loss_bbox_0_unscaled: 0.0063 (0.0076)  loss_giou_0_unscaled: 0.2646 (0.3319)  loss_xy_0_unscaled: 0.0019 (0.0026)  loss_hw_0_unscaled: 0.0039 (0.0050)  cardinality_error_0_unscaled: 1120.0000 (1095.7652)  loss_ce_dn_0_unscaled: 0.0655 (0.0611)  loss_bbox_dn_0_unscaled: 0.0036 (0.0041)  loss_giou_dn_0_unscaled: 0.1646 (0.1874)  loss_xy_dn_0_unscaled: 0.0012 (0.0015)  loss_hw_dn_0_unscaled: 0.0025 (0.0026)  cardinality_error_dn_0_unscaled: 198.0000 (177.2037)  loss_ce_1_unscaled: 0.0857 (0.1169)  loss_bbox_1_unscaled: 0.0070 (0.0075)  loss_giou_1_unscaled: 0.2899 (0.3285)  loss_xy_1_unscaled: 0.0019 (0.0026)  loss_hw_1_unscaled: 0.0049 (0.0049)  cardinality_error_1_unscaled: 1120.0000 (1096.8201)  loss_ce_dn_1_unscaled: 0.0549 (0.0531)  loss_bbox_dn_1_unscaled: 0.0027 (0.0031)  loss_giou_dn_1_unscaled: 0.1442 (0.1522)  loss_xy_dn_1_unscaled: 0.0011 (0.0012)  loss_hw_dn_1_unscaled: 0.0019 (0.0019)  cardinality_error_dn_1_unscaled: 198.0000 (177.2027)  loss_ce_2_unscaled: 0.0867 (0.1061)  loss_bbox_2_unscaled: 0.0063 (0.0074)  loss_giou_2_unscaled: 0.2932 (0.3267)  loss_xy_2_unscaled: 0.0019 (0.0025)  loss_hw_2_unscaled: 0.0045 (0.0049)  cardinality_error_2_unscaled: 1120.0000 (1096.8201)  loss_ce_dn_2_unscaled: 0.0523 (0.0488)  loss_bbox_dn_2_unscaled: 0.0023 (0.0030)  loss_giou_dn_2_unscaled: 0.1315 (0.1450)  loss_xy_dn_2_unscaled: 0.0010 (0.0011)  loss_hw_dn_2_unscaled: 0.0015 (0.0018)  cardinality_error_dn_2_unscaled: 198.0000 (177.2037)  loss_ce_3_unscaled: 0.0764 (0.1031)  loss_bbox_3_unscaled: 0.0059 (0.0074)  loss_giou_3_unscaled: 0.2973 (0.3258)  loss_xy_3_unscaled: 0.0019 (0.0025)  loss_hw_3_unscaled: 0.0044 (0.0049)  cardinality_error_3_unscaled: 1120.0000 (1096.8201)  loss_ce_dn_3_unscaled: 0.0485 (0.0465)  loss_bbox_dn_3_unscaled: 0.0024 (0.0029)  loss_giou_dn_3_unscaled: 0.1285 (0.1434)  loss_xy_dn_3_unscaled: 0.0011 (0.0011)  loss_hw_dn_3_unscaled: 0.0016 (0.0018)  cardinality_error_dn_3_unscaled: 198.0000 (177.2037)  loss_ce_4_unscaled: 0.0765 (0.1023)  loss_bbox_4_unscaled: 0.0060 (0.0074)  loss_giou_4_unscaled: 0.2980 (0.3261)  loss_xy_4_unscaled: 0.0019 (0.0025)  loss_hw_4_unscaled: 0.0041 (0.0049)  cardinality_error_4_unscaled: 1120.0000 (1096.8201)  loss_ce_dn_4_unscaled: 0.0491 (0.0443)  loss_bbox_dn_4_unscaled: 0.0024 (0.0029)  loss_giou_dn_4_unscaled: 0.1286 (0.1436)  loss_xy_dn_4_unscaled: 0.0011 (0.0011)  loss_hw_dn_4_unscaled: 0.0016 (0.0018)  cardinality_error_dn_4_unscaled: 198.0000 (177.2037)  loss_ce_interm_unscaled: 0.1502 (0.1433)  loss_bbox_interm_unscaled: 0.0070 (0.0081)  loss_giou_interm_unscaled: 0.3104 (0.3500)  loss_xy_interm_unscaled: 0.0021 (0.0028)  loss_hw_interm_unscaled: 0.0050 (0.0053)  cardinality_error_interm_unscaled: 1120.0000 (1096.8176)  loss_coverage_unscaled: 0.1268 (0.1806)  loss_interval_unscaled: 0.6885 (0.8671)  loss_count_unscaled: 0.0692 (0.2931)  loss_spacing_unscaled: 0.0000 (0.0493)  loss_boundary_guide_unscaled: 0.0032 (0.0249)  ccm_loss_unscaled: 0.0600 (0.0380)  time: 0.3924  data: 0.0015  max mem: 12336
+
+============================================================
+[CCM SOTA] E0 Iter10500 | Warmup:1.00 | Weight:0.25
+  Batch: N∈[108, 108], μ=108.0
+  Boundaries: [13.7, 23.9, 42.3]px
+  Targets:    [25.0, 49.9, 100.5]px
+  Errors:     [45.2%, 52.1%, 57.9%]
+  Coverage:   [0.113, 0.181, 0.282]
+  Losses: CCM=0.094 Cov=0.212 Guide=0.069
+  DETR Loss: 9.3190 | CCM%: 1.0%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter11000 | Warmup:1.00 | Weight:0.26
+  Batch: N∈[7, 7], μ=7.0
+  Boundaries: [9.9, 17.8, 33.7]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [0.7%, 1.3%, 12.6%]
+  Coverage:   [0.586, 0.717, 0.828]
+  Losses: CCM=0.078 Cov=0.017 Guide=0.002
+  DETR Loss: 8.0577 | CCM%: 1.0%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter11500 | Warmup:1.00 | Weight:0.27
+  Batch: N∈[1, 1], μ=1.0
+  Boundaries: [10.3, 17.3, 29.3]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [2.9%, 3.6%, 2.3%]
+  Coverage:   [0.911, 0.945, 0.967]
+  Losses: CCM=0.050 Cov=0.209 Guide=0.000
+  DETR Loss: 8.9914 | CCM%: 0.6%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter12000 | Warmup:1.00 | Weight:0.29
+  Batch: N∈[50, 50], μ=50.0
+  Boundaries: [12.5, 22.1, 40.6]px
+  Targets:    [15.0, 27.1, 49.9]px
+  Errors:     [16.9%, 18.4%, 18.6%]
+  Coverage:   [0.200, 0.307, 0.448]
+  Losses: CCM=0.126 Cov=0.399 Guide=0.020
+  DETR Loss: 14.3903 | CCM%: 0.9%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter12500 | Warmup:1.00 | Weight:0.30
+  Batch: N∈[251, 251], μ=251.0
+  Boundaries: [14.0, 23.7, 40.9]px
+  Targets:    [33.1, 66.7, 127.7]px
+  Errors:     [57.7%, 64.5%, 68.0%]
+  Coverage:   [0.053, 0.086, 0.140]
+  Losses: CCM=0.064 Cov=0.074 Guide=0.021
+  DETR Loss: 9.7707 | CCM%: 0.7%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter13000 | Warmup:1.00 | Weight:0.31
+  Batch: N∈[8, 8], μ=8.0
+  Boundaries: [10.1, 18.0, 31.6]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [1.3%, 0.3%, 5.6%]
+  Coverage:   [0.558, 0.693, 0.798]
+  Losses: CCM=0.094 Cov=0.021 Guide=0.001
+  DETR Loss: 6.6646 | CCM%: 1.4%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter13500 | Warmup:1.00 | Weight:0.32
+  Batch: N∈[20, 20], μ=20.0
+  Boundaries: [11.2, 19.5, 35.1]px
+  Targets:    [10.0, 18.0, 30.0]px
+  Errors:     [12.1%, 8.5%, 17.0%]
+  Coverage:   [0.359, 0.494, 0.637]
+  Losses: CCM=0.124 Cov=0.166 Guide=0.007
+  DETR Loss: 7.6628 | CCM%: 1.6%
+============================================================
+
+============================================================
+[CCM SOTA] E0 Iter14000 | Warmup:1.00 | Weight:0.33
+  Batch: N∈[86, 86], μ=86.0
+  Boundaries: [13.1, 22.3, 38.7]px
+  Targets:    [25.0, 49.9, 100.5]px
+  Errors:     [47.5%, 55.3%, 61.5%]
+  Coverage:   [0.133, 0.206, 0.310]
+  Losses: CCM=0.132 Cov=0.186 Guide=0.082
+  DETR Loss: 10.3713 | CCM%: 1.3%
+============================================================
+Epoch: [0]  [14017/14018]  eta: 0:00:00  lr: 0.000100  ccm_weight: 0.333  class_error: 0.00  loss: 9.9358 (9.3962)  loss_ce_dn: 0.0316 (0.0425)  loss_bbox_dn: 0.0210 (0.0148)  loss_giou_dn: 0.4128 (0.2903)  loss_ce: 0.0868 (0.1057)  loss_bbox: 0.0360 (0.0377)  loss_giou: 0.6019 (0.6594)  loss_ce_0: 0.1236 (0.1412)  loss_bbox_0: 0.0353 (0.0385)  loss_giou_0: 0.5975 (0.6693)  loss_ce_dn_0: 0.0508 (0.0594)  loss_bbox_dn_0: 0.0305 (0.0208)  loss_giou_dn_0: 0.5705 (0.3769)  loss_ce_1: 0.1021 (0.1197)  loss_bbox_1: 0.0352 (0.0380)  loss_giou_1: 0.5687 (0.6626)  loss_ce_dn_1: 0.0358 (0.0511)  loss_bbox_dn_1: 0.0231 (0.0159)  loss_giou_dn_1: 0.4491 (0.3066)  loss_ce_2: 0.0886 (0.1090)  loss_bbox_2: 0.0358 (0.0377)  loss_giou_2: 0.5944 (0.6591)  loss_ce_dn_2: 0.0323 (0.0470)  loss_bbox_dn_2: 0.0211 (0.0149)  loss_giou_dn_2: 0.4134 (0.2919)  loss_ce_3: 0.0835 (0.1063)  loss_bbox_3: 0.0357 (0.0375)  loss_giou_3: 0.6006 (0.6572)  loss_ce_dn_3: 0.0292 (0.0448)  loss_bbox_dn_3: 0.0211 (0.0147)  loss_giou_dn_3: 0.4126 (0.2887)  loss_ce_4: 0.0852 (0.1056)  loss_bbox_4: 0.0360 (0.0376)  loss_giou_4: 0.6017 (0.6579)  loss_ce_dn_4: 0.0333 (0.0427)  loss_bbox_dn_4: 0.0210 (0.0147)  loss_giou_dn_4: 0.4129 (0.2892)  loss_ce_interm: 0.1208 (0.1458)  loss_bbox_interm: 0.0376 (0.0410)  loss_giou_interm: 0.6236 (0.7060)  loss_coverage: 0.0856 (0.1778)  loss_interval: 1.0630 (0.8593)  loss_count: 0.0218 (0.2508)  loss_spacing: 0.0000 (0.0354)  loss_boundary_guide: 0.0160 (0.0215)  ccm_loss: 0.1158 (0.0516)  loss_ce_dn_unscaled: 0.0316 (0.0425)  loss_bbox_dn_unscaled: 0.0042 (0.0030)  loss_giou_dn_unscaled: 0.2064 (0.1451)  loss_xy_dn_unscaled: 0.0016 (0.0011)  loss_hw_dn_unscaled: 0.0027 (0.0018)  cardinality_error_dn_unscaled: 169.0000 (177.2804)  loss_ce_unscaled: 0.0868 (0.1057)  class_error_unscaled: 0.0000 (0.8203)  loss_bbox_unscaled: 0.0072 (0.0075)  loss_giou_unscaled: 0.3010 (0.3297)  loss_xy_unscaled: 0.0023 (0.0026)  loss_hw_unscaled: 0.0047 (0.0050)  cardinality_error_unscaled: 1113.0000 (1098.2337)  loss_ce_0_unscaled: 0.1236 (0.1412)  loss_bbox_0_unscaled: 0.0071 (0.0077)  loss_giou_0_unscaled: 0.2987 (0.3347)  loss_xy_0_unscaled: 0.0023 (0.0026)  loss_hw_0_unscaled: 0.0048 (0.0051)  cardinality_error_0_unscaled: 1113.0000 (1097.4811)  loss_ce_dn_0_unscaled: 0.0508 (0.0594)  loss_bbox_dn_0_unscaled: 0.0061 (0.0042)  loss_giou_dn_0_unscaled: 0.2852 (0.1885)  loss_xy_dn_0_unscaled: 0.0020 (0.0015)  loss_hw_dn_0_unscaled: 0.0039 (0.0027)  cardinality_error_dn_0_unscaled: 169.0000 (177.2804)  loss_ce_1_unscaled: 0.1021 (0.1197)  loss_bbox_1_unscaled: 0.0070 (0.0076)  loss_giou_1_unscaled: 0.2843 (0.3313)  loss_xy_1_unscaled: 0.0022 (0.0026)  loss_hw_1_unscaled: 0.0046 (0.0050)  cardinality_error_1_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_1_unscaled: 0.0358 (0.0511)  loss_bbox_dn_1_unscaled: 0.0046 (0.0032)  loss_giou_dn_1_unscaled: 0.2245 (0.1533)  loss_xy_dn_1_unscaled: 0.0017 (0.0012)  loss_hw_dn_1_unscaled: 0.0030 (0.0020)  cardinality_error_dn_1_unscaled: 169.0000 (177.2795)  loss_ce_2_unscaled: 0.0886 (0.1090)  loss_bbox_2_unscaled: 0.0072 (0.0075)  loss_giou_2_unscaled: 0.2972 (0.3296)  loss_xy_2_unscaled: 0.0023 (0.0026)  loss_hw_2_unscaled: 0.0046 (0.0050)  cardinality_error_2_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_2_unscaled: 0.0323 (0.0470)  loss_bbox_dn_2_unscaled: 0.0042 (0.0030)  loss_giou_dn_2_unscaled: 0.2067 (0.1459)  loss_xy_dn_2_unscaled: 0.0015 (0.0011)  loss_hw_dn_2_unscaled: 0.0027 (0.0018)  cardinality_error_dn_2_unscaled: 169.0000 (177.2804)  loss_ce_3_unscaled: 0.0835 (0.1063)  loss_bbox_3_unscaled: 0.0071 (0.0075)  loss_giou_3_unscaled: 0.3003 (0.3286)  loss_xy_3_unscaled: 0.0023 (0.0026)  loss_hw_3_unscaled: 0.0047 (0.0049)  cardinality_error_3_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_3_unscaled: 0.0292 (0.0448)  loss_bbox_dn_3_unscaled: 0.0042 (0.0029)  loss_giou_dn_3_unscaled: 0.2063 (0.1444)  loss_xy_dn_3_unscaled: 0.0015 (0.0011)  loss_hw_dn_3_unscaled: 0.0027 (0.0018)  cardinality_error_dn_3_unscaled: 169.0000 (177.2804)  loss_ce_4_unscaled: 0.0852 (0.1056)  loss_bbox_4_unscaled: 0.0072 (0.0075)  loss_giou_4_unscaled: 0.3008 (0.3289)  loss_xy_4_unscaled: 0.0023 (0.0026)  loss_hw_4_unscaled: 0.0047 (0.0050)  cardinality_error_4_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_4_unscaled: 0.0333 (0.0427)  loss_bbox_dn_4_unscaled: 0.0042 (0.0029)  loss_giou_dn_4_unscaled: 0.2064 (0.1446)  loss_xy_dn_4_unscaled: 0.0015 (0.0011)  loss_hw_dn_4_unscaled: 0.0027 (0.0018)  cardinality_error_dn_4_unscaled: 169.0000 (177.2804)  loss_ce_interm_unscaled: 0.1208 (0.1458)  loss_bbox_interm_unscaled: 0.0075 (0.0082)  loss_giou_interm_unscaled: 0.3118 (0.3530)  loss_xy_interm_unscaled: 0.0024 (0.0028)  loss_hw_interm_unscaled: 0.0053 (0.0054)  cardinality_error_interm_unscaled: 1113.0000 (1098.2319)  loss_coverage_unscaled: 0.0856 (0.1778)  loss_interval_unscaled: 1.0630 (0.8593)  loss_count_unscaled: 0.0218 (0.2508)  loss_spacing_unscaled: 0.0000 (0.0354)  loss_boundary_guide_unscaled: 0.0160 (0.0215)  ccm_loss_unscaled: 0.1158 (0.0516)  time: 0.3895  data: 0.0017  max mem: 12336
+Epoch: [0] Total time: 1:40:14 (0.4291 s / it)
+Averaged stats: lr: 0.000100  ccm_weight: 0.333  class_error: 0.00  loss: 9.9358 (9.3962)  loss_ce_dn: 0.0316 (0.0425)  loss_bbox_dn: 0.0210 (0.0148)  loss_giou_dn: 0.4128 (0.2903)  loss_ce: 0.0868 (0.1057)  loss_bbox: 0.0360 (0.0377)  loss_giou: 0.6019 (0.6594)  loss_ce_0: 0.1236 (0.1412)  loss_bbox_0: 0.0353 (0.0385)  loss_giou_0: 0.5975 (0.6693)  loss_ce_dn_0: 0.0508 (0.0594)  loss_bbox_dn_0: 0.0305 (0.0208)  loss_giou_dn_0: 0.5705 (0.3769)  loss_ce_1: 0.1021 (0.1197)  loss_bbox_1: 0.0352 (0.0380)  loss_giou_1: 0.5687 (0.6626)  loss_ce_dn_1: 0.0358 (0.0511)  loss_bbox_dn_1: 0.0231 (0.0159)  loss_giou_dn_1: 0.4491 (0.3066)  loss_ce_2: 0.0886 (0.1090)  loss_bbox_2: 0.0358 (0.0377)  loss_giou_2: 0.5944 (0.6591)  loss_ce_dn_2: 0.0323 (0.0470)  loss_bbox_dn_2: 0.0211 (0.0149)  loss_giou_dn_2: 0.4134 (0.2919)  loss_ce_3: 0.0835 (0.1063)  loss_bbox_3: 0.0357 (0.0375)  loss_giou_3: 0.6006 (0.6572)  loss_ce_dn_3: 0.0292 (0.0448)  loss_bbox_dn_3: 0.0211 (0.0147)  loss_giou_dn_3: 0.4126 (0.2887)  loss_ce_4: 0.0852 (0.1056)  loss_bbox_4: 0.0360 (0.0376)  loss_giou_4: 0.6017 (0.6579)  loss_ce_dn_4: 0.0333 (0.0427)  loss_bbox_dn_4: 0.0210 (0.0147)  loss_giou_dn_4: 0.4129 (0.2892)  loss_ce_interm: 0.1208 (0.1458)  loss_bbox_interm: 0.0376 (0.0410)  loss_giou_interm: 0.6236 (0.7060)  loss_coverage: 0.0856 (0.1778)  loss_interval: 1.0630 (0.8593)  loss_count: 0.0218 (0.2508)  loss_spacing: 0.0000 (0.0354)  loss_boundary_guide: 0.0160 (0.0215)  ccm_loss: 0.1158 (0.0516)  loss_ce_dn_unscaled: 0.0316 (0.0425)  loss_bbox_dn_unscaled: 0.0042 (0.0030)  loss_giou_dn_unscaled: 0.2064 (0.1451)  loss_xy_dn_unscaled: 0.0016 (0.0011)  loss_hw_dn_unscaled: 0.0027 (0.0018)  cardinality_error_dn_unscaled: 169.0000 (177.2804)  loss_ce_unscaled: 0.0868 (0.1057)  class_error_unscaled: 0.0000 (0.8203)  loss_bbox_unscaled: 0.0072 (0.0075)  loss_giou_unscaled: 0.3010 (0.3297)  loss_xy_unscaled: 0.0023 (0.0026)  loss_hw_unscaled: 0.0047 (0.0050)  cardinality_error_unscaled: 1113.0000 (1098.2337)  loss_ce_0_unscaled: 0.1236 (0.1412)  loss_bbox_0_unscaled: 0.0071 (0.0077)  loss_giou_0_unscaled: 0.2987 (0.3347)  loss_xy_0_unscaled: 0.0023 (0.0026)  loss_hw_0_unscaled: 0.0048 (0.0051)  cardinality_error_0_unscaled: 1113.0000 (1097.4811)  loss_ce_dn_0_unscaled: 0.0508 (0.0594)  loss_bbox_dn_0_unscaled: 0.0061 (0.0042)  loss_giou_dn_0_unscaled: 0.2852 (0.1885)  loss_xy_dn_0_unscaled: 0.0020 (0.0015)  loss_hw_dn_0_unscaled: 0.0039 (0.0027)  cardinality_error_dn_0_unscaled: 169.0000 (177.2804)  loss_ce_1_unscaled: 0.1021 (0.1197)  loss_bbox_1_unscaled: 0.0070 (0.0076)  loss_giou_1_unscaled: 0.2843 (0.3313)  loss_xy_1_unscaled: 0.0022 (0.0026)  loss_hw_1_unscaled: 0.0046 (0.0050)  cardinality_error_1_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_1_unscaled: 0.0358 (0.0511)  loss_bbox_dn_1_unscaled: 0.0046 (0.0032)  loss_giou_dn_1_unscaled: 0.2245 (0.1533)  loss_xy_dn_1_unscaled: 0.0017 (0.0012)  loss_hw_dn_1_unscaled: 0.0030 (0.0020)  cardinality_error_dn_1_unscaled: 169.0000 (177.2795)  loss_ce_2_unscaled: 0.0886 (0.1090)  loss_bbox_2_unscaled: 0.0072 (0.0075)  loss_giou_2_unscaled: 0.2972 (0.3296)  loss_xy_2_unscaled: 0.0023 (0.0026)  loss_hw_2_unscaled: 0.0046 (0.0050)  cardinality_error_2_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_2_unscaled: 0.0323 (0.0470)  loss_bbox_dn_2_unscaled: 0.0042 (0.0030)  loss_giou_dn_2_unscaled: 0.2067 (0.1459)  loss_xy_dn_2_unscaled: 0.0015 (0.0011)  loss_hw_dn_2_unscaled: 0.0027 (0.0018)  cardinality_error_dn_2_unscaled: 169.0000 (177.2804)  loss_ce_3_unscaled: 0.0835 (0.1063)  loss_bbox_3_unscaled: 0.0071 (0.0075)  loss_giou_3_unscaled: 0.3003 (0.3286)  loss_xy_3_unscaled: 0.0023 (0.0026)  loss_hw_3_unscaled: 0.0047 (0.0049)  cardinality_error_3_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_3_unscaled: 0.0292 (0.0448)  loss_bbox_dn_3_unscaled: 0.0042 (0.0029)  loss_giou_dn_3_unscaled: 0.2063 (0.1444)  loss_xy_dn_3_unscaled: 0.0015 (0.0011)  loss_hw_dn_3_unscaled: 0.0027 (0.0018)  cardinality_error_dn_3_unscaled: 169.0000 (177.2804)  loss_ce_4_unscaled: 0.0852 (0.1056)  loss_bbox_4_unscaled: 0.0072 (0.0075)  loss_giou_4_unscaled: 0.3008 (0.3289)  loss_xy_4_unscaled: 0.0023 (0.0026)  loss_hw_4_unscaled: 0.0047 (0.0050)  cardinality_error_4_unscaled: 1113.0000 (1098.2337)  loss_ce_dn_4_unscaled: 0.0333 (0.0427)  loss_bbox_dn_4_unscaled: 0.0042 (0.0029)  loss_giou_dn_4_unscaled: 0.2064 (0.1446)  loss_xy_dn_4_unscaled: 0.0015 (0.0011)  loss_hw_dn_4_unscaled: 0.0027 (0.0018)  cardinality_error_dn_4_unscaled: 169.0000 (177.2804)  loss_ce_interm_unscaled: 0.1208 (0.1458)  loss_bbox_interm_unscaled: 0.0075 (0.0082)  loss_giou_interm_unscaled: 0.3118 (0.3530)  loss_xy_interm_unscaled: 0.0024 (0.0028)  loss_hw_interm_unscaled: 0.0053 (0.0054)  cardinality_error_interm_unscaled: 1113.0000 (1098.2319)  loss_coverage_unscaled: 0.0856 (0.1778)  loss_interval_unscaled: 1.0630 (0.8593)  loss_count_unscaled: 0.0218 (0.2508)  loss_spacing_unscaled: 0.0000 (0.0354)  loss_boundary_guide_unscaled: 0.0160 (0.0215)  ccm_loss_unscaled: 0.1158 (0.0516)
+Test:  [    0/14018]  eta: 5:43:05  class_error: 0.00  loss: 6.1182 (6.1182)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.1118 (0.1118)  loss_bbox: 0.0245 (0.0245)  loss_giou: 0.7080 (0.7080)  loss_ce_0: 0.1506 (0.1506)  loss_bbox_0: 0.0241 (0.0241)  loss_giou_0: 0.6888 (0.6888)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.1195 (0.1195)  loss_bbox_1: 0.0253 (0.0253)  loss_giou_1: 0.7191 (0.7191)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.1237 (0.1237)  loss_bbox_2: 0.0245 (0.0245)  loss_giou_2: 0.7006 (0.7006)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.1223 (0.1223)  loss_bbox_3: 0.0250 (0.0250)  loss_giou_3: 0.7149 (0.7149)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.1409 (0.1409)  loss_bbox_4: 0.0248 (0.0248)  loss_giou_4: 0.7133 (0.7133)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1460 (0.1460)  loss_bbox_interm: 0.0262 (0.0262)  loss_giou_interm: 0.7844 (0.7844)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.1118 (0.1118)  class_error_unscaled: 0.0000 (0.0000)  loss_bbox_unscaled: 0.0049 (0.0049)  loss_giou_unscaled: 0.3540 (0.3540)  loss_xy_unscaled: 0.0010 (0.0010)  loss_hw_unscaled: 0.0039 (0.0039)  cardinality_error_unscaled: 293.0000 (293.0000)  loss_ce_0_unscaled: 0.1506 (0.1506)  loss_bbox_0_unscaled: 0.0048 (0.0048)  loss_giou_0_unscaled: 0.3444 (0.3444)  loss_xy_0_unscaled: 0.0011 (0.0011)  loss_hw_0_unscaled: 0.0038 (0.0038)  cardinality_error_0_unscaled: 293.0000 (293.0000)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.1195 (0.1195)  loss_bbox_1_unscaled: 0.0051 (0.0051)  loss_giou_1_unscaled: 0.3595 (0.3595)  loss_xy_1_unscaled: 0.0010 (0.0010)  loss_hw_1_unscaled: 0.0041 (0.0041)  cardinality_error_1_unscaled: 293.0000 (293.0000)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.1237 (0.1237)  loss_bbox_2_unscaled: 0.0049 (0.0049)  loss_giou_2_unscaled: 0.3503 (0.3503)  loss_xy_2_unscaled: 0.0011 (0.0011)  loss_hw_2_unscaled: 0.0038 (0.0038)  cardinality_error_2_unscaled: 293.0000 (293.0000)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.1223 (0.1223)  loss_bbox_3_unscaled: 0.0050 (0.0050)  loss_giou_3_unscaled: 0.3575 (0.3575)  loss_xy_3_unscaled: 0.0011 (0.0011)  loss_hw_3_unscaled: 0.0039 (0.0039)  cardinality_error_3_unscaled: 293.0000 (293.0000)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.1409 (0.1409)  loss_bbox_4_unscaled: 0.0050 (0.0050)  loss_giou_4_unscaled: 0.3566 (0.3566)  loss_xy_4_unscaled: 0.0011 (0.0011)  loss_hw_4_unscaled: 0.0039 (0.0039)  cardinality_error_4_unscaled: 293.0000 (293.0000)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1460 (0.1460)  loss_bbox_interm_unscaled: 0.0052 (0.0052)  loss_giou_interm_unscaled: 0.3922 (0.3922)  loss_xy_interm_unscaled: 0.0010 (0.0010)  loss_hw_interm_unscaled: 0.0043 (0.0043)  cardinality_error_interm_unscaled: 293.0000 (293.0000)  time: 1.4685  data: 1.2562  max mem: 12336
+Test:  [ 5000/14018]  eta: 1:28:29  class_error: 0.00  loss: 6.0423 (5.9133)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0528 (0.1292)  loss_bbox: 0.0348 (0.0375)  loss_giou: 0.6053 (0.6584)  loss_ce_0: 0.1002 (0.1556)  loss_bbox_0: 0.0361 (0.0379)  loss_giou_0: 0.7043 (0.6679)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0708 (0.1400)  loss_bbox_1: 0.0334 (0.0376)  loss_giou_1: 0.6539 (0.6625)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0517 (0.1343)  loss_bbox_2: 0.0345 (0.0374)  loss_giou_2: 0.6215 (0.6587)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0547 (0.1346)  loss_bbox_3: 0.0349 (0.0372)  loss_giou_3: 0.6028 (0.6556)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0524 (0.1319)  loss_bbox_4: 0.0347 (0.0372)  loss_giou_4: 0.6018 (0.6553)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1072 (0.1668)  loss_bbox_interm: 0.0330 (0.0399)  loss_giou_interm: 0.7157 (0.6977)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0528 (0.1292)  class_error_unscaled: 0.0000 (1.3601)  loss_bbox_unscaled: 0.0070 (0.0075)  loss_giou_unscaled: 0.3027 (0.3292)  loss_xy_unscaled: 0.0024 (0.0027)  loss_hw_unscaled: 0.0045 (0.0048)  cardinality_error_unscaled: 299.0000 (504.7429)  loss_ce_0_unscaled: 0.1002 (0.1556)  loss_bbox_0_unscaled: 0.0072 (0.0076)  loss_giou_0_unscaled: 0.3522 (0.3339)  loss_xy_0_unscaled: 0.0025 (0.0027)  loss_hw_0_unscaled: 0.0045 (0.0049)  cardinality_error_0_unscaled: 299.0000 (504.7429)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0708 (0.1400)  loss_bbox_1_unscaled: 0.0067 (0.0075)  loss_giou_1_unscaled: 0.3269 (0.3313)  loss_xy_1_unscaled: 0.0022 (0.0027)  loss_hw_1_unscaled: 0.0044 (0.0048)  cardinality_error_1_unscaled: 299.0000 (504.7429)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0517 (0.1343)  loss_bbox_2_unscaled: 0.0069 (0.0075)  loss_giou_2_unscaled: 0.3108 (0.3294)  loss_xy_2_unscaled: 0.0024 (0.0027)  loss_hw_2_unscaled: 0.0044 (0.0048)  cardinality_error_2_unscaled: 299.0000 (504.7429)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0547 (0.1346)  loss_bbox_3_unscaled: 0.0070 (0.0074)  loss_giou_3_unscaled: 0.3014 (0.3278)  loss_xy_3_unscaled: 0.0024 (0.0027)  loss_hw_3_unscaled: 0.0045 (0.0048)  cardinality_error_3_unscaled: 299.0000 (504.7429)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0524 (0.1319)  loss_bbox_4_unscaled: 0.0069 (0.0074)  loss_giou_4_unscaled: 0.3009 (0.3276)  loss_xy_4_unscaled: 0.0024 (0.0027)  loss_hw_4_unscaled: 0.0045 (0.0048)  cardinality_error_4_unscaled: 299.0000 (504.7429)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1072 (0.1668)  loss_bbox_interm_unscaled: 0.0066 (0.0080)  loss_giou_interm_unscaled: 0.3579 (0.3488)  loss_xy_interm_unscaled: 0.0024 (0.0029)  loss_hw_interm_unscaled: 0.0045 (0.0051)  cardinality_error_interm_unscaled: 299.0000 (504.7429)  time: 0.6737  data: 0.0043  max mem: 12336
+Test:  [10000/14018]  eta: 0:36:44  class_error: 0.00  loss: 5.3445 (5.9698)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0586 (0.1330)  loss_bbox: 0.0280 (0.0382)  loss_giou: 0.6226 (0.6622)  loss_ce_0: 0.1014 (0.1572)  loss_bbox_0: 0.0303 (0.0387)  loss_giou_0: 0.6234 (0.6721)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0584 (0.1432)  loss_bbox_1: 0.0297 (0.0383)  loss_giou_1: 0.6146 (0.6666)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0436 (0.1396)  loss_bbox_2: 0.0272 (0.0382)  loss_giou_2: 0.6178 (0.6627)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0583 (0.1388)  loss_bbox_3: 0.0279 (0.0379)  loss_giou_3: 0.6113 (0.6596)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0569 (0.1357)  loss_bbox_4: 0.0284 (0.0379)  loss_giou_4: 0.6190 (0.6593)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1286 (0.1686)  loss_bbox_interm: 0.0304 (0.0407)  loss_giou_interm: 0.6756 (0.7013)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0586 (0.1330)  class_error_unscaled: 0.0000 (1.4006)  loss_bbox_unscaled: 0.0056 (0.0076)  loss_giou_unscaled: 0.3113 (0.3311)  loss_xy_unscaled: 0.0019 (0.0028)  loss_hw_unscaled: 0.0034 (0.0049)  cardinality_error_unscaled: 298.0000 (505.9947)  loss_ce_0_unscaled: 0.1014 (0.1572)  loss_bbox_0_unscaled: 0.0061 (0.0077)  loss_giou_0_unscaled: 0.3117 (0.3361)  loss_xy_0_unscaled: 0.0021 (0.0028)  loss_hw_0_unscaled: 0.0032 (0.0049)  cardinality_error_0_unscaled: 298.0000 (505.9947)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0584 (0.1432)  loss_bbox_1_unscaled: 0.0059 (0.0077)  loss_giou_1_unscaled: 0.3073 (0.3333)  loss_xy_1_unscaled: 0.0020 (0.0028)  loss_hw_1_unscaled: 0.0037 (0.0049)  cardinality_error_1_unscaled: 298.0000 (505.9947)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0436 (0.1396)  loss_bbox_2_unscaled: 0.0054 (0.0076)  loss_giou_2_unscaled: 0.3089 (0.3314)  loss_xy_2_unscaled: 0.0020 (0.0028)  loss_hw_2_unscaled: 0.0034 (0.0049)  cardinality_error_2_unscaled: 298.0000 (505.9947)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0583 (0.1388)  loss_bbox_3_unscaled: 0.0056 (0.0076)  loss_giou_3_unscaled: 0.3056 (0.3298)  loss_xy_3_unscaled: 0.0018 (0.0028)  loss_hw_3_unscaled: 0.0034 (0.0048)  cardinality_error_3_unscaled: 298.0000 (505.9947)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0569 (0.1357)  loss_bbox_4_unscaled: 0.0057 (0.0076)  loss_giou_4_unscaled: 0.3095 (0.3297)  loss_xy_4_unscaled: 0.0018 (0.0028)  loss_hw_4_unscaled: 0.0034 (0.0048)  cardinality_error_4_unscaled: 298.0000 (505.9947)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1286 (0.1686)  loss_bbox_interm_unscaled: 0.0061 (0.0081)  loss_giou_interm_unscaled: 0.3378 (0.3507)  loss_xy_interm_unscaled: 0.0022 (0.0030)  loss_hw_interm_unscaled: 0.0035 (0.0051)  cardinality_error_interm_unscaled: 298.0000 (505.9947)  time: 0.2870  data: 0.0044  max mem: 12336
+Test:  [14017/14018]  eta: 0:00:00  class_error: 0.00  loss: 5.3589 (5.9932)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0491 (0.1377)  loss_bbox: 0.0298 (0.0381)  loss_giou: 0.5902 (0.6627)  loss_ce_0: 0.1043 (0.1592)  loss_bbox_0: 0.0307 (0.0386)  loss_giou_0: 0.6426 (0.6724)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0703 (0.1455)  loss_bbox_1: 0.0302 (0.0382)  loss_giou_1: 0.5961 (0.6672)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0582 (0.1428)  loss_bbox_2: 0.0300 (0.0381)  loss_giou_2: 0.5842 (0.6632)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0545 (0.1417)  loss_bbox_3: 0.0295 (0.0378)  loss_giou_3: 0.5980 (0.6600)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0547 (0.1400)  loss_bbox_4: 0.0297 (0.0377)  loss_giou_4: 0.5958 (0.6597)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1004 (0.1702)  loss_bbox_interm: 0.0343 (0.0406)  loss_giou_interm: 0.6774 (0.7020)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0491 (0.1377)  class_error_unscaled: 0.0000 (1.3558)  loss_bbox_unscaled: 0.0060 (0.0076)  loss_giou_unscaled: 0.2951 (0.3313)  loss_xy_unscaled: 0.0020 (0.0028)  loss_hw_unscaled: 0.0042 (0.0048)  cardinality_error_unscaled: 299.0000 (504.6047)  loss_ce_0_unscaled: 0.1043 (0.1592)  loss_bbox_0_unscaled: 0.0061 (0.0077)  loss_giou_0_unscaled: 0.3213 (0.3362)  loss_xy_0_unscaled: 0.0020 (0.0028)  loss_hw_0_unscaled: 0.0045 (0.0049)  cardinality_error_0_unscaled: 299.0000 (504.6047)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0703 (0.1455)  loss_bbox_1_unscaled: 0.0060 (0.0076)  loss_giou_1_unscaled: 0.2980 (0.3336)  loss_xy_1_unscaled: 0.0021 (0.0028)  loss_hw_1_unscaled: 0.0044 (0.0049)  cardinality_error_1_unscaled: 299.0000 (504.6047)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0582 (0.1428)  loss_bbox_2_unscaled: 0.0060 (0.0076)  loss_giou_2_unscaled: 0.2921 (0.3316)  loss_xy_2_unscaled: 0.0020 (0.0028)  loss_hw_2_unscaled: 0.0041 (0.0048)  cardinality_error_2_unscaled: 299.0000 (504.6047)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0545 (0.1417)  loss_bbox_3_unscaled: 0.0059 (0.0076)  loss_giou_3_unscaled: 0.2990 (0.3300)  loss_xy_3_unscaled: 0.0021 (0.0027)  loss_hw_3_unscaled: 0.0042 (0.0048)  cardinality_error_3_unscaled: 299.0000 (504.6047)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0547 (0.1400)  loss_bbox_4_unscaled: 0.0059 (0.0075)  loss_giou_4_unscaled: 0.2979 (0.3299)  loss_xy_4_unscaled: 0.0020 (0.0027)  loss_hw_4_unscaled: 0.0042 (0.0048)  cardinality_error_4_unscaled: 299.0000 (504.6047)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1004 (0.1702)  loss_bbox_interm_unscaled: 0.0069 (0.0081)  loss_giou_interm_unscaled: 0.3387 (0.3510)  loss_xy_interm_unscaled: 0.0021 (0.0030)  loss_hw_interm_unscaled: 0.0050 (0.0051)  cardinality_error_interm_unscaled: 299.0000 (504.6047)  time: 0.6661  data: 0.0046  max mem: 12336
+Test: Total time: 2:21:41 (0.6065 s / it)
+Averaged stats: class_error: 0.00  loss: 5.3589 (5.9932)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0491 (0.1377)  loss_bbox: 0.0298 (0.0381)  loss_giou: 0.5902 (0.6627)  loss_ce_0: 0.1043 (0.1592)  loss_bbox_0: 0.0307 (0.0386)  loss_giou_0: 0.6426 (0.6724)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0703 (0.1455)  loss_bbox_1: 0.0302 (0.0382)  loss_giou_1: 0.5961 (0.6672)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0582 (0.1428)  loss_bbox_2: 0.0300 (0.0381)  loss_giou_2: 0.5842 (0.6632)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0545 (0.1417)  loss_bbox_3: 0.0295 (0.0378)  loss_giou_3: 0.5980 (0.6600)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0547 (0.1400)  loss_bbox_4: 0.0297 (0.0377)  loss_giou_4: 0.5958 (0.6597)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1004 (0.1702)  loss_bbox_interm: 0.0343 (0.0406)  loss_giou_interm: 0.6774 (0.7020)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0491 (0.1377)  class_error_unscaled: 0.0000 (1.3558)  loss_bbox_unscaled: 0.0060 (0.0076)  loss_giou_unscaled: 0.2951 (0.3313)  loss_xy_unscaled: 0.0020 (0.0028)  loss_hw_unscaled: 0.0042 (0.0048)  cardinality_error_unscaled: 299.0000 (504.6047)  loss_ce_0_unscaled: 0.1043 (0.1592)  loss_bbox_0_unscaled: 0.0061 (0.0077)  loss_giou_0_unscaled: 0.3213 (0.3362)  loss_xy_0_unscaled: 0.0020 (0.0028)  loss_hw_0_unscaled: 0.0045 (0.0049)  cardinality_error_0_unscaled: 299.0000 (504.6047)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0703 (0.1455)  loss_bbox_1_unscaled: 0.0060 (0.0076)  loss_giou_1_unscaled: 0.2980 (0.3336)  loss_xy_1_unscaled: 0.0021 (0.0028)  loss_hw_1_unscaled: 0.0044 (0.0049)  cardinality_error_1_unscaled: 299.0000 (504.6047)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0582 (0.1428)  loss_bbox_2_unscaled: 0.0060 (0.0076)  loss_giou_2_unscaled: 0.2921 (0.3316)  loss_xy_2_unscaled: 0.0020 (0.0028)  loss_hw_2_unscaled: 0.0041 (0.0048)  cardinality_error_2_unscaled: 299.0000 (504.6047)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0545 (0.1417)  loss_bbox_3_unscaled: 0.0059 (0.0076)  loss_giou_3_unscaled: 0.2990 (0.3300)  loss_xy_3_unscaled: 0.0021 (0.0027)  loss_hw_3_unscaled: 0.0042 (0.0048)  cardinality_error_3_unscaled: 299.0000 (504.6047)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0547 (0.1400)  loss_bbox_4_unscaled: 0.0059 (0.0075)  loss_giou_4_unscaled: 0.2979 (0.3299)  loss_xy_4_unscaled: 0.0020 (0.0027)  loss_hw_4_unscaled: 0.0042 (0.0048)  cardinality_error_4_unscaled: 299.0000 (504.6047)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1004 (0.1702)  loss_bbox_interm_unscaled: 0.0069 (0.0081)  loss_giou_interm_unscaled: 0.3387 (0.3510)  loss_xy_interm_unscaled: 0.0021 (0.0030)  loss_hw_interm_unscaled: 0.0050 (0.0051)  cardinality_error_interm_unscaled: 299.0000 (504.6047)
+Accumulating evaluation results...
+DONE (t=169.84s).
+IoU metric: bbox
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.241
+Average Precision  (AP) @[ IoU=0.25      | area=   all | maxDets=1500 ] = -1.000
+Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.586
+Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1500 ] = 0.156
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.120
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.238
+Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.299
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.387
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.070
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.366
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.409
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.218
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.418
+Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.449
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.539
+Optimal LRP             @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.785
+Optimal LRP Loc         @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.279
+Optimal LRP FP          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.288
+Optimal LRP FN          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.425
+# Class-specific LRP-Optimal Thresholds #
+ [0.289 0.341 0.342 0.433 0.374 0.36  0.3   0.561]
+Training time 4:04:56
+
+进程已结束，退出代码为 0

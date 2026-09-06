@@ -1,0 +1,2585 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver1 -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AITODv2 --pretrain_model_path /workspace/DQDetr/models/dqdetr_best305.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=False dn_box_noise_scale=1.0
+Not using distributed mode
+data_aug_scales [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+data_aug_max_size 1333
+data_aug_scales2_resize [400, 500, 600]
+data_aug_scales2_crop [384, 600]
+data_aug_scale_overlap None
+num_classes 9
+lr 0.0001
+param_dict_type default
+lr_backbone 1e-05
+lr_backbone_names ['backbone.0']
+lr_linear_proj_names ['reference_points', 'sampling_offsets']
+lr_linear_proj_mult 0.1
+ddetr_lr_param False
+batch_size 1
+weight_decay 1e-06
+epochs 1
+lr_drop 11
+save_checkpoint_interval 1
+clip_max_norm 0.1
+onecyclelr False
+multi_step_lr True
+lr_drop_list [13, 23]
+val_epoch [0]
+ccm_params [10, 100, 500]
+ccm_cls_num 4
+dynamic_query_list [300, 500, 900, 1500]
+find_unused_parameters False
+modelname dqdetr
+frozen_weights None
+backbone resnet50
+use_checkpoint False
+dilation False
+position_embedding sine
+pe_temperatureH 20
+pe_temperatureW 20
+return_interm_indices [0, 1, 2, 3]
+backbone_freeze_keywords None
+enc_layers 6
+dec_layers 6
+unic_layers 0
+pre_norm False
+dim_feedforward 2048
+hidden_dim 256
+dropout 0.0
+nheads 8
+num_queries 900
+query_dim 4
+num_patterns 0
+pdetr3_bbox_embed_diff_each_layer False
+pdetr3_refHW -1
+random_refpoints_xy False
+fix_refpoints_hw -1
+dabdetr_yolo_like_anchor_update False
+dabdetr_deformable_encoder False
+dabdetr_deformable_decoder False
+use_deformable_box_attn False
+box_attn_type roi_align
+dec_layer_number None
+num_feature_levels 5
+enc_n_points 4
+dec_n_points 4
+decoder_layer_noise False
+dln_xy_noise 0.2
+dln_hw_noise 0.2
+add_channel_attention False
+add_pos_value False
+two_stage_type standard
+two_stage_pat_embed 0
+two_stage_add_query_num 0
+two_stage_bbox_embed_share False
+two_stage_class_embed_share False
+two_stage_learn_wh False
+two_stage_default_hw 0.05
+two_stage_keep_all_tokens False
+num_select 300
+transformer_activation relu
+batch_norm_type FrozenBatchNorm2d
+masks False
+aux_loss True
+set_cost_class 2.0
+set_cost_bbox 5.0
+set_cost_giou 2.0
+cls_loss_coef 1.0
+mask_loss_coef 1.0
+dice_loss_coef 1.0
+bbox_loss_coef 5.0
+giou_loss_coef 2.0
+enc_loss_coef 1.0
+interm_loss_coef 1.0
+no_interm_box_loss False
+focal_alpha 0.25
+decoder_sa_type sa
+matcher_type HungarianMatcher
+decoder_module_seq ['sa', 'ca', 'ffn']
+nms_iou_threshold -1
+dec_pred_bbox_embed_share True
+dec_pred_class_embed_share True
+use_dn True
+dn_number 100
+dn_box_noise_scale 1.0
+dn_label_noise_ratio 0.5
+embed_init_tgt False
+dn_labelbook_size 91
+match_unstable_error True
+use_ema False
+ema_decay 0.9997
+ema_epoch 0
+use_detached_boxes_dec_out False
+coverage_loss_coef 1.0
+interval_loss_coef 1.0
+spacing_loss_coef 1.0
+dn_scalar 100
+dn_bbox_coef 1.0
+dn_label_coef 1.0
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[01/09 11:25:29.737]: git:
+  sha: N/A, status: clean, branch: N/A
+
+[01/09 11:25:29.738]: Command: /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver1 -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AITODv2 --pretrain_model_path /workspace/DQDetr/models/dqdetr_best305.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=False dn_box_noise_scale=1.0
+[01/09 11:25:29.738]: Full config saved to logs/DQDETR_ver1/config_args_all.json
+[01/09 11:25:29.738]: world size: 1
+[01/09 11:25:29.738]: rank: 0
+[01/09 11:25:29.738]: local_rank: 0
+[01/09 11:25:29.738]: args: Namespace(config_file='config/DQ_5scale.py', options={'dn_scalar': 100, 'embed_init_tgt': False, 'dn_bbox_coef': 1.0, 'dn_label_coef': 1.0, 'use_ema': False, 'dn_box_noise_scale': 1.0}, dataset_file='aitodv2', coco_path='/workspace/DQDetr/data/path/AITODv2', coco_panoptic_path=None, remove_difficult=False, fix_size=False, output_dir='logs/DQDETR_ver1', note='', device='cuda', seed=42, resume='', pretrain_model_path='/workspace/DQDetr/models/dqdetr_best305.pth', finetune_ignore=None, start_epoch=0, eval=False, num_workers=10, test=False, debug=False, find_unused_params=False, save_results=False, save_log=False, world_size=1, dist_url='env://', rank=0, local_rank=0, amp=True, distributed=False, data_aug_scales=[480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800], data_aug_max_size=1333, data_aug_scales2_resize=[400, 500, 600], data_aug_scales2_crop=[384, 600], data_aug_scale_overlap=None, num_classes=9, lr=0.0001, param_dict_type='default', lr_backbone=1e-05, lr_backbone_names=['backbone.0'], lr_linear_proj_names=['reference_points', 'sampling_offsets'], lr_linear_proj_mult=0.1, ddetr_lr_param=False, batch_size=1, weight_decay=1e-06, epochs=1, lr_drop=11, save_checkpoint_interval=1, clip_max_norm=0.1, onecyclelr=False, multi_step_lr=True, lr_drop_list=[13, 23], val_epoch=[0], ccm_params=[10, 100, 500], ccm_cls_num=4, dynamic_query_list=[300, 500, 900, 1500], find_unused_parameters=False, modelname='dqdetr', frozen_weights=None, backbone='resnet50', use_checkpoint=False, dilation=False, position_embedding='sine', pe_temperatureH=20, pe_temperatureW=20, return_interm_indices=[0, 1, 2, 3], backbone_freeze_keywords=None, enc_layers=6, dec_layers=6, unic_layers=0, pre_norm=False, dim_feedforward=2048, hidden_dim=256, dropout=0.0, nheads=8, num_queries=900, query_dim=4, num_patterns=0, pdetr3_bbox_embed_diff_each_layer=False, pdetr3_refHW=-1, random_refpoints_xy=False, fix_refpoints_hw=-1, dabdetr_yolo_like_anchor_update=False, dabdetr_deformable_encoder=False, dabdetr_deformable_decoder=False, use_deformable_box_attn=False, box_attn_type='roi_align', dec_layer_number=None, num_feature_levels=5, enc_n_points=4, dec_n_points=4, decoder_layer_noise=False, dln_xy_noise=0.2, dln_hw_noise=0.2, add_channel_attention=False, add_pos_value=False, two_stage_type='standard', two_stage_pat_embed=0, two_stage_add_query_num=0, two_stage_bbox_embed_share=False, two_stage_class_embed_share=False, two_stage_learn_wh=False, two_stage_default_hw=0.05, two_stage_keep_all_tokens=False, num_select=300, transformer_activation='relu', batch_norm_type='FrozenBatchNorm2d', masks=False, aux_loss=True, set_cost_class=2.0, set_cost_bbox=5.0, set_cost_giou=2.0, cls_loss_coef=1.0, mask_loss_coef=1.0, dice_loss_coef=1.0, bbox_loss_coef=5.0, giou_loss_coef=2.0, enc_loss_coef=1.0, interm_loss_coef=1.0, no_interm_box_loss=False, focal_alpha=0.25, decoder_sa_type='sa', matcher_type='HungarianMatcher', decoder_module_seq=['sa', 'ca', 'ffn'], nms_iou_threshold=-1, dec_pred_bbox_embed_share=True, dec_pred_class_embed_share=True, use_dn=True, dn_number=100, dn_box_noise_scale=1.0, dn_label_noise_ratio=0.5, embed_init_tgt=False, dn_labelbook_size=91, match_unstable_error=True, use_ema=False, ema_decay=0.9997, ema_epoch=0, use_detached_boxes_dec_out=False, coverage_loss_coef=1.0, interval_loss_coef=1.0, spacing_loss_coef=1.0, dn_scalar=100, dn_bbox_coef=1.0, dn_label_coef=1.0)
+
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+[01/09 11:25:32.015]: number of params:58771735
+[01/09 11:25:32.017]: params:
+{
+  "transformer.level_embed": 1280,
+  "transformer.CCM.density_conv1.weight": 131072,
+  "transformer.CCM.density_conv1.bias": 512,
+  "transformer.CCM.ccm_backbone.0.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.0.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.0.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.1.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.1.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.1.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.2.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.2.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.2.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.3.conv.weight": 1179648,
+  "transformer.CCM.ccm_backbone.3.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.3.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.4.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.4.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.4.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.5.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.5.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.5.gn.bias": 256,
+  "transformer.CCM.boundary_head.1.weight": 32768,
+  "transformer.CCM.boundary_head.1.bias": 128,
+  "transformer.CCM.boundary_head.4.weight": 384,
+  "transformer.CCM.boundary_head.4.bias": 3,
+  "transformer.CCM.count_regressor.2.weight": 32768,
+  "transformer.CCM.count_regressor.2.bias": 128,
+  "transformer.CCM.count_regressor.5.weight": 128,
+  "transformer.CCM.count_regressor.5.bias": 1,
+  "transformer.CCM.ccm_classifier.weight": 1024,
+  "transformer.CCM.ccm_classifier.bias": 4,
+  "transformer.CCM.ref_point_conv.weight": 256,
+  "transformer.CCM.ref_point_conv.bias": 1,
+  "transformer.CGFE.ChannelGate.mlp.1.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.1.bias": 16,
+  "transformer.CGFE.ChannelGate.mlp.3.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.3.bias": 256,
+  "transformer.CGFE.SpatialGate.spatial.conv.weight": 98,
+  "transformer.CGFE.SpatialGate.spatial.bn.weight": 1,
+  "transformer.CGFE.SpatialGate.spatial.bn.bias": 1,
+  "transformer.multiscale.conv1.conv.weight": 589824,
+  "transformer.multiscale.conv1.gn.weight": 256,
+  "transformer.multiscale.conv1.gn.bias": 256,
+  "transformer.multiscale.conv2.conv.weight": 589824,
+  "transformer.multiscale.conv2.gn.weight": 256,
+  "transformer.multiscale.conv2.gn.bias": 256,
+  "transformer.multiscale.conv3.conv.weight": 589824,
+  "transformer.multiscale.conv3.gn.weight": 256,
+  "transformer.multiscale.conv3.gn.bias": 256,
+  "transformer.multiscale.conv4.conv.weight": 589824,
+  "transformer.multiscale.conv4.gn.weight": 256,
+  "transformer.multiscale.conv4.gn.bias": 256,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.0.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.0.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.0.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.0.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.0.norm1.weight": 256,
+  "transformer.encoder.layers.0.norm1.bias": 256,
+  "transformer.encoder.layers.0.linear1.weight": 524288,
+  "transformer.encoder.layers.0.linear1.bias": 2048,
+  "transformer.encoder.layers.0.linear2.weight": 524288,
+  "transformer.encoder.layers.0.linear2.bias": 256,
+  "transformer.encoder.layers.0.norm2.weight": 256,
+  "transformer.encoder.layers.0.norm2.bias": 256,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.1.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.1.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.1.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.1.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.1.norm1.weight": 256,
+  "transformer.encoder.layers.1.norm1.bias": 256,
+  "transformer.encoder.layers.1.linear1.weight": 524288,
+  "transformer.encoder.layers.1.linear1.bias": 2048,
+  "transformer.encoder.layers.1.linear2.weight": 524288,
+  "transformer.encoder.layers.1.linear2.bias": 256,
+  "transformer.encoder.layers.1.norm2.weight": 256,
+  "transformer.encoder.layers.1.norm2.bias": 256,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.2.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.2.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.2.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.2.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.2.norm1.weight": 256,
+  "transformer.encoder.layers.2.norm1.bias": 256,
+  "transformer.encoder.layers.2.linear1.weight": 524288,
+  "transformer.encoder.layers.2.linear1.bias": 2048,
+  "transformer.encoder.layers.2.linear2.weight": 524288,
+  "transformer.encoder.layers.2.linear2.bias": 256,
+  "transformer.encoder.layers.2.norm2.weight": 256,
+  "transformer.encoder.layers.2.norm2.bias": 256,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.3.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.3.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.3.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.3.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.3.norm1.weight": 256,
+  "transformer.encoder.layers.3.norm1.bias": 256,
+  "transformer.encoder.layers.3.linear1.weight": 524288,
+  "transformer.encoder.layers.3.linear1.bias": 2048,
+  "transformer.encoder.layers.3.linear2.weight": 524288,
+  "transformer.encoder.layers.3.linear2.bias": 256,
+  "transformer.encoder.layers.3.norm2.weight": 256,
+  "transformer.encoder.layers.3.norm2.bias": 256,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.4.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.4.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.4.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.4.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.4.norm1.weight": 256,
+  "transformer.encoder.layers.4.norm1.bias": 256,
+  "transformer.encoder.layers.4.linear1.weight": 524288,
+  "transformer.encoder.layers.4.linear1.bias": 2048,
+  "transformer.encoder.layers.4.linear2.weight": 524288,
+  "transformer.encoder.layers.4.linear2.bias": 256,
+  "transformer.encoder.layers.4.norm2.weight": 256,
+  "transformer.encoder.layers.4.norm2.bias": 256,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.5.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.5.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.5.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.5.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.5.norm1.weight": 256,
+  "transformer.encoder.layers.5.norm1.bias": 256,
+  "transformer.encoder.layers.5.linear1.weight": 524288,
+  "transformer.encoder.layers.5.linear1.bias": 2048,
+  "transformer.encoder.layers.5.linear2.weight": 524288,
+  "transformer.encoder.layers.5.linear2.bias": 256,
+  "transformer.encoder.layers.5.norm2.weight": 256,
+  "transformer.encoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.0.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.0.norm1.weight": 256,
+  "transformer.decoder.layers.0.norm1.bias": 256,
+  "transformer.decoder.layers.0.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.0.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.0.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.0.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.0.norm2.weight": 256,
+  "transformer.decoder.layers.0.norm2.bias": 256,
+  "transformer.decoder.layers.0.linear1.weight": 524288,
+  "transformer.decoder.layers.0.linear1.bias": 2048,
+  "transformer.decoder.layers.0.linear2.weight": 524288,
+  "transformer.decoder.layers.0.linear2.bias": 256,
+  "transformer.decoder.layers.0.norm3.weight": 256,
+  "transformer.decoder.layers.0.norm3.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.1.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.1.norm1.weight": 256,
+  "transformer.decoder.layers.1.norm1.bias": 256,
+  "transformer.decoder.layers.1.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.1.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.1.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.1.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.1.norm2.weight": 256,
+  "transformer.decoder.layers.1.norm2.bias": 256,
+  "transformer.decoder.layers.1.linear1.weight": 524288,
+  "transformer.decoder.layers.1.linear1.bias": 2048,
+  "transformer.decoder.layers.1.linear2.weight": 524288,
+  "transformer.decoder.layers.1.linear2.bias": 256,
+  "transformer.decoder.layers.1.norm3.weight": 256,
+  "transformer.decoder.layers.1.norm3.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.2.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.2.norm1.weight": 256,
+  "transformer.decoder.layers.2.norm1.bias": 256,
+  "transformer.decoder.layers.2.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.2.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.2.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.2.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.2.norm2.weight": 256,
+  "transformer.decoder.layers.2.norm2.bias": 256,
+  "transformer.decoder.layers.2.linear1.weight": 524288,
+  "transformer.decoder.layers.2.linear1.bias": 2048,
+  "transformer.decoder.layers.2.linear2.weight": 524288,
+  "transformer.decoder.layers.2.linear2.bias": 256,
+  "transformer.decoder.layers.2.norm3.weight": 256,
+  "transformer.decoder.layers.2.norm3.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.3.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.3.norm1.weight": 256,
+  "transformer.decoder.layers.3.norm1.bias": 256,
+  "transformer.decoder.layers.3.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.3.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.3.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.3.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.3.norm2.weight": 256,
+  "transformer.decoder.layers.3.norm2.bias": 256,
+  "transformer.decoder.layers.3.linear1.weight": 524288,
+  "transformer.decoder.layers.3.linear1.bias": 2048,
+  "transformer.decoder.layers.3.linear2.weight": 524288,
+  "transformer.decoder.layers.3.linear2.bias": 256,
+  "transformer.decoder.layers.3.norm3.weight": 256,
+  "transformer.decoder.layers.3.norm3.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.4.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.4.norm1.weight": 256,
+  "transformer.decoder.layers.4.norm1.bias": 256,
+  "transformer.decoder.layers.4.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.4.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.4.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.4.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.4.norm2.weight": 256,
+  "transformer.decoder.layers.4.norm2.bias": 256,
+  "transformer.decoder.layers.4.linear1.weight": 524288,
+  "transformer.decoder.layers.4.linear1.bias": 2048,
+  "transformer.decoder.layers.4.linear2.weight": 524288,
+  "transformer.decoder.layers.4.linear2.bias": 256,
+  "transformer.decoder.layers.4.norm3.weight": 256,
+  "transformer.decoder.layers.4.norm3.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.5.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.5.norm1.weight": 256,
+  "transformer.decoder.layers.5.norm1.bias": 256,
+  "transformer.decoder.layers.5.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.5.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.5.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.5.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.5.norm2.weight": 256,
+  "transformer.decoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.5.linear1.weight": 524288,
+  "transformer.decoder.layers.5.linear1.bias": 2048,
+  "transformer.decoder.layers.5.linear2.weight": 524288,
+  "transformer.decoder.layers.5.linear2.bias": 256,
+  "transformer.decoder.layers.5.norm3.weight": 256,
+  "transformer.decoder.layers.5.norm3.bias": 256,
+  "transformer.decoder.norm.weight": 256,
+  "transformer.decoder.norm.bias": 256,
+  "transformer.decoder.ref_point_head.layers.0.weight": 131072,
+  "transformer.decoder.ref_point_head.layers.0.bias": 256,
+  "transformer.decoder.ref_point_head.layers.1.weight": 65536,
+  "transformer.decoder.ref_point_head.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.0.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.0.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.1.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.2.weight": 1024,
+  "transformer.decoder.bbox_embed.0.layers.2.bias": 4,
+  "transformer.decoder.class_embed.0.weight": 2304,
+  "transformer.decoder.class_embed.0.bias": 9,
+  "transformer.enc_output.weight": 65536,
+  "transformer.enc_output.bias": 256,
+  "transformer.enc_output_norm.weight": 256,
+  "transformer.enc_output_norm.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.0.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.0.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.1.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.1.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.2.weight": 1024,
+  "transformer.enc_out_bbox_embed.layers.2.bias": 4,
+  "transformer.enc_out_class_embed.weight": 2304,
+  "transformer.enc_out_class_embed.bias": 9,
+  "label_enc.weight": 23552,
+  "input_proj.0.0.weight": 65536,
+  "input_proj.0.0.bias": 256,
+  "input_proj.0.1.weight": 256,
+  "input_proj.0.1.bias": 256,
+  "input_proj.1.0.weight": 131072,
+  "input_proj.1.0.bias": 256,
+  "input_proj.1.1.weight": 256,
+  "input_proj.1.1.bias": 256,
+  "input_proj.2.0.weight": 262144,
+  "input_proj.2.0.bias": 256,
+  "input_proj.2.1.weight": 256,
+  "input_proj.2.1.bias": 256,
+  "input_proj.3.0.weight": 524288,
+  "input_proj.3.0.bias": 256,
+  "input_proj.3.1.weight": 256,
+  "input_proj.3.1.bias": 256,
+  "input_proj.4.0.weight": 4718592,
+  "input_proj.4.0.bias": 256,
+  "input_proj.4.1.weight": 256,
+  "input_proj.4.1.bias": 256,
+  "backbone.0.body.layer2.0.conv1.weight": 32768,
+  "backbone.0.body.layer2.0.conv2.weight": 147456,
+  "backbone.0.body.layer2.0.conv3.weight": 65536,
+  "backbone.0.body.layer2.0.downsample.0.weight": 131072,
+  "backbone.0.body.layer2.1.conv1.weight": 65536,
+  "backbone.0.body.layer2.1.conv2.weight": 147456,
+  "backbone.0.body.layer2.1.conv3.weight": 65536,
+  "backbone.0.body.layer2.2.conv1.weight": 65536,
+  "backbone.0.body.layer2.2.conv2.weight": 147456,
+  "backbone.0.body.layer2.2.conv3.weight": 65536,
+  "backbone.0.body.layer2.3.conv1.weight": 65536,
+  "backbone.0.body.layer2.3.conv2.weight": 147456,
+  "backbone.0.body.layer2.3.conv3.weight": 65536,
+  "backbone.0.body.layer3.0.conv1.weight": 131072,
+  "backbone.0.body.layer3.0.conv2.weight": 589824,
+  "backbone.0.body.layer3.0.conv3.weight": 262144,
+  "backbone.0.body.layer3.0.downsample.0.weight": 524288,
+  "backbone.0.body.layer3.1.conv1.weight": 262144,
+  "backbone.0.body.layer3.1.conv2.weight": 589824,
+  "backbone.0.body.layer3.1.conv3.weight": 262144,
+  "backbone.0.body.layer3.2.conv1.weight": 262144,
+  "backbone.0.body.layer3.2.conv2.weight": 589824,
+  "backbone.0.body.layer3.2.conv3.weight": 262144,
+  "backbone.0.body.layer3.3.conv1.weight": 262144,
+  "backbone.0.body.layer3.3.conv2.weight": 589824,
+  "backbone.0.body.layer3.3.conv3.weight": 262144,
+  "backbone.0.body.layer3.4.conv1.weight": 262144,
+  "backbone.0.body.layer3.4.conv2.weight": 589824,
+  "backbone.0.body.layer3.4.conv3.weight": 262144,
+  "backbone.0.body.layer3.5.conv1.weight": 262144,
+  "backbone.0.body.layer3.5.conv2.weight": 589824,
+  "backbone.0.body.layer3.5.conv3.weight": 262144,
+  "backbone.0.body.layer4.0.conv1.weight": 524288,
+  "backbone.0.body.layer4.0.conv2.weight": 2359296,
+  "backbone.0.body.layer4.0.conv3.weight": 1048576,
+  "backbone.0.body.layer4.0.downsample.0.weight": 2097152,
+  "backbone.0.body.layer4.1.conv1.weight": 1048576,
+  "backbone.0.body.layer4.1.conv2.weight": 2359296,
+  "backbone.0.body.layer4.1.conv3.weight": 1048576,
+  "backbone.0.body.layer4.2.conv1.weight": 1048576,
+  "backbone.0.body.layer4.2.conv2.weight": 2359296,
+  "backbone.0.body.layer4.2.conv3.weight": 1048576
+}
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.84s)
+creating index...
+index created!
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=3.31s)
+creating index...
+index created!
+/workspace/DQDetr/main_aitod.py:255: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(args.pretrain_model_path, map_location='cpu')['model']
+[01/09 11:25:40.379]: Ignore keys: []
+[01/09 11:25:40.493]: _IncompatibleKeys(missing_keys=['transformer.CCM.density_conv1.weight', 'transformer.CCM.density_conv1.bias', 'transformer.CCM.ccm_backbone.0.conv.weight', 'transformer.CCM.ccm_backbone.0.gn.weight', 'transformer.CCM.ccm_backbone.0.gn.bias', 'transformer.CCM.ccm_backbone.1.conv.weight', 'transformer.CCM.ccm_backbone.1.gn.weight', 'transformer.CCM.ccm_backbone.1.gn.bias', 'transformer.CCM.ccm_backbone.2.conv.weight', 'transformer.CCM.ccm_backbone.2.gn.weight', 'transformer.CCM.ccm_backbone.2.gn.bias', 'transformer.CCM.ccm_backbone.3.conv.weight', 'transformer.CCM.ccm_backbone.3.gn.weight', 'transformer.CCM.ccm_backbone.3.gn.bias', 'transformer.CCM.ccm_backbone.4.conv.weight', 'transformer.CCM.ccm_backbone.4.gn.weight', 'transformer.CCM.ccm_backbone.4.gn.bias', 'transformer.CCM.ccm_backbone.5.conv.weight', 'transformer.CCM.ccm_backbone.5.gn.weight', 'transformer.CCM.ccm_backbone.5.gn.bias', 'transformer.CCM.boundary_head.1.weight', 'transformer.CCM.boundary_head.1.bias', 'transformer.CCM.boundary_head.4.weight', 'transformer.CCM.boundary_head.4.bias', 'transformer.CCM.count_regressor.2.weight', 'transformer.CCM.count_regressor.2.bias', 'transformer.CCM.count_regressor.5.weight', 'transformer.CCM.count_regressor.5.bias', 'transformer.CCM.ccm_classifier.weight', 'transformer.CCM.ccm_classifier.bias', 'transformer.CCM.ref_point_conv.weight', 'transformer.CCM.ref_point_conv.bias'], unexpected_keys=['transformer.CCM.conv1.weight', 'transformer.CCM.conv1.bias', 'transformer.CCM.ccm.0.weight', 'transformer.CCM.ccm.0.bias', 'transformer.CCM.ccm.2.weight', 'transformer.CCM.ccm.2.bias', 'transformer.CCM.ccm.4.weight', 'transformer.CCM.ccm.4.bias', 'transformer.CCM.ccm.6.weight', 'transformer.CCM.ccm.6.bias', 'transformer.CCM.ccm.8.weight', 'transformer.CCM.ccm.8.bias', 'transformer.CCM.ccm.10.weight', 'transformer.CCM.ccm.10.bias', 'transformer.CCM.linear.weight', 'transformer.CCM.linear.bias'])
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/functional.py:513: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3609.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/nn/modules/loss.py:942: UserWarning: Using a target size (torch.Size([1])) that is different to the input size (torch.Size([])). This will likely lead to incorrect results due to broadcasting. Please ensure they have the same size.
+  return F.smooth_l1_loss(input, target, reduction=self.reduction, beta=self.beta)
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 0
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [51.3, 295.9, 1602.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [414.2%, 1544.6%, 5248.9%]
+  Current Coverage:    [0.981, 0.997, 0.999]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [48.1%, 24.7%, 7.9%]
+  Losses: CCM=34.608 (Cov=0.298, Guide=2.306, Sp=15.762)
+  Total DETR Loss: 50.3539
+  CCM/DETR Ratio: 68.7%
+================================================================================
+Epoch: [0]  [    0/14018]  eta: 1 day, 0:24:18  lr: 0.000100  class_error: 0.00  loss: 73.2063 (73.2063)  loss_ce_dn: 2.7940 (2.7940)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce: 0.0001 (0.0001)  loss_bbox: 0.0085 (0.0085)  loss_giou: 0.1962 (0.1962)  loss_ce_0: 0.0296 (0.0296)  loss_bbox_0: 0.0095 (0.0095)  loss_giou_0: 0.1981 (0.1981)  loss_ce_dn_0: 1.1674 (1.1674)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0008 (0.0008)  loss_bbox_1: 0.0088 (0.0088)  loss_giou_1: 0.1717 (0.1717)  loss_ce_dn_1: 2.3838 (2.3838)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0002 (0.0002)  loss_bbox_2: 0.0083 (0.0083)  loss_giou_2: 0.2019 (0.2019)  loss_ce_dn_2: 2.5357 (2.5357)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0002 (0.0002)  loss_bbox_3: 0.0083 (0.0083)  loss_giou_3: 0.1876 (0.1876)  loss_ce_dn_3: 2.6219 (2.6219)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0001 (0.0001)  loss_bbox_4: 0.0083 (0.0083)  loss_giou_4: 0.1932 (0.1932)  loss_ce_dn_4: 2.6714 (2.6714)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1232 (0.1232)  loss_bbox_interm: 0.0078 (0.0078)  loss_giou_interm: 0.2097 (0.2097)  loss_coverage: 0.2984 (0.2984)  loss_interval: 1.8089 (1.8089)  loss_count: 2.6777 (2.6777)  loss_spacing: 15.7616 (15.7616)  loss_boundary_guide: 2.3057 (2.3057)  ccm_loss: 34.6077 (34.6077)  loss_ce_dn_unscaled: 2.7940 (2.7940)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 199.0000 (199.0000)  loss_ce_unscaled: 0.0001 (0.0001)  class_error_unscaled: 0.0000 (0.0000)  loss_bbox_unscaled: 0.0017 (0.0017)  loss_giou_unscaled: 0.0981 (0.0981)  loss_xy_unscaled: 0.0008 (0.0008)  loss_hw_unscaled: 0.0009 (0.0009)  cardinality_error_unscaled: 435.0000 (435.0000)  loss_ce_0_unscaled: 0.0296 (0.0296)  loss_bbox_0_unscaled: 0.0019 (0.0019)  loss_giou_0_unscaled: 0.0991 (0.0991)  loss_xy_0_unscaled: 0.0008 (0.0008)  loss_hw_0_unscaled: 0.0011 (0.0011)  cardinality_error_0_unscaled: 435.0000 (435.0000)  loss_ce_dn_0_unscaled: 1.1674 (1.1674)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 199.0000 (199.0000)  loss_ce_1_unscaled: 0.0008 (0.0008)  loss_bbox_1_unscaled: 0.0018 (0.0018)  loss_giou_1_unscaled: 0.0858 (0.0858)  loss_xy_1_unscaled: 0.0007 (0.0007)  loss_hw_1_unscaled: 0.0011 (0.0011)  cardinality_error_1_unscaled: 435.0000 (435.0000)  loss_ce_dn_1_unscaled: 2.3838 (2.3838)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 199.0000 (199.0000)  loss_ce_2_unscaled: 0.0002 (0.0002)  loss_bbox_2_unscaled: 0.0017 (0.0017)  loss_giou_2_unscaled: 0.1010 (0.1010)  loss_xy_2_unscaled: 0.0008 (0.0008)  loss_hw_2_unscaled: 0.0009 (0.0009)  cardinality_error_2_unscaled: 435.0000 (435.0000)  loss_ce_dn_2_unscaled: 2.5357 (2.5357)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 199.0000 (199.0000)  loss_ce_3_unscaled: 0.0002 (0.0002)  loss_bbox_3_unscaled: 0.0017 (0.0017)  loss_giou_3_unscaled: 0.0938 (0.0938)  loss_xy_3_unscaled: 0.0007 (0.0007)  loss_hw_3_unscaled: 0.0009 (0.0009)  cardinality_error_3_unscaled: 435.0000 (435.0000)  loss_ce_dn_3_unscaled: 2.6219 (2.6219)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 199.0000 (199.0000)  loss_ce_4_unscaled: 0.0001 (0.0001)  loss_bbox_4_unscaled: 0.0017 (0.0017)  loss_giou_4_unscaled: 0.0966 (0.0966)  loss_xy_4_unscaled: 0.0008 (0.0008)  loss_hw_4_unscaled: 0.0009 (0.0009)  cardinality_error_4_unscaled: 435.0000 (435.0000)  loss_ce_dn_4_unscaled: 2.6714 (2.6714)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 199.0000 (199.0000)  loss_ce_interm_unscaled: 0.1232 (0.1232)  loss_bbox_interm_unscaled: 0.0016 (0.0016)  loss_giou_interm_unscaled: 0.1048 (0.1048)  loss_xy_interm_unscaled: 0.0008 (0.0008)  loss_hw_interm_unscaled: 0.0008 (0.0008)  cardinality_error_interm_unscaled: 435.0000 (435.0000)  loss_coverage_unscaled: 0.2984 (0.2984)  loss_interval_unscaled: 1.8089 (1.8089)  loss_count_unscaled: 2.6777 (2.6777)  loss_spacing_unscaled: 15.7616 (15.7616)  loss_boundary_guide_unscaled: 2.3057 (2.3057)  ccm_loss_unscaled: 34.6077 (34.6077)  time: 6.2675  data: 1.0701  max mem: 5786
+Error idx: 1522
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 100
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.6, 21.2, 36.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [16.8%, 17.8%, 22.4%]
+  Current Coverage:    [0.921, 0.955, 0.973]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [42.1%, 20.5%, 5.3%]
+  Losses: CCM=0.419 (Cov=0.222, Guide=0.015, Sp=0.000)
+  Total DETR Loss: 6.8855
+  CCM/DETR Ratio: 6.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 200
+  Batch Stats: Min=7, Max=7, Mean=7.0
+  Current Boundaries:  [11.7, 21.7, 42.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [17.5%, 20.4%, 42.9%]
+  Current Coverage:    [0.626, 0.756, 0.859]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [12.6%, 0.6%, 6.1%]
+  Losses: CCM=0.302 (Cov=0.020, Guide=0.031, Sp=0.000)
+  Total DETR Loss: 8.3374
+  CCM/DETR Ratio: 3.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [8.1, 18.1, 39.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [18.3%, 0.3%, 32.1%]
+  Current Coverage:    [0.891, 0.948, 0.975]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [39.1%, 19.8%, 5.5%]
+  Losses: CCM=0.354 (Cov=0.195, Guide=0.020, Sp=0.000)
+  Total DETR Loss: 8.0162
+  CCM/DETR Ratio: 4.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 400
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [8.7, 15.3, 29.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [13.1%, 15.0%, 3.0%]
+  Current Coverage:    [0.897, 0.939, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [39.7%, 18.9%, 4.7%]
+  Losses: CCM=0.346 (Cov=0.195, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 4.3741
+  CCM/DETR Ratio: 7.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 500
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [9.6, 17.4, 32.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [3.9%, 3.2%, 8.6%]
+  Current Coverage:    [0.827, 0.897, 0.942]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [32.7%, 14.7%, 2.2%]
+  Losses: CCM=0.216 (Cov=0.129, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 12.1553
+  CCM/DETR Ratio: 1.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 600
+  Batch Stats: Min=47, Max=47, Mean=47.0
+  Current Boundaries:  [11.2, 20.3, 37.1] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [25.3%, 25.1%, 25.7%]
+  Current Coverage:    [0.193, 0.302, 0.441]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [20.7%, 39.8%, 45.9%]
+  Losses: CCM=0.482 (Cov=0.412, Guide=0.043, Sp=0.000)
+  Total DETR Loss: 9.1451
+  CCM/DETR Ratio: 5.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 700
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [15.3, 27.4, 49.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [52.9%, 52.2%, 63.9%]
+  Current Coverage:    [0.836, 0.901, 0.942]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [33.6%, 15.1%, 2.2%]
+  Losses: CCM=1.149 (Cov=0.136, Guide=0.100, Sp=0.392)
+  Total DETR Loss: 6.8554
+  CCM/DETR Ratio: 16.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 800
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.2, 18.8, 36.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [1.9%, 4.6%, 22.9%]
+  Current Coverage:    [0.910, 0.950, 0.974]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.0%, 20.0%, 5.4%]
+  Losses: CCM=0.270 (Cov=0.211, Guide=0.007, Sp=0.000)
+  Total DETR Loss: 3.6529
+  CCM/DETR Ratio: 7.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 900
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [8.3, 17.9, 34.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [16.9%, 0.5%, 15.6%]
+  Current Coverage:    [0.806, 0.900, 0.945]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [30.6%, 15.0%, 2.5%]
+  Losses: CCM=0.244 (Cov=0.116, Guide=0.009, Sp=0.000)
+  Total DETR Loss: 8.0046
+  CCM/DETR Ratio: 3.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1000
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.0, 17.7, 32.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.3%, 1.8%, 9.4%]
+  Current Coverage:    [0.909, 0.946, 0.970]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.9%, 19.6%, 5.0%]
+  Losses: CCM=0.198 (Cov=0.209, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 6.0687
+  CCM/DETR Ratio: 3.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1100
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.6, 19.1, 36.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.7%, 6.0%, 20.5%]
+  Current Coverage:    [0.914, 0.950, 0.973]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.4%, 20.0%, 5.3%]
+  Losses: CCM=0.247 (Cov=0.214, Guide=0.007, Sp=0.000)
+  Total DETR Loss: 5.4155
+  CCM/DETR Ratio: 4.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1200
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [8.5, 15.2, 27.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [14.6%, 15.5%, 8.8%]
+  Current Coverage:    [0.895, 0.938, 0.965]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [39.5%, 18.8%, 4.5%]
+  Losses: CCM=0.279 (Cov=0.193, Guide=0.010, Sp=0.000)
+  Total DETR Loss: 11.0702
+  CCM/DETR Ratio: 2.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1300
+  Batch Stats: Min=5, Max=5, Mean=5.0
+  Current Boundaries:  [10.7, 18.6, 35.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [7.6%, 3.6%, 17.6%]
+  Current Coverage:    [0.682, 0.788, 0.876]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [18.2%, 3.8%, 4.4%]
+  Losses: CCM=0.319 (Cov=0.037, Guide=0.005, Sp=0.000)
+  Total DETR Loss: 6.4139
+  CCM/DETR Ratio: 5.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1400
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [7.5, 14.1, 31.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [25.0%, 21.8%, 3.6%]
+  Current Coverage:    [0.789, 0.876, 0.939]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [28.9%, 12.6%, 1.9%]
+  Losses: CCM=0.282 (Cov=0.100, Guide=0.024, Sp=0.012)
+  Total DETR Loss: 12.0060
+  CCM/DETR Ratio: 2.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1500
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.6, 16.7, 29.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [3.6%, 7.3%, 1.6%]
+  Current Coverage:    [0.906, 0.943, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.6%, 19.3%, 4.7%]
+  Losses: CCM=0.232 (Cov=0.204, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 6.7899
+  CCM/DETR Ratio: 3.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1600
+  Batch Stats: Min=30, Max=30, Mean=30.0
+  Current Boundaries:  [13.8, 22.9, 39.0] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [8.5%, 15.4%, 21.8%]
+  Current Coverage:    [0.314, 0.433, 0.565]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [8.6%, 26.7%, 33.5%]
+  Losses: CCM=0.402 (Cov=0.191, Guide=0.016, Sp=0.000)
+  Total DETR Loss: 8.0831
+  CCM/DETR Ratio: 5.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1700
+  Batch Stats: Min=95, Max=95, Mean=95.0
+  Current Boundaries:  [10.0, 16.9, 29.0] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [33.7%, 37.8%, 41.8%]
+  Current Coverage:    [0.095, 0.151, 0.234]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [30.5%, 54.9%, 66.6%]
+  Losses: CCM=0.567 (Cov=0.503, Guide=0.115, Sp=0.000)
+  Total DETR Loss: 10.4544
+  CCM/DETR Ratio: 5.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1800
+  Batch Stats: Min=221, Max=221, Mean=221.0
+  Current Boundaries:  [15.1, 25.0, 42.0] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [39.5%, 49.8%, 58.2%]
+  Current Coverage:    [0.064, 0.102, 0.160]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [18.6%, 44.8%, 64.0%]
+  Losses: CCM=0.518 (Cov=0.194, Guide=0.248, Sp=0.021)
+  Total DETR Loss: 12.2658
+  CCM/DETR Ratio: 4.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 1900
+  Batch Stats: Min=98, Max=98, Mean=98.0
+  Current Boundaries:  [12.9, 22.2, 39.2] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [14.4%, 18.1%, 21.5%]
+  Current Coverage:    [0.116, 0.185, 0.285]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [28.4%, 51.5%, 61.5%]
+  Losses: CCM=0.441 (Cov=0.434, Guide=0.020, Sp=0.000)
+  Total DETR Loss: 13.3599
+  CCM/DETR Ratio: 3.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2000
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.5, 15.6, 27.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.3%, 13.5%, 9.2%]
+  Current Coverage:    [0.905, 0.940, 0.965]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.5%, 19.0%, 4.5%]
+  Losses: CCM=0.221 (Cov=0.202, Guide=0.005, Sp=0.000)
+  Total DETR Loss: 2.9738
+  CCM/DETR Ratio: 7.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2100
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [9.8, 16.5, 29.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.0%, 8.3%, 3.1%]
+  Current Coverage:    [0.765, 0.846, 0.906]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [26.5%, 9.6%, 1.4%]
+  Losses: CCM=0.354 (Cov=0.080, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 9.6295
+  CCM/DETR Ratio: 3.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2200
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [11.9, 19.3, 33.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [18.8%, 7.3%, 10.5%]
+  Current Coverage:    [0.856, 0.906, 0.943]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [35.6%, 15.6%, 2.3%]
+  Losses: CCM=0.227 (Cov=0.151, Guide=0.007, Sp=0.000)
+  Total DETR Loss: 3.1089
+  CCM/DETR Ratio: 7.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2300
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [10.0, 17.7, 32.9] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.1%, 1.6%, 9.7%]
+  Current Coverage:    [0.833, 0.899, 0.943]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [33.3%, 14.9%, 2.3%]
+  Losses: CCM=0.196 (Cov=0.133, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 6.9959
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2400
+  Batch Stats: Min=32, Max=32, Mean=32.0
+  Current Boundaries:  [12.6, 22.7, 49.2] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [16.4%, 16.3%, 1.5%]
+  Current Coverage:    [0.282, 0.415, 0.606]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [11.8%, 28.5%, 29.4%]
+  Losses: CCM=0.710 (Cov=0.182, Guide=0.011, Sp=0.170)
+  Total DETR Loss: 9.8622
+  CCM/DETR Ratio: 7.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2500
+  Batch Stats: Min=7, Max=7, Mean=7.0
+  Current Boundaries:  [9.5, 16.1, 27.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.5%, 10.3%, 9.7%]
+  Current Coverage:    [0.576, 0.697, 0.794]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [7.6%, 5.3%, 12.6%]
+  Losses: CCM=0.281 (Cov=0.024, Guide=0.004, Sp=0.000)
+  Total DETR Loss: 6.5802
+  CCM/DETR Ratio: 4.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2600
+  Batch Stats: Min=37, Max=37, Mean=37.0
+  Current Boundaries:  [13.5, 23.4, 40.7] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [10.3%, 13.5%, 18.4%]
+  Current Coverage:    [0.267, 0.388, 0.524]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [13.3%, 31.2%, 37.6%]
+  Losses: CCM=0.388 (Cov=0.257, Guide=0.012, Sp=0.000)
+  Total DETR Loss: 9.9538
+  CCM/DETR Ratio: 3.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2700
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [13.1, 21.9, 37.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [31.6%, 21.7%, 25.8%]
+  Current Coverage:    [0.814, 0.879, 0.926]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [31.4%, 12.9%, 0.6%]
+  Losses: CCM=0.237 (Cov=0.115, Guide=0.028, Sp=0.000)
+  Total DETR Loss: 8.3638
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2800
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [10.5, 17.7, 30.4] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [5.7%, 1.9%, 1.3%]
+  Current Coverage:    [0.841, 0.898, 0.938]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [34.1%, 14.8%, 1.8%]
+  Losses: CCM=0.262 (Cov=0.138, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 13.4875
+  CCM/DETR Ratio: 1.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 2900
+  Batch Stats: Min=50, Max=50, Mean=50.0
+  Current Boundaries:  [12.1, 20.7, 35.6] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [19.3%, 23.6%, 28.7%]
+  Current Coverage:    [0.195, 0.293, 0.416]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [20.5%, 40.7%, 48.4%]
+  Losses: CCM=0.484 (Cov=0.442, Guide=0.039, Sp=0.000)
+  Total DETR Loss: 9.7728
+  CCM/DETR Ratio: 4.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3000
+  Batch Stats: Min=33, Max=33, Mean=33.0
+  Current Boundaries:  [14.3, 23.9, 41.8] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [4.9%, 11.9%, 16.2%]
+  Current Coverage:    [0.302, 0.420, 0.559]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [9.8%, 28.0%, 34.1%]
+  Losses: CCM=0.399 (Cov=0.204, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 6.3030
+  CCM/DETR Ratio: 6.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3100
+  Batch Stats: Min=18, Max=18, Mean=18.0
+  Current Boundaries:  [11.6, 21.3, 37.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [16.3%, 18.2%, 26.2%]
+  Current Coverage:    [0.392, 0.542, 0.678]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [10.8%, 20.8%, 24.2%]
+  Losses: CCM=0.455 (Cov=0.114, Guide=0.018, Sp=0.000)
+  Total DETR Loss: 9.6305
+  CCM/DETR Ratio: 4.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3200
+  Batch Stats: Min=10, Max=10, Mean=10.0
+  Current Boundaries:  [10.0, 17.3, 30.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.1%, 3.8%, 1.0%]
+  Current Coverage:    [0.500, 0.634, 0.752]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [0.0%, 11.6%, 16.8%]
+  Losses: CCM=0.270 (Cov=0.042, Guide=0.000, Sp=0.000)
+  Total DETR Loss: 9.2936
+  CCM/DETR Ratio: 2.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3300
+  Batch Stats: Min=34, Max=34, Mean=34.0
+  Current Boundaries:  [11.6, 20.6, 37.9] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [22.5%, 23.8%, 24.1%]
+  Current Coverage:    [0.255, 0.378, 0.527]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [14.5%, 32.2%, 37.3%]
+  Losses: CCM=0.441 (Cov=0.264, Guide=0.036, Sp=0.000)
+  Total DETR Loss: 7.0072
+  CCM/DETR Ratio: 6.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3400
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [10.7, 17.6, 30.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [7.2%, 2.0%, 0.3%]
+  Current Coverage:    [0.781, 0.855, 0.909]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [28.1%, 10.5%, 1.1%]
+  Losses: CCM=0.204 (Cov=0.090, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 9.7823
+  CCM/DETR Ratio: 2.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3500
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [12.4, 20.4, 35.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [24.5%, 13.3%, 19.4%]
+  Current Coverage:    [0.861, 0.911, 0.947]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [36.1%, 16.1%, 2.7%]
+  Losses: CCM=0.209 (Cov=0.157, Guide=0.016, Sp=0.000)
+  Total DETR Loss: 7.4736
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3600
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.7, 17.3, 28.9] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.9%, 3.9%, 3.6%]
+  Current Coverage:    [0.914, 0.945, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.4%, 19.5%, 4.7%]
+  Losses: CCM=0.185 (Cov=0.212, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 5.7490
+  CCM/DETR Ratio: 3.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3700
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.3, 18.6, 32.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [13.6%, 3.2%, 6.7%]
+  Current Coverage:    [0.919, 0.949, 0.970]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.9%, 19.9%, 5.0%]
+  Losses: CCM=0.227 (Cov=0.218, Guide=0.004, Sp=0.000)
+  Total DETR Loss: 3.7149
+  CCM/DETR Ratio: 6.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3800
+  Batch Stats: Min=33, Max=33, Mean=33.0
+  Current Boundaries:  [12.2, 20.0, 34.3] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [18.8%, 26.4%, 31.2%]
+  Current Coverage:    [0.270, 0.377, 0.510]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [13.0%, 32.3%, 39.0%]
+  Losses: CCM=0.426 (Cov=0.273, Guide=0.046, Sp=0.000)
+  Total DETR Loss: 10.0957
+  CCM/DETR Ratio: 4.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 3900
+  Batch Stats: Min=6, Max=6, Mean=6.0
+  Current Boundaries:  [10.2, 17.2, 29.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.5%, 4.3%, 1.1%]
+  Current Coverage:    [0.630, 0.742, 0.832]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [13.0%, 0.8%, 8.8%]
+  Losses: CCM=0.269 (Cov=0.025, Guide=0.000, Sp=0.000)
+  Total DETR Loss: 9.5694
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4000
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [8.9, 16.0, 27.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [10.3%, 11.1%, 9.1%]
+  Current Coverage:    [0.899, 0.941, 0.965]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [39.9%, 19.1%, 4.5%]
+  Losses: CCM=0.193 (Cov=0.198, Guide=0.006, Sp=0.000)
+  Total DETR Loss: 12.1034
+  CCM/DETR Ratio: 1.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4100
+  Batch Stats: Min=43, Max=43, Mean=43.0
+  Current Boundaries:  [12.3, 20.6, 35.4] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [18.5%, 24.0%, 29.0%]
+  Current Coverage:    [0.222, 0.324, 0.452]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [17.8%, 37.6%, 44.8%]
+  Losses: CCM=0.465 (Cov=0.374, Guide=0.039, Sp=0.000)
+  Total DETR Loss: 9.9400
+  CCM/DETR Ratio: 4.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4200
+  Batch Stats: Min=7, Max=7, Mean=7.0
+  Current Boundaries:  [11.9, 21.7, 38.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [19.5%, 20.6%, 27.5%]
+  Current Coverage:    [0.630, 0.756, 0.845]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [13.0%, 0.6%, 7.5%]
+  Losses: CCM=0.279 (Cov=0.023, Guide=0.021, Sp=0.000)
+  Total DETR Loss: 9.0335
+  CCM/DETR Ratio: 3.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4300
+  Batch Stats: Min=21, Max=21, Mean=21.0
+  Current Boundaries:  [12.9, 22.8, 41.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [29.3%, 26.9%, 37.3%]
+  Current Coverage:    [0.380, 0.521, 0.662]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [12.0%, 22.9%, 25.8%]
+  Losses: CCM=0.371 (Cov=0.133, Guide=0.037, Sp=0.000)
+  Total DETR Loss: 5.6035
+  CCM/DETR Ratio: 6.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4400
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.4, 17.0, 29.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.1%, 5.4%, 3.2%]
+  Current Coverage:    [0.912, 0.945, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.2%, 19.5%, 4.7%]
+  Losses: CCM=0.201 (Cov=0.210, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 3.1829
+  CCM/DETR Ratio: 6.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4500
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.5, 19.5, 34.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [15.4%, 8.3%, 16.0%]
+  Current Coverage:    [0.920, 0.951, 0.972]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [42.0%, 20.1%, 5.2%]
+  Losses: CCM=0.192 (Cov=0.220, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 6.9691
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4600
+  Batch Stats: Min=16, Max=16, Mean=16.0
+  Current Boundaries:  [12.6, 21.4, 38.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [26.5%, 19.1%, 27.4%]
+  Current Coverage:    [0.441, 0.573, 0.705]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [5.9%, 17.7%, 21.5%]
+  Losses: CCM=0.351 (Cov=0.081, Guide=0.024, Sp=0.000)
+  Total DETR Loss: 12.3548
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4700
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [10.0, 17.5, 32.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.1%, 2.8%, 7.8%]
+  Current Coverage:    [0.833, 0.897, 0.942]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [33.3%, 14.7%, 2.2%]
+  Losses: CCM=0.197 (Cov=0.133, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 9.0045
+  CCM/DETR Ratio: 2.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4800
+  Batch Stats: Min=58, Max=58, Mean=58.0
+  Current Boundaries:  [11.0, 19.3, 37.9] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [26.9%, 28.8%, 24.1%]
+  Current Coverage:    [0.159, 0.250, 0.395]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [24.1%, 45.0%, 50.5%]
+  Losses: CCM=0.833 (Cov=0.309, Guide=0.048, Sp=0.000)
+  Total DETR Loss: 13.8331
+  CCM/DETR Ratio: 6.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 4900
+  Batch Stats: Min=14, Max=14, Mean=14.0
+  Current Boundaries:  [12.1, 20.9, 36.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [21.7%, 16.2%, 22.7%]
+  Current Coverage:    [0.464, 0.599, 0.724]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [3.6%, 15.1%, 19.6%]
+  Losses: CCM=0.314 (Cov=0.062, Guide=0.017, Sp=0.000)
+  Total DETR Loss: 6.7091
+  CCM/DETR Ratio: 4.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5000
+  Batch Stats: Min=8, Max=8, Mean=8.0
+  Current Boundaries:  [10.9, 18.3, 31.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [9.5%, 1.6%, 4.5%]
+  Current Coverage:    [0.577, 0.696, 0.796]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [7.7%, 5.4%, 12.4%]
+  Losses: CCM=0.251 (Cov=0.024, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 7.6042
+  CCM/DETR Ratio: 3.3%
+================================================================================
+Epoch: [0]  [ 5000/14018]  eta: 1:08:07  lr: 0.000100  class_error: 0.00  loss: 9.9567 (9.7799)  loss_ce_dn: 0.0374 (0.0478)  loss_bbox_dn: 0.0164 (0.0144)  loss_giou_dn: 0.3615 (0.2856)  loss_ce: 0.0725 (0.0984)  loss_bbox: 0.0328 (0.0370)  loss_giou: 0.5953 (0.6515)  loss_ce_0: 0.1130 (0.1343)  loss_bbox_0: 0.0383 (0.0380)  loss_giou_0: 0.6054 (0.6618)  loss_ce_dn_0: 0.0534 (0.0643)  loss_bbox_dn_0: 0.0259 (0.0203)  loss_giou_dn_0: 0.5264 (0.3701)  loss_ce_1: 0.1103 (0.1117)  loss_bbox_1: 0.0323 (0.0375)  loss_giou_1: 0.6162 (0.6566)  loss_ce_dn_1: 0.0429 (0.0581)  loss_bbox_dn_1: 0.0172 (0.0156)  loss_giou_dn_1: 0.3689 (0.3016)  loss_ce_2: 0.0750 (0.1019)  loss_bbox_2: 0.0331 (0.0372)  loss_giou_2: 0.6102 (0.6519)  loss_ce_dn_2: 0.0400 (0.0535)  loss_bbox_dn_2: 0.0160 (0.0146)  loss_giou_dn_2: 0.3576 (0.2871)  loss_ce_3: 0.0733 (0.0990)  loss_bbox_3: 0.0334 (0.0369)  loss_giou_3: 0.6011 (0.6492)  loss_ce_dn_3: 0.0377 (0.0511)  loss_bbox_dn_3: 0.0164 (0.0144)  loss_giou_dn_3: 0.3594 (0.2841)  loss_ce_4: 0.0723 (0.0986)  loss_bbox_4: 0.0330 (0.0369)  loss_giou_4: 0.5952 (0.6501)  loss_ce_dn_4: 0.0399 (0.0485)  loss_bbox_dn_4: 0.0164 (0.0144)  loss_giou_dn_4: 0.3584 (0.2846)  loss_ce_interm: 0.1154 (0.1373)  loss_bbox_interm: 0.0366 (0.0406)  loss_giou_interm: 0.6828 (0.6988)  loss_coverage: 0.1319 (0.1774)  loss_interval: 1.0086 (0.8644)  loss_count: 0.0459 (0.2880)  loss_spacing: 0.0000 (0.0581)  loss_boundary_guide: 0.0051 (0.0451)  ccm_loss: 0.2724 (0.4516)  loss_ce_dn_unscaled: 0.0374 (0.0478)  loss_bbox_dn_unscaled: 0.0033 (0.0029)  loss_giou_dn_unscaled: 0.1808 (0.1428)  loss_xy_dn_unscaled: 0.0013 (0.0011)  loss_hw_dn_unscaled: 0.0019 (0.0018)  cardinality_error_dn_unscaled: 190.0000 (177.6767)  loss_ce_unscaled: 0.0725 (0.0984)  class_error_unscaled: 0.0000 (0.6472)  loss_bbox_unscaled: 0.0066 (0.0074)  loss_giou_unscaled: 0.2977 (0.3257)  loss_xy_unscaled: 0.0022 (0.0026)  loss_hw_unscaled: 0.0043 (0.0048)  cardinality_error_unscaled: 1113.0000 (1094.0574)  loss_ce_0_unscaled: 0.1130 (0.1343)  loss_bbox_0_unscaled: 0.0077 (0.0076)  loss_giou_0_unscaled: 0.3027 (0.3309)  loss_xy_0_unscaled: 0.0023 (0.0026)  loss_hw_0_unscaled: 0.0049 (0.0050)  cardinality_error_0_unscaled: 1113.0000 (1093.9104)  loss_ce_dn_0_unscaled: 0.0534 (0.0643)  loss_bbox_dn_0_unscaled: 0.0052 (0.0041)  loss_giou_dn_0_unscaled: 0.2632 (0.1851)  loss_xy_dn_0_unscaled: 0.0015 (0.0015)  loss_hw_dn_0_unscaled: 0.0033 (0.0026)  cardinality_error_dn_0_unscaled: 190.0000 (177.6761)  loss_ce_1_unscaled: 0.1103 (0.1117)  loss_bbox_1_unscaled: 0.0065 (0.0075)  loss_giou_1_unscaled: 0.3081 (0.3283)  loss_xy_1_unscaled: 0.0020 (0.0026)  loss_hw_1_unscaled: 0.0046 (0.0049)  cardinality_error_1_unscaled: 1113.0000 (1094.0574)  loss_ce_dn_1_unscaled: 0.0429 (0.0581)  loss_bbox_dn_1_unscaled: 0.0034 (0.0031)  loss_giou_dn_1_unscaled: 0.1844 (0.1508)  loss_xy_dn_1_unscaled: 0.0014 (0.0012)  loss_hw_dn_1_unscaled: 0.0021 (0.0019)  cardinality_error_dn_1_unscaled: 190.0000 (177.6741)  loss_ce_2_unscaled: 0.0750 (0.1019)  loss_bbox_2_unscaled: 0.0066 (0.0074)  loss_giou_2_unscaled: 0.3051 (0.3259)  loss_xy_2_unscaled: 0.0022 (0.0026)  loss_hw_2_unscaled: 0.0044 (0.0049)  cardinality_error_2_unscaled: 1113.0000 (1094.0574)  loss_ce_dn_2_unscaled: 0.0400 (0.0535)  loss_bbox_dn_2_unscaled: 0.0032 (0.0029)  loss_giou_dn_2_unscaled: 0.1788 (0.1435)  loss_xy_dn_2_unscaled: 0.0013 (0.0011)  loss_hw_dn_2_unscaled: 0.0020 (0.0018)  cardinality_error_dn_2_unscaled: 190.0000 (177.6767)  loss_ce_3_unscaled: 0.0733 (0.0990)  loss_bbox_3_unscaled: 0.0067 (0.0074)  loss_giou_3_unscaled: 0.3005 (0.3246)  loss_xy_3_unscaled: 0.0022 (0.0026)  loss_hw_3_unscaled: 0.0044 (0.0048)  cardinality_error_3_unscaled: 1113.0000 (1094.0574)  loss_ce_dn_3_unscaled: 0.0377 (0.0511)  loss_bbox_dn_3_unscaled: 0.0033 (0.0029)  loss_giou_dn_3_unscaled: 0.1797 (0.1420)  loss_xy_dn_3_unscaled: 0.0013 (0.0011)  loss_hw_dn_3_unscaled: 0.0019 (0.0018)  cardinality_error_dn_3_unscaled: 190.0000 (177.6767)  loss_ce_4_unscaled: 0.0723 (0.0986)  loss_bbox_4_unscaled: 0.0066 (0.0074)  loss_giou_4_unscaled: 0.2976 (0.3250)  loss_xy_4_unscaled: 0.0023 (0.0026)  loss_hw_4_unscaled: 0.0043 (0.0048)  cardinality_error_4_unscaled: 1113.0000 (1094.0574)  loss_ce_dn_4_unscaled: 0.0399 (0.0485)  loss_bbox_dn_4_unscaled: 0.0033 (0.0029)  loss_giou_dn_4_unscaled: 0.1792 (0.1423)  loss_xy_dn_4_unscaled: 0.0013 (0.0011)  loss_hw_dn_4_unscaled: 0.0019 (0.0018)  cardinality_error_dn_4_unscaled: 190.0000 (177.6767)  loss_ce_interm_unscaled: 0.1154 (0.1373)  loss_bbox_interm_unscaled: 0.0073 (0.0081)  loss_giou_interm_unscaled: 0.3414 (0.3494)  loss_xy_interm_unscaled: 0.0024 (0.0028)  loss_hw_interm_unscaled: 0.0056 (0.0053)  cardinality_error_interm_unscaled: 1113.0000 (1094.0478)  loss_coverage_unscaled: 0.1319 (0.1774)  loss_interval_unscaled: 1.0086 (0.8644)  loss_count_unscaled: 0.0459 (0.2880)  loss_spacing_unscaled: 0.0000 (0.0581)  loss_boundary_guide_unscaled: 0.0051 (0.0451)  ccm_loss_unscaled: 0.2724 (0.4516)  time: 0.4311  data: 0.0014  max mem: 11273
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5100
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [10.4, 18.1, 32.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [3.9%, 0.4%, 9.2%]
+  Current Coverage:    [0.775, 0.858, 0.916]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [27.5%, 10.8%, 0.4%]
+  Losses: CCM=0.268 (Cov=0.087, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 12.5585
+  CCM/DETR Ratio: 2.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5200
+  Batch Stats: Min=51, Max=51, Mean=51.0
+  Current Boundaries:  [13.9, 23.1, 40.0] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [7.8%, 14.9%, 19.9%]
+  Current Coverage:    [0.214, 0.311, 0.439]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [18.6%, 38.9%, 46.1%]
+  Losses: CCM=0.451 (Cov=0.239, Guide=0.014, Sp=0.000)
+  Total DETR Loss: 9.6709
+  CCM/DETR Ratio: 4.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.0, 18.0, 30.4] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.7%, 0.0%, 1.5%]
+  Current Coverage:    [0.909, 0.947, 0.968]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.9%, 19.7%, 4.8%]
+  Losses: CCM=0.194 (Cov=0.209, Guide=0.000, Sp=0.000)
+  Total DETR Loss: 6.1282
+  CCM/DETR Ratio: 3.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5400
+  Batch Stats: Min=27, Max=27, Mean=27.0
+  Current Boundaries:  [11.7, 20.0, 35.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [17.7%, 11.1%, 17.2%]
+  Current Coverage:    [0.303, 0.425, 0.565]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [19.7%, 32.5%, 35.5%]
+  Losses: CCM=0.414 (Cov=0.270, Guide=0.010, Sp=0.000)
+  Total DETR Loss: 6.7373
+  CCM/DETR Ratio: 6.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5500
+  Batch Stats: Min=14, Max=14, Mean=14.0
+  Current Boundaries:  [12.0, 20.0, 33.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [20.7%, 11.0%, 12.6%]
+  Current Coverage:    [0.462, 0.588, 0.707]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [3.8%, 16.2%, 21.3%]
+  Losses: CCM=0.295 (Cov=0.073, Guide=0.010, Sp=0.000)
+  Total DETR Loss: 8.5322
+  CCM/DETR Ratio: 3.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5600
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [9.4, 16.3, 28.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [5.6%, 9.2%, 4.5%]
+  Current Coverage:    [0.825, 0.891, 0.935]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [32.5%, 14.1%, 1.5%]
+  Losses: CCM=0.205 (Cov=0.126, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 8.4520
+  CCM/DETR Ratio: 2.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5700
+  Batch Stats: Min=11, Max=11, Mean=11.0
+  Current Boundaries:  [8.8, 15.1, 25.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [11.7%, 15.8%, 16.5%]
+  Current Coverage:    [0.445, 0.579, 0.695]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [5.5%, 17.1%, 22.5%]
+  Losses: CCM=0.308 (Cov=0.083, Guide=0.013, Sp=0.000)
+  Total DETR Loss: 8.4925
+  CCM/DETR Ratio: 3.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5800
+  Batch Stats: Min=46, Max=46, Mean=46.0
+  Current Boundaries:  [13.7, 22.5, 37.6] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [8.9%, 16.9%, 24.7%]
+  Current Coverage:    [0.229, 0.329, 0.450]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [17.1%, 37.1%, 45.0%]
+  Losses: CCM=0.440 (Cov=0.370, Guide=0.021, Sp=0.000)
+  Total DETR Loss: 8.6036
+  CCM/DETR Ratio: 5.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 5900
+  Batch Stats: Min=36, Max=36, Mean=36.0
+  Current Boundaries:  [10.6, 20.0, 45.7] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [29.6%, 26.1%, 8.4%]
+  Current Coverage:    [0.227, 0.358, 0.559]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [17.3%, 34.2%, 34.1%]
+  Losses: CCM=0.482 (Cov=0.263, Guide=0.037, Sp=0.024)
+  Total DETR Loss: 14.1446
+  CCM/DETR Ratio: 3.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6000
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [9.5, 15.9, 26.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.5%, 11.5%, 12.2%]
+  Current Coverage:    [0.826, 0.888, 0.929]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [32.6%, 13.8%, 0.9%]
+  Losses: CCM=0.242 (Cov=0.126, Guide=0.006, Sp=0.000)
+  Total DETR Loss: 4.8135
+  CCM/DETR Ratio: 5.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6100
+  Batch Stats: Min=4, Max=4, Mean=4.0
+  Current Boundaries:  [9.5, 16.5, 28.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.5%, 8.6%, 6.1%]
+  Current Coverage:    [0.704, 0.804, 0.876]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [20.4%, 5.4%, 4.4%]
+  Losses: CCM=0.255 (Cov=0.047, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 10.1185
+  CCM/DETR Ratio: 2.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6200
+  Batch Stats: Min=5, Max=5, Mean=5.0
+  Current Boundaries:  [11.9, 20.3, 34.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [19.8%, 12.7%, 14.2%]
+  Current Coverage:    [0.705, 0.802, 0.873]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [20.5%, 5.2%, 4.7%]
+  Losses: CCM=0.219 (Cov=0.047, Guide=0.011, Sp=0.000)
+  Total DETR Loss: 9.1534
+  CCM/DETR Ratio: 2.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [8.9, 14.7, 24.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [10.3%, 18.2%, 19.6%]
+  Current Coverage:    [0.899, 0.936, 0.960]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [39.9%, 18.6%, 4.0%]
+  Losses: CCM=0.298 (Cov=0.196, Guide=0.017, Sp=0.037)
+  Total DETR Loss: 7.1687
+  CCM/DETR Ratio: 4.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6400
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.7, 16.2, 26.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.4%, 10.0%, 11.5%]
+  Current Coverage:    [0.907, 0.942, 0.964]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.7%, 19.2%, 4.4%]
+  Losses: CCM=0.194 (Cov=0.204, Guide=0.004, Sp=0.000)
+  Total DETR Loss: 2.2855
+  CCM/DETR Ratio: 8.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6500
+  Batch Stats: Min=25, Max=25, Mean=25.0
+  Current Boundaries:  [13.8, 22.6, 37.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [38.4%, 25.5%, 24.3%]
+  Current Coverage:    [0.356, 0.475, 0.598]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [14.4%, 27.5%, 32.2%]
+  Losses: CCM=0.386 (Cov=0.200, Guide=0.034, Sp=0.000)
+  Total DETR Loss: 10.9529
+  CCM/DETR Ratio: 3.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6600
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.7, 16.5, 27.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.6%, 8.2%, 8.1%]
+  Current Coverage:    [0.907, 0.943, 0.965]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.7%, 19.3%, 4.5%]
+  Losses: CCM=0.190 (Cov=0.205, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 12.8006
+  CCM/DETR Ratio: 1.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6700
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.0, 17.0, 28.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.1%, 5.4%, 4.1%]
+  Current Coverage:    [0.909, 0.944, 0.966]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.9%, 19.4%, 4.6%]
+  Losses: CCM=0.218 (Cov=0.207, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 4.4179
+  CCM/DETR Ratio: 4.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6800
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [10.0, 21.2, 36.9] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.1%, 17.7%, 23.2%]
+  Current Coverage:    [0.833, 0.914, 0.949]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [33.3%, 16.4%, 2.9%]
+  Losses: CCM=0.208 (Cov=0.139, Guide=0.012, Sp=0.000)
+  Total DETR Loss: 5.5374
+  CCM/DETR Ratio: 3.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 6900
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [7.7, 17.9, 33.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [22.5%, 0.4%, 12.3%]
+  Current Coverage:    [0.885, 0.947, 0.971]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [38.5%, 19.7%, 5.1%]
+  Losses: CCM=0.206 (Cov=0.190, Guide=0.013, Sp=0.000)
+  Total DETR Loss: 4.9614
+  CCM/DETR Ratio: 4.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7000
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.8, 16.3, 27.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [1.9%, 9.6%, 9.5%]
+  Current Coverage:    [0.907, 0.942, 0.964]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.7%, 19.2%, 4.4%]
+  Losses: CCM=0.192 (Cov=0.205, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 3.9671
+  CCM/DETR Ratio: 4.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7100
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.6, 17.5, 29.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.5%, 2.6%, 0.7%]
+  Current Coverage:    [0.914, 0.946, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.4%, 19.6%, 4.7%]
+  Losses: CCM=0.187 (Cov=0.212, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 6.6490
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7200
+  Batch Stats: Min=138, Max=138, Mean=138.0
+  Current Boundaries:  [14.0, 23.9, 41.5] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [43.9%, 52.1%, 58.7%]
+  Current Coverage:    [0.092, 0.148, 0.231]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [15.8%, 40.2%, 56.9%]
+  Losses: CCM=0.525 (Cov=0.153, Guide=0.276, Sp=0.000)
+  Total DETR Loss: 10.7772
+  CCM/DETR Ratio: 4.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.3, 17.6, 31.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.9%, 2.0%, 3.4%]
+  Current Coverage:    [0.903, 0.946, 0.969]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.3%, 19.6%, 4.9%]
+  Losses: CCM=0.208 (Cov=0.203, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 3.7433
+  CCM/DETR Ratio: 5.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7400
+  Batch Stats: Min=81, Max=81, Mean=81.0
+  Current Boundaries:  [14.5, 24.2, 42.1] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [3.7%, 10.8%, 15.6%]
+  Current Coverage:    [0.152, 0.230, 0.342]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [24.8%, 47.0%, 55.8%]
+  Losses: CCM=0.387 (Cov=0.356, Guide=0.007, Sp=0.000)
+  Total DETR Loss: 8.1144
+  CCM/DETR Ratio: 4.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7500
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [10.0, 16.4, 27.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.5%, 9.0%, 9.9%]
+  Current Coverage:    [0.770, 0.845, 0.900]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [27.0%, 9.5%, 2.0%]
+  Losses: CCM=0.300 (Cov=0.082, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 10.1843
+  CCM/DETR Ratio: 2.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7600
+  Batch Stats: Min=5, Max=5, Mean=5.0
+  Current Boundaries:  [11.7, 19.0, 31.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [17.2%, 5.6%, 4.2%]
+  Current Coverage:    [0.700, 0.792, 0.862]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [20.0%, 4.2%, 5.8%]
+  Losses: CCM=0.216 (Cov=0.045, Guide=0.005, Sp=0.000)
+  Total DETR Loss: 6.8520
+  CCM/DETR Ratio: 3.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7700
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.6, 19.7, 35.9] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [16.1%, 9.5%, 19.9%]
+  Current Coverage:    [0.921, 0.952, 0.973]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [42.1%, 20.2%, 5.3%]
+  Losses: CCM=0.200 (Cov=0.220, Guide=0.011, Sp=0.000)
+  Total DETR Loss: 3.7129
+  CCM/DETR Ratio: 5.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7800
+  Batch Stats: Min=91, Max=91, Mean=91.0
+  Current Boundaries:  [13.4, 22.7, 40.0] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [10.6%, 16.2%, 19.9%]
+  Current Coverage:    [0.129, 0.200, 0.305]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [27.1%, 50.0%, 59.5%]
+  Losses: CCM=0.419 (Cov=0.407, Guide=0.016, Sp=0.000)
+  Total DETR Loss: 8.6619
+  CCM/DETR Ratio: 4.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 7900
+  Batch Stats: Min=13, Max=13, Mean=13.0
+  Current Boundaries:  [11.2, 18.4, 30.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [12.7%, 2.0%, 2.2%]
+  Current Coverage:    [0.464, 0.585, 0.702]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [3.6%, 16.5%, 21.8%]
+  Losses: CCM=0.382 (Cov=0.076, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 15.8266
+  CCM/DETR Ratio: 2.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8000
+  Batch Stats: Min=15, Max=15, Mean=15.0
+  Current Boundaries:  [12.2, 19.8, 32.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [22.6%, 10.2%, 7.6%]
+  Current Coverage:    [0.449, 0.569, 0.683]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [5.1%, 18.1%, 23.7%]
+  Losses: CCM=0.314 (Cov=0.092, Guide=0.009, Sp=0.000)
+  Total DETR Loss: 6.9025
+  CCM/DETR Ratio: 4.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8100
+  Batch Stats: Min=27, Max=27, Mean=27.0
+  Current Boundaries:  [12.6, 22.0, 37.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [26.0%, 22.1%, 24.6%]
+  Current Coverage:    [0.318, 0.449, 0.580]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [18.2%, 30.1%, 34.0%]
+  Losses: CCM=0.402 (Cov=0.239, Guide=0.024, Sp=0.000)
+  Total DETR Loss: 8.6696
+  CCM/DETR Ratio: 4.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8200
+  Batch Stats: Min=86, Max=86, Mean=86.0
+  Current Boundaries:  [14.3, 24.8, 41.8] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [4.9%, 8.6%, 16.3%]
+  Current Coverage:    [0.143, 0.224, 0.327]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [25.7%, 47.6%, 57.3%]
+  Losses: CCM=0.408 (Cov=0.373, Guide=0.007, Sp=0.000)
+  Total DETR Loss: 7.7049
+  CCM/DETR Ratio: 5.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.9, 19.6, 33.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [19.5%, 8.9%, 11.3%]
+  Current Coverage:    [0.923, 0.951, 0.971]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [42.3%, 20.1%, 5.1%]
+  Losses: CCM=0.266 (Cov=0.222, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 4.1275
+  CCM/DETR Ratio: 6.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8400
+  Batch Stats: Min=64, Max=64, Mean=64.0
+  Current Boundaries:  [12.9, 22.1, 39.9] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [14.2%, 18.6%, 20.0%]
+  Current Coverage:    [0.168, 0.256, 0.384]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [23.2%, 44.4%, 51.6%]
+  Losses: CCM=0.425 (Cov=0.310, Guide=0.019, Sp=0.000)
+  Total DETR Loss: 12.4719
+  CCM/DETR Ratio: 3.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8500
+  Batch Stats: Min=5, Max=5, Mean=5.0
+  Current Boundaries:  [10.2, 16.8, 29.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.3%, 6.6%, 2.8%]
+  Current Coverage:    [0.671, 0.771, 0.854]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [17.1%, 2.1%, 6.6%]
+  Losses: CCM=0.295 (Cov=0.034, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 9.3689
+  CCM/DETR Ratio: 3.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8600
+  Batch Stats: Min=16, Max=16, Mean=16.0
+  Current Boundaries:  [12.3, 21.3, 37.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [22.9%, 18.4%, 25.6%]
+  Current Coverage:    [0.434, 0.571, 0.702]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [6.6%, 17.9%, 21.8%]
+  Losses: CCM=0.318 (Cov=0.084, Guide=0.020, Sp=0.000)
+  Total DETR Loss: 9.2926
+  CCM/DETR Ratio: 3.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8700
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [9.9, 16.8, 29.4] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [1.1%, 6.6%, 1.8%]
+  Current Coverage:    [0.831, 0.894, 0.936]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [33.1%, 14.4%, 1.6%]
+  Losses: CCM=0.206 (Cov=0.131, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 10.0173
+  CCM/DETR Ratio: 2.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8800
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [11.1, 18.3, 30.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [11.2%, 1.5%, 2.7%]
+  Current Coverage:    [0.847, 0.901, 0.939]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [34.7%, 15.1%, 1.9%]
+  Losses: CCM=0.240 (Cov=0.144, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 9.2628
+  CCM/DETR Ratio: 2.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 8900
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.9, 18.9, 32.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [9.7%, 4.9%, 8.5%]
+  Current Coverage:    [0.916, 0.950, 0.970]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.6%, 20.0%, 5.0%]
+  Losses: CCM=0.190 (Cov=0.216, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 8.1634
+  CCM/DETR Ratio: 2.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9000
+  Batch Stats: Min=17, Max=17, Mean=17.0
+  Current Boundaries:  [9.8, 17.9, 33.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.0%, 0.5%, 11.8%]
+  Current Coverage:    [0.365, 0.513, 0.663]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [13.5%, 23.7%, 25.7%]
+  Losses: CCM=0.396 (Cov=0.140, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 9.0639
+  CCM/DETR Ratio: 4.4%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9100
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [12.7, 20.0, 33.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [27.0%, 11.2%, 10.1%]
+  Current Coverage:    [0.927, 0.952, 0.971]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [42.7%, 20.2%, 5.1%]
+  Losses: CCM=0.372 (Cov=0.226, Guide=0.013, Sp=0.038)
+  Total DETR Loss: 2.5179
+  CCM/DETR Ratio: 14.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9200
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.1, 15.3, 26.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [9.2%, 14.8%, 11.4%]
+  Current Coverage:    [0.901, 0.939, 0.964]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.1%, 18.9%, 4.4%]
+  Losses: CCM=0.194 (Cov=0.198, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 2.8477
+  CCM/DETR Ratio: 6.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.2, 19.4, 33.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [11.9%, 8.0%, 12.2%]
+  Current Coverage:    [0.918, 0.951, 0.971]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.8%, 20.1%, 5.1%]
+  Losses: CCM=0.194 (Cov=0.218, Guide=0.005, Sp=0.000)
+  Total DETR Loss: 3.1400
+  CCM/DETR Ratio: 6.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9400
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [9.3, 15.4, 26.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.7%, 14.6%, 12.2%]
+  Current Coverage:    [0.823, 0.885, 0.929]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [32.3%, 13.5%, 0.9%]
+  Losses: CCM=0.236 (Cov=0.123, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 6.7190
+  CCM/DETR Ratio: 3.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9500
+  Batch Stats: Min=141, Max=141, Mean=141.0
+  Current Boundaries:  [13.6, 25.1, 47.2] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [45.7%, 49.7%, 53.0%]
+  Current Coverage:    [0.088, 0.151, 0.251]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [16.2%, 39.9%, 54.9%]
+  Losses: CCM=0.673 (Cov=0.146, Guide=0.236, Sp=0.094)
+  Total DETR Loss: 13.4890
+  CCM/DETR Ratio: 5.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9600
+  Batch Stats: Min=8, Max=8, Mean=8.0
+  Current Boundaries:  [11.3, 19.0, 32.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [13.4%, 5.8%, 8.4%]
+  Current Coverage:    [0.586, 0.704, 0.802]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [8.6%, 4.6%, 11.8%]
+  Losses: CCM=0.258 (Cov=0.023, Guide=0.004, Sp=0.000)
+  Total DETR Loss: 14.2050
+  CCM/DETR Ratio: 1.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9700
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.5, 16.0, 26.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.3%, 11.3%, 10.6%]
+  Current Coverage:    [0.905, 0.941, 0.964]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.5%, 19.1%, 4.4%]
+  Losses: CCM=0.193 (Cov=0.203, Guide=0.005, Sp=0.000)
+  Total DETR Loss: 5.4278
+  CCM/DETR Ratio: 3.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9800
+  Batch Stats: Min=41, Max=41, Mean=41.0
+  Current Boundaries:  [13.3, 21.9, 36.4] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [11.7%, 19.3%, 27.1%]
+  Current Coverage:    [0.245, 0.348, 0.470]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [15.5%, 35.2%, 43.0%]
+  Losses: CCM=0.444 (Cov=0.333, Guide=0.027, Sp=0.000)
+  Total DETR Loss: 9.8678
+  CCM/DETR Ratio: 4.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 9900
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [11.5, 19.7, 34.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [15.4%, 9.4%, 14.1%]
+  Current Coverage:    [0.920, 0.952, 0.972]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [42.0%, 20.2%, 5.2%]
+  Losses: CCM=0.276 (Cov=0.220, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 10.4553
+  CCM/DETR Ratio: 2.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10000
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [8.4, 14.9, 27.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [15.6%, 17.1%, 9.0%]
+  Current Coverage:    [0.808, 0.882, 0.932]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [30.8%, 13.2%, 1.2%]
+  Losses: CCM=0.208 (Cov=0.112, Guide=0.012, Sp=0.000)
+  Total DETR Loss: 5.5407
+  CCM/DETR Ratio: 3.8%
+================================================================================
+Epoch: [0]  [10000/14018]  eta: 0:30:14  lr: 0.000100  class_error: 0.00  loss: 9.6085 (9.6668)  loss_ce_dn: 0.0517 (0.0440)  loss_bbox_dn: 0.0158 (0.0147)  loss_giou_dn: 0.3012 (0.2893)  loss_ce: 0.0750 (0.1031)  loss_bbox: 0.0313 (0.0375)  loss_giou: 0.5747 (0.6581)  loss_ce_0: 0.1281 (0.1396)  loss_bbox_0: 0.0363 (0.0382)  loss_giou_0: 0.5572 (0.6675)  loss_ce_dn_0: 0.0649 (0.0607)  loss_bbox_dn_0: 0.0226 (0.0207)  loss_giou_dn_0: 0.3762 (0.3756)  loss_ce_1: 0.0875 (0.1171)  loss_bbox_1: 0.0326 (0.0378)  loss_giou_1: 0.6469 (0.6617)  loss_ce_dn_1: 0.0529 (0.0534)  loss_bbox_dn_1: 0.0156 (0.0158)  loss_giou_dn_1: 0.3017 (0.3055)  loss_ce_2: 0.0814 (0.1065)  loss_bbox_2: 0.0321 (0.0376)  loss_giou_2: 0.6418 (0.6582)  loss_ce_dn_2: 0.0528 (0.0493)  loss_bbox_dn_2: 0.0160 (0.0148)  loss_giou_dn_2: 0.2942 (0.2908)  loss_ce_3: 0.0821 (0.1037)  loss_bbox_3: 0.0317 (0.0374)  loss_giou_3: 0.6035 (0.6558)  loss_ce_dn_3: 0.0593 (0.0470)  loss_bbox_dn_3: 0.0159 (0.0146)  loss_giou_dn_3: 0.3011 (0.2878)  loss_ce_4: 0.0773 (0.1029)  loss_bbox_4: 0.0313 (0.0374)  loss_giou_4: 0.5853 (0.6566)  loss_ce_dn_4: 0.0501 (0.0446)  loss_bbox_dn_4: 0.0160 (0.0147)  loss_giou_dn_4: 0.3012 (0.2883)  loss_ce_interm: 0.1369 (0.1437)  loss_bbox_interm: 0.0349 (0.0409)  loss_giou_interm: 0.6118 (0.7053)  loss_coverage: 0.1232 (0.1729)  loss_interval: 0.6992 (0.8478)  loss_count: 0.0698 (0.2213)  loss_spacing: 0.0000 (0.0310)  loss_boundary_guide: 0.0090 (0.0377)  ccm_loss: 0.2198 (0.3779)  loss_ce_dn_unscaled: 0.0517 (0.0440)  loss_bbox_dn_unscaled: 0.0032 (0.0029)  loss_giou_dn_unscaled: 0.1506 (0.1446)  loss_xy_dn_unscaled: 0.0011 (0.0011)  loss_hw_dn_unscaled: 0.0016 (0.0018)  cardinality_error_dn_unscaled: 198.0000 (177.2037)  loss_ce_unscaled: 0.0750 (0.1031)  class_error_unscaled: 0.0000 (0.6841)  loss_bbox_unscaled: 0.0063 (0.0075)  loss_giou_unscaled: 0.2873 (0.3291)  loss_xy_unscaled: 0.0021 (0.0026)  loss_hw_unscaled: 0.0043 (0.0049)  cardinality_error_unscaled: 1110.0000 (1095.7696)  loss_ce_0_unscaled: 0.1281 (0.1396)  loss_bbox_0_unscaled: 0.0073 (0.0076)  loss_giou_0_unscaled: 0.2786 (0.3337)  loss_xy_0_unscaled: 0.0019 (0.0026)  loss_hw_0_unscaled: 0.0047 (0.0050)  cardinality_error_0_unscaled: 1110.0000 (1095.6961)  loss_ce_dn_0_unscaled: 0.0649 (0.0607)  loss_bbox_dn_0_unscaled: 0.0045 (0.0041)  loss_giou_dn_0_unscaled: 0.1881 (0.1878)  loss_xy_dn_0_unscaled: 0.0016 (0.0015)  loss_hw_dn_0_unscaled: 0.0030 (0.0027)  cardinality_error_dn_0_unscaled: 198.0000 (177.2034)  loss_ce_1_unscaled: 0.0875 (0.1171)  loss_bbox_1_unscaled: 0.0065 (0.0076)  loss_giou_1_unscaled: 0.3234 (0.3309)  loss_xy_1_unscaled: 0.0022 (0.0026)  loss_hw_1_unscaled: 0.0043 (0.0050)  cardinality_error_1_unscaled: 1110.0000 (1095.7696)  loss_ce_dn_1_unscaled: 0.0529 (0.0534)  loss_bbox_dn_1_unscaled: 0.0031 (0.0032)  loss_giou_dn_1_unscaled: 0.1508 (0.1528)  loss_xy_dn_1_unscaled: 0.0011 (0.0012)  loss_hw_dn_1_unscaled: 0.0022 (0.0020)  cardinality_error_dn_1_unscaled: 198.0000 (177.2024)  loss_ce_2_unscaled: 0.0814 (0.1065)  loss_bbox_2_unscaled: 0.0064 (0.0075)  loss_giou_2_unscaled: 0.3209 (0.3291)  loss_xy_2_unscaled: 0.0020 (0.0026)  loss_hw_2_unscaled: 0.0046 (0.0049)  cardinality_error_2_unscaled: 1110.0000 (1095.7696)  loss_ce_dn_2_unscaled: 0.0528 (0.0493)  loss_bbox_dn_2_unscaled: 0.0032 (0.0030)  loss_giou_dn_2_unscaled: 0.1471 (0.1454)  loss_xy_dn_2_unscaled: 0.0012 (0.0011)  loss_hw_dn_2_unscaled: 0.0016 (0.0018)  cardinality_error_dn_2_unscaled: 198.0000 (177.2037)  loss_ce_3_unscaled: 0.0821 (0.1037)  loss_bbox_3_unscaled: 0.0063 (0.0075)  loss_giou_3_unscaled: 0.3017 (0.3279)  loss_xy_3_unscaled: 0.0022 (0.0026)  loss_hw_3_unscaled: 0.0044 (0.0049)  cardinality_error_3_unscaled: 1110.0000 (1095.7696)  loss_ce_dn_3_unscaled: 0.0593 (0.0470)  loss_bbox_dn_3_unscaled: 0.0032 (0.0029)  loss_giou_dn_3_unscaled: 0.1506 (0.1439)  loss_xy_dn_3_unscaled: 0.0011 (0.0011)  loss_hw_dn_3_unscaled: 0.0016 (0.0018)  cardinality_error_dn_3_unscaled: 198.0000 (177.2037)  loss_ce_4_unscaled: 0.0773 (0.1029)  loss_bbox_4_unscaled: 0.0063 (0.0075)  loss_giou_4_unscaled: 0.2927 (0.3283)  loss_xy_4_unscaled: 0.0022 (0.0026)  loss_hw_4_unscaled: 0.0043 (0.0049)  cardinality_error_4_unscaled: 1110.0000 (1095.7696)  loss_ce_dn_4_unscaled: 0.0501 (0.0446)  loss_bbox_dn_4_unscaled: 0.0032 (0.0029)  loss_giou_dn_4_unscaled: 0.1506 (0.1441)  loss_xy_dn_4_unscaled: 0.0011 (0.0011)  loss_hw_dn_4_unscaled: 0.0016 (0.0018)  cardinality_error_dn_4_unscaled: 198.0000 (177.2037)  loss_ce_interm_unscaled: 0.1369 (0.1437)  loss_bbox_interm_unscaled: 0.0070 (0.0082)  loss_giou_interm_unscaled: 0.3059 (0.3527)  loss_xy_interm_unscaled: 0.0019 (0.0028)  loss_hw_interm_unscaled: 0.0047 (0.0054)  cardinality_error_interm_unscaled: 1110.0000 (1095.7620)  loss_coverage_unscaled: 0.1232 (0.1729)  loss_interval_unscaled: 0.6992 (0.8478)  loss_count_unscaled: 0.0698 (0.2213)  loss_spacing_unscaled: 0.0000 (0.0310)  loss_boundary_guide_unscaled: 0.0090 (0.0377)  ccm_loss_unscaled: 0.2198 (0.3779)  time: 0.5142  data: 0.0075  max mem: 12339
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10100
+  Batch Stats: Min=16, Max=16, Mean=16.0
+  Current Boundaries:  [11.6, 20.3, 35.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [16.8%, 12.7%, 17.3%]
+  Current Coverage:    [0.421, 0.559, 0.687]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [7.9%, 19.1%, 23.3%]
+  Losses: CCM=0.320 (Cov=0.097, Guide=0.011, Sp=0.000)
+  Total DETR Loss: 11.7254
+  CCM/DETR Ratio: 2.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10200
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.3, 15.5, 25.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.4%, 13.8%, 14.7%]
+  Current Coverage:    [0.903, 0.939, 0.962]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.3%, 18.9%, 4.2%]
+  Losses: CCM=0.227 (Cov=0.200, Guide=0.009, Sp=0.000)
+  Total DETR Loss: 6.5077
+  CCM/DETR Ratio: 3.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10300
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [10.0, 16.9, 28.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.7%, 6.0%, 5.5%]
+  Current Coverage:    [0.770, 0.849, 0.904]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [27.0%, 9.9%, 1.6%]
+  Losses: CCM=0.214 (Cov=0.083, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 4.3729
+  CCM/DETR Ratio: 4.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10400
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [9.5, 16.2, 27.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.9%, 9.7%, 7.8%]
+  Current Coverage:    [0.826, 0.890, 0.932]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [32.6%, 14.0%, 1.2%]
+  Losses: CCM=0.204 (Cov=0.126, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 5.4455
+  CCM/DETR Ratio: 3.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10500
+  Batch Stats: Min=108, Max=108, Mean=108.0
+  Current Boundaries:  [13.9, 22.8, 38.8] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [44.5%, 54.4%, 61.4%]
+  Current Coverage:    [0.114, 0.174, 0.264]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [13.6%, 37.6%, 53.6%]
+  Losses: CCM=0.551 (Cov=0.134, Guide=0.311, Sp=0.000)
+  Total DETR Loss: 9.6506
+  CCM/DETR Ratio: 5.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10600
+  Batch Stats: Min=98, Max=98, Mean=98.0
+  Current Boundaries:  [12.7, 21.5, 36.5] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [15.7%, 20.8%, 26.9%]
+  Current Coverage:    [0.114, 0.180, 0.271]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [28.6%, 52.0%, 62.9%]
+  Losses: CCM=0.430 (Cov=0.449, Guide=0.030, Sp=0.000)
+  Total DETR Loss: 10.5887
+  CCM/DETR Ratio: 4.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10700
+  Batch Stats: Min=20, Max=20, Mean=20.0
+  Current Boundaries:  [11.2, 19.0, 32.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [11.9%, 5.6%, 9.0%]
+  Current Coverage:    [0.358, 0.487, 0.620]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [14.2%, 26.3%, 30.0%]
+  Losses: CCM=0.350 (Cov=0.179, Guide=0.004, Sp=0.000)
+  Total DETR Loss: 12.3114
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10800
+  Batch Stats: Min=6, Max=6, Mean=6.0
+  Current Boundaries:  [10.5, 18.4, 30.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [5.7%, 2.2%, 2.1%]
+  Current Coverage:    [0.637, 0.754, 0.836]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [13.7%, 0.4%, 8.4%]
+  Losses: CCM=0.222 (Cov=0.026, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 6.1437
+  CCM/DETR Ratio: 3.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 10900
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [12.4, 20.9, 35.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [24.5%, 16.4%, 18.0%]
+  Current Coverage:    [0.861, 0.913, 0.946]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [36.1%, 16.3%, 2.6%]
+  Losses: CCM=0.228 (Cov=0.158, Guide=0.016, Sp=0.000)
+  Total DETR Loss: 7.2541
+  CCM/DETR Ratio: 3.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11000
+  Batch Stats: Min=7, Max=7, Mean=7.0
+  Current Boundaries:  [11.5, 19.1, 32.3] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [15.2%, 6.3%, 7.7%]
+  Current Coverage:    [0.621, 0.732, 0.822]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [12.1%, 1.8%, 9.8%]
+  Losses: CCM=0.230 (Cov=0.025, Guide=0.005, Sp=0.000)
+  Total DETR Loss: 7.5223
+  CCM/DETR Ratio: 3.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11100
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [10.7, 17.9, 30.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [7.6%, 0.7%, 1.8%]
+  Current Coverage:    [0.843, 0.899, 0.938]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [34.3%, 14.9%, 1.8%]
+  Losses: CCM=0.198 (Cov=0.140, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 12.1210
+  CCM/DETR Ratio: 1.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11200
+  Batch Stats: Min=17, Max=17, Mean=17.0
+  Current Boundaries:  [12.5, 20.8, 34.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [25.8%, 15.5%, 15.5%]
+  Current Coverage:    [0.425, 0.550, 0.671]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [7.5%, 20.0%, 24.9%]
+  Losses: CCM=0.330 (Cov=0.108, Guide=0.016, Sp=0.000)
+  Total DETR Loss: 7.1754
+  CCM/DETR Ratio: 4.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11300
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.3, 15.5, 26.6] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.9%, 14.1%, 11.2%]
+  Current Coverage:    [0.903, 0.939, 0.964]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.3%, 18.9%, 4.4%]
+  Losses: CCM=0.196 (Cov=0.200, Guide=0.007, Sp=0.000)
+  Total DETR Loss: 3.2193
+  CCM/DETR Ratio: 6.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11400
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [8.6, 21.7, 43.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [13.9%, 20.8%, 46.3%]
+  Current Coverage:    [0.811, 0.916, 0.956]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [31.1%, 16.6%, 3.6%]
+  Losses: CCM=0.247 (Cov=0.126, Guide=0.034, Sp=0.000)
+  Total DETR Loss: 7.1696
+  CCM/DETR Ratio: 3.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11500
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.0, 17.2, 29.0] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [0.1%, 4.4%, 3.1%]
+  Current Coverage:    [0.909, 0.945, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.9%, 19.5%, 4.7%]
+  Losses: CCM=0.188 (Cov=0.207, Guide=0.000, Sp=0.000)
+  Total DETR Loss: 8.3339
+  CCM/DETR Ratio: 2.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11600
+  Batch Stats: Min=2, Max=2, Mean=2.0
+  Current Boundaries:  [8.8, 15.3, 26.4] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [11.7%, 15.2%, 11.9%]
+  Current Coverage:    [0.815, 0.884, 0.930]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [31.5%, 13.4%, 1.0%]
+  Losses: CCM=0.215 (Cov=0.117, Guide=0.010, Sp=0.000)
+  Total DETR Loss: 9.8900
+  CCM/DETR Ratio: 2.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11700
+  Batch Stats: Min=50, Max=50, Mean=50.0
+  Current Boundaries:  [14.3, 23.7, 39.8] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [4.9%, 12.5%, 20.3%]
+  Current Coverage:    [0.222, 0.322, 0.443]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [17.8%, 37.8%, 45.7%]
+  Losses: CCM=0.434 (Cov=0.383, Guide=0.012, Sp=0.000)
+  Total DETR Loss: 10.1407
+  CCM/DETR Ratio: 4.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11800
+  Batch Stats: Min=13, Max=13, Mean=13.0
+  Current Boundaries:  [12.1, 21.0, 36.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [21.7%, 16.9%, 22.7%]
+  Current Coverage:    [0.483, 0.618, 0.739]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [1.7%, 13.2%, 18.1%]
+  Losses: CCM=0.293 (Cov=0.051, Guide=0.017, Sp=0.000)
+  Total DETR Loss: 9.0947
+  CCM/DETR Ratio: 3.2%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 11900
+  Batch Stats: Min=15, Max=15, Mean=15.0
+  Current Boundaries:  [12.5, 20.8, 34.9] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [25.3%, 15.8%, 16.4%]
+  Current Coverage:    [0.454, 0.581, 0.699]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [4.6%, 16.9%, 22.1%]
+  Losses: CCM=0.304 (Cov=0.079, Guide=0.016, Sp=0.000)
+  Total DETR Loss: 7.8378
+  CCM/DETR Ratio: 3.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12000
+  Batch Stats: Min=50, Max=50, Mean=50.0
+  Current Boundaries:  [12.5, 22.4, 38.7] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [16.9%, 17.4%, 22.5%]
+  Current Coverage:    [0.200, 0.309, 0.436]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [20.0%, 39.1%, 46.4%]
+  Losses: CCM=0.476 (Cov=0.408, Guide=0.023, Sp=0.000)
+  Total DETR Loss: 16.2068
+  CCM/DETR Ratio: 2.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12100
+  Batch Stats: Min=129, Max=129, Mean=129.0
+  Current Boundaries:  [14.8, 24.6, 42.1] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [41.1%, 50.7%, 58.2%]
+  Current Coverage:    [0.103, 0.160, 0.246]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [14.7%, 39.0%, 55.4%]
+  Losses: CCM=0.501 (Cov=0.144, Guide=0.256, Sp=0.000)
+  Total DETR Loss: 10.8124
+  CCM/DETR Ratio: 4.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12200
+  Batch Stats: Min=6, Max=6, Mean=6.0
+  Current Boundaries:  [11.3, 20.0, 35.4] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [13.2%, 11.1%, 18.3%]
+  Current Coverage:    [0.653, 0.769, 0.855]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [15.3%, 1.9%, 6.5%]
+  Losses: CCM=0.238 (Cov=0.028, Guide=0.009, Sp=0.000)
+  Total DETR Loss: 7.2456
+  CCM/DETR Ratio: 3.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12300
+  Batch Stats: Min=5, Max=5, Mean=5.0
+  Current Boundaries:  [11.1, 19.8, 34.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [11.6%, 10.0%, 13.9%]
+  Current Coverage:    [0.690, 0.798, 0.872]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [19.0%, 4.8%, 4.8%]
+  Losses: CCM=0.223 (Cov=0.041, Guide=0.006, Sp=0.000)
+  Total DETR Loss: 7.4552
+  CCM/DETR Ratio: 3.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12400
+  Batch Stats: Min=68, Max=68, Mean=68.0
+  Current Boundaries:  [14.6, 24.0, 39.7] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [2.8%, 11.6%, 20.4%]
+  Current Coverage:    [0.177, 0.261, 0.369]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [22.3%, 43.9%, 53.1%]
+  Losses: CCM=0.380 (Cov=0.315, Guide=0.011, Sp=0.000)
+  Total DETR Loss: 15.2282
+  CCM/DETR Ratio: 2.5%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12500
+  Batch Stats: Min=251, Max=251, Mean=251.0
+  Current Boundaries:  [12.7, 22.1, 39.1] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [49.1%, 55.7%, 61.1%]
+  Current Coverage:    [0.048, 0.081, 0.135]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [20.2%, 46.9%, 66.5%]
+  Losses: CCM=0.553 (Cov=0.211, Guide=0.335, Sp=0.000)
+  Total DETR Loss: 9.8101
+  CCM/DETR Ratio: 5.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12600
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.3, 17.4, 29.5] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.9%, 3.5%, 1.4%]
+  Current Coverage:    [0.903, 0.946, 0.967]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.3%, 19.6%, 4.7%]
+  Losses: CCM=0.208 (Cov=0.203, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 2.6960
+  CCM/DETR Ratio: 7.7%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12700
+  Batch Stats: Min=14, Max=14, Mean=14.0
+  Current Boundaries:  [11.8, 20.2, 32.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [18.4%, 12.1%, 9.2%]
+  Current Coverage:    [0.458, 0.590, 0.700]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [4.2%, 16.0%, 22.0%]
+  Losses: CCM=0.306 (Cov=0.076, Guide=0.008, Sp=0.000)
+  Total DETR Loss: 7.9093
+  CCM/DETR Ratio: 3.9%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12800
+  Batch Stats: Min=23, Max=23, Mean=23.0
+  Current Boundaries:  [12.2, 20.9, 35.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [22.1%, 16.2%, 17.4%]
+  Current Coverage:    [0.346, 0.476, 0.605]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [15.4%, 27.4%, 31.5%]
+  Losses: CCM=0.380 (Cov=0.198, Guide=0.015, Sp=0.000)
+  Total DETR Loss: 12.4659
+  CCM/DETR Ratio: 3.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 12900
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [9.0, 16.9, 28.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [9.4%, 6.1%, 4.3%]
+  Current Coverage:    [0.900, 0.944, 0.966]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [40.0%, 19.4%, 4.6%]
+  Losses: CCM=0.230 (Cov=0.200, Guide=0.003, Sp=0.000)
+  Total DETR Loss: 4.3608
+  CCM/DETR Ratio: 5.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13000
+  Batch Stats: Min=8, Max=8, Mean=8.0
+  Current Boundaries:  [10.4, 19.1, 32.4] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [4.7%, 6.1%, 8.0%]
+  Current Coverage:    [0.566, 0.705, 0.802]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [6.6%, 4.5%, 11.8%]
+  Losses: CCM=0.241 (Cov=0.020, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 7.8541
+  CCM/DETR Ratio: 3.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13100
+  Batch Stats: Min=3, Max=3, Mean=3.0
+  Current Boundaries:  [9.8, 21.7, 39.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [2.2%, 20.6%, 32.6%]
+  Current Coverage:    [0.765, 0.879, 0.930]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [26.5%, 12.9%, 1.0%]
+  Losses: CCM=0.226 (Cov=0.087, Guide=0.019, Sp=0.000)
+  Total DETR Loss: 12.3853
+  CCM/DETR Ratio: 1.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13200
+  Batch Stats: Min=134, Max=134, Mean=134.0
+  Current Boundaries:  [14.7, 25.4, 43.0] px
+  Adaptive Targets:    [25.0, 49.9, 100.5] px
+  Boundary Errors:     [41.2%, 49.1%, 57.2%]
+  Current Coverage:    [0.099, 0.159, 0.243]
+  Adaptive Cov Target: [0.250, 0.550, 0.800]
+  Coverage Errors:     [15.1%, 39.1%, 55.7%]
+  Losses: CCM=0.549 (Cov=0.146, Guide=0.243, Sp=0.030)
+  Total DETR Loss: 8.9309
+  CCM/DETR Ratio: 6.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13300
+  Batch Stats: Min=24, Max=24, Mean=24.0
+  Current Boundaries:  [11.0, 18.7, 31.2] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [10.1%, 3.7%, 4.1%]
+  Current Coverage:    [0.314, 0.437, 0.565]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [18.6%, 31.3%, 35.5%]
+  Losses: CCM=0.391 (Cov=0.258, Guide=0.002, Sp=0.000)
+  Total DETR Loss: 13.7548
+  CCM/DETR Ratio: 2.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13400
+  Batch Stats: Min=54, Max=54, Mean=54.0
+  Current Boundaries:  [13.8, 22.7, 37.4] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [8.1%, 16.3%, 25.1%]
+  Current Coverage:    [0.204, 0.296, 0.409]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [19.6%, 40.4%, 49.1%]
+  Losses: CCM=0.375 (Cov=0.266, Guide=0.020, Sp=0.000)
+  Total DETR Loss: 12.6518
+  CCM/DETR Ratio: 3.0%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13500
+  Batch Stats: Min=20, Max=20, Mean=20.0
+  Current Boundaries:  [11.5, 21.2, 40.7] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [15.2%, 17.7%, 36.0%]
+  Current Coverage:    [0.365, 0.514, 0.671]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [13.5%, 23.6%, 24.9%]
+  Losses: CCM=0.359 (Cov=0.136, Guide=0.024, Sp=0.000)
+  Total DETR Loss: 8.3758
+  CCM/DETR Ratio: 4.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13600
+  Batch Stats: Min=43, Max=43, Mean=43.0
+  Current Boundaries:  [10.4, 19.1, 33.8] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [30.5%, 29.6%, 32.2%]
+  Current Coverage:    [0.195, 0.307, 0.440]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [20.5%, 39.3%, 46.0%]
+  Losses: CCM=0.557 (Cov=0.407, Guide=0.068, Sp=0.000)
+  Total DETR Loss: 9.9361
+  CCM/DETR Ratio: 5.6%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13700
+  Batch Stats: Min=1, Max=1, Mean=1.0
+  Current Boundaries:  [10.6, 18.4, 31.8] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [6.5%, 2.4%, 6.1%]
+  Current Coverage:    [0.914, 0.949, 0.970]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [41.4%, 19.9%, 5.0%]
+  Losses: CCM=0.186 (Cov=0.213, Guide=0.001, Sp=0.000)
+  Total DETR Loss: 5.6986
+  CCM/DETR Ratio: 3.3%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13800
+  Batch Stats: Min=18, Max=18, Mean=18.0
+  Current Boundaries:  [11.0, 21.2, 42.1] px
+  Adaptive Targets:    [10.0, 18.0, 30.0] px
+  Boundary Errors:     [10.6%, 18.0%, 40.4%]
+  Current Coverage:    [0.380, 0.541, 0.700]
+  Adaptive Cov Target: [0.500, 0.750, 0.920]
+  Coverage Errors:     [12.0%, 20.9%, 22.0%]
+  Losses: CCM=0.356 (Cov=0.106, Guide=0.025, Sp=0.000)
+  Total DETR Loss: 7.3562
+  CCM/DETR Ratio: 4.8%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 13900
+  Batch Stats: Min=41, Max=41, Mean=41.0
+  Current Boundaries:  [12.6, 22.0, 37.6] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [16.2%, 18.9%, 24.6%]
+  Current Coverage:    [0.235, 0.349, 0.479]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [16.5%, 35.1%, 42.1%]
+  Losses: CCM=0.440 (Cov=0.328, Guide=0.026, Sp=0.000)
+  Total DETR Loss: 10.6799
+  CCM/DETR Ratio: 4.1%
+================================================================================
+
+================================================================================
+[CCM Monitor - Adaptive] Epoch 0, Iter 14000
+  Batch Stats: Min=86, Max=86, Mean=86.0
+  Current Boundaries:  [14.0, 23.4, 39.4] px
+  Adaptive Targets:    [15.0, 27.1, 49.9] px
+  Boundary Errors:     [7.1%, 13.6%, 21.0%]
+  Current Coverage:    [0.140, 0.214, 0.314]
+  Adaptive Cov Target: [0.400, 0.700, 0.900]
+  Coverage Errors:     [26.0%, 48.6%, 58.6%]
+  Losses: CCM=0.430 (Cov=0.388, Guide=0.014, Sp=0.000)
+  Total DETR Loss: 11.0585
+  CCM/DETR Ratio: 3.9%
+================================================================================
+Epoch: [0]  [14017/14018]  eta: 0:00:00  lr: 0.000100  class_error: 0.00  loss: 10.3007 (9.6569)  loss_ce_dn: 0.0356 (0.0427)  loss_bbox_dn: 0.0233 (0.0148)  loss_giou_dn: 0.4327 (0.2912)  loss_ce: 0.0796 (0.1051)  loss_bbox: 0.0336 (0.0379)  loss_giou: 0.6243 (0.6625)  loss_ce_0: 0.1238 (0.1420)  loss_bbox_0: 0.0359 (0.0386)  loss_giou_0: 0.6245 (0.6717)  loss_ce_dn_0: 0.0495 (0.0591)  loss_bbox_dn_0: 0.0307 (0.0209)  loss_giou_dn_0: 0.5580 (0.3779)  loss_ce_1: 0.1117 (0.1197)  loss_bbox_1: 0.0356 (0.0382)  loss_giou_1: 0.6140 (0.6658)  loss_ce_dn_1: 0.0351 (0.0516)  loss_bbox_dn_1: 0.0246 (0.0160)  loss_giou_dn_1: 0.4630 (0.3077)  loss_ce_2: 0.0838 (0.1091)  loss_bbox_2: 0.0342 (0.0379)  loss_giou_2: 0.6191 (0.6623)  loss_ce_dn_2: 0.0379 (0.0476)  loss_bbox_dn_2: 0.0245 (0.0150)  loss_giou_dn_2: 0.4314 (0.2927)  loss_ce_3: 0.0837 (0.1062)  loss_bbox_3: 0.0334 (0.0378)  loss_giou_3: 0.6184 (0.6600)  loss_ce_dn_3: 0.0340 (0.0454)  loss_bbox_dn_3: 0.0238 (0.0148)  loss_giou_dn_3: 0.4323 (0.2897)  loss_ce_4: 0.0767 (0.1049)  loss_bbox_4: 0.0336 (0.0378)  loss_giou_4: 0.6234 (0.6612)  loss_ce_dn_4: 0.0352 (0.0432)  loss_bbox_dn_4: 0.0233 (0.0148)  loss_giou_dn_4: 0.4324 (0.2902)  loss_ce_interm: 0.1443 (0.1467)  loss_bbox_interm: 0.0361 (0.0413)  loss_giou_interm: 0.6668 (0.7100)  loss_coverage: 0.1517 (0.1710)  loss_interval: 1.0682 (0.8459)  loss_count: 0.0265 (0.1961)  loss_spacing: 0.0000 (0.0227)  loss_boundary_guide: 0.0130 (0.0349)  ccm_loss: 0.3214 (0.3545)  loss_ce_dn_unscaled: 0.0356 (0.0427)  loss_bbox_dn_unscaled: 0.0047 (0.0030)  loss_giou_dn_unscaled: 0.2163 (0.1456)  loss_xy_dn_unscaled: 0.0016 (0.0011)  loss_hw_dn_unscaled: 0.0030 (0.0018)  cardinality_error_dn_unscaled: 169.0000 (177.2804)  loss_ce_unscaled: 0.0796 (0.1051)  class_error_unscaled: 0.0000 (0.7047)  loss_bbox_unscaled: 0.0067 (0.0076)  loss_giou_unscaled: 0.3121 (0.3312)  loss_xy_unscaled: 0.0025 (0.0026)  loss_hw_unscaled: 0.0045 (0.0050)  cardinality_error_unscaled: 1112.0000 (1097.1753)  loss_ce_0_unscaled: 0.1238 (0.1420)  loss_bbox_0_unscaled: 0.0072 (0.0077)  loss_giou_0_unscaled: 0.3122 (0.3358)  loss_xy_0_unscaled: 0.0023 (0.0026)  loss_hw_0_unscaled: 0.0045 (0.0051)  cardinality_error_0_unscaled: 1112.0000 (1097.1228)  loss_ce_dn_0_unscaled: 0.0495 (0.0591)  loss_bbox_dn_0_unscaled: 0.0061 (0.0042)  loss_giou_dn_0_unscaled: 0.2790 (0.1890)  loss_xy_dn_0_unscaled: 0.0021 (0.0015)  loss_hw_dn_0_unscaled: 0.0039 (0.0027)  cardinality_error_dn_0_unscaled: 169.0000 (177.2802)  loss_ce_1_unscaled: 0.1117 (0.1197)  loss_bbox_1_unscaled: 0.0071 (0.0076)  loss_giou_1_unscaled: 0.3070 (0.3329)  loss_xy_1_unscaled: 0.0024 (0.0026)  loss_hw_1_unscaled: 0.0045 (0.0050)  cardinality_error_1_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_1_unscaled: 0.0351 (0.0516)  loss_bbox_dn_1_unscaled: 0.0049 (0.0032)  loss_giou_dn_1_unscaled: 0.2315 (0.1538)  loss_xy_dn_1_unscaled: 0.0017 (0.0012)  loss_hw_dn_1_unscaled: 0.0030 (0.0020)  cardinality_error_dn_1_unscaled: 169.0000 (177.2794)  loss_ce_2_unscaled: 0.0838 (0.1091)  loss_bbox_2_unscaled: 0.0068 (0.0076)  loss_giou_2_unscaled: 0.3095 (0.3312)  loss_xy_2_unscaled: 0.0025 (0.0026)  loss_hw_2_unscaled: 0.0045 (0.0050)  cardinality_error_2_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_2_unscaled: 0.0379 (0.0476)  loss_bbox_dn_2_unscaled: 0.0049 (0.0030)  loss_giou_dn_2_unscaled: 0.2157 (0.1463)  loss_xy_dn_2_unscaled: 0.0017 (0.0011)  loss_hw_dn_2_unscaled: 0.0031 (0.0019)  cardinality_error_dn_2_unscaled: 169.0000 (177.2804)  loss_ce_3_unscaled: 0.0837 (0.1062)  loss_bbox_3_unscaled: 0.0067 (0.0076)  loss_giou_3_unscaled: 0.3092 (0.3300)  loss_xy_3_unscaled: 0.0025 (0.0026)  loss_hw_3_unscaled: 0.0044 (0.0050)  cardinality_error_3_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_3_unscaled: 0.0340 (0.0454)  loss_bbox_dn_3_unscaled: 0.0048 (0.0030)  loss_giou_dn_3_unscaled: 0.2161 (0.1448)  loss_xy_dn_3_unscaled: 0.0016 (0.0011)  loss_hw_dn_3_unscaled: 0.0030 (0.0018)  cardinality_error_dn_3_unscaled: 169.0000 (177.2804)  loss_ce_4_unscaled: 0.0767 (0.1049)  loss_bbox_4_unscaled: 0.0067 (0.0076)  loss_giou_4_unscaled: 0.3117 (0.3306)  loss_xy_4_unscaled: 0.0025 (0.0026)  loss_hw_4_unscaled: 0.0045 (0.0050)  cardinality_error_4_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_4_unscaled: 0.0352 (0.0432)  loss_bbox_dn_4_unscaled: 0.0047 (0.0030)  loss_giou_dn_4_unscaled: 0.2162 (0.1451)  loss_xy_dn_4_unscaled: 0.0016 (0.0011)  loss_hw_dn_4_unscaled: 0.0030 (0.0018)  cardinality_error_dn_4_unscaled: 169.0000 (177.2804)  loss_ce_interm_unscaled: 0.1443 (0.1467)  loss_bbox_interm_unscaled: 0.0072 (0.0083)  loss_giou_interm_unscaled: 0.3334 (0.3550)  loss_xy_interm_unscaled: 0.0023 (0.0028)  loss_hw_interm_unscaled: 0.0048 (0.0054)  cardinality_error_interm_unscaled: 1112.0000 (1097.1697)  loss_coverage_unscaled: 0.1517 (0.1710)  loss_interval_unscaled: 1.0682 (0.8459)  loss_count_unscaled: 0.0265 (0.1961)  loss_spacing_unscaled: 0.0000 (0.0227)  loss_boundary_guide_unscaled: 0.0130 (0.0349)  ccm_loss_unscaled: 0.3214 (0.3545)  time: 0.5561  data: 0.0021  max mem: 12339
+Epoch: [0] Total time: 1:49:33 (0.4689 s / it)
+Averaged stats: lr: 0.000100  class_error: 0.00  loss: 10.3007 (9.6569)  loss_ce_dn: 0.0356 (0.0427)  loss_bbox_dn: 0.0233 (0.0148)  loss_giou_dn: 0.4327 (0.2912)  loss_ce: 0.0796 (0.1051)  loss_bbox: 0.0336 (0.0379)  loss_giou: 0.6243 (0.6625)  loss_ce_0: 0.1238 (0.1420)  loss_bbox_0: 0.0359 (0.0386)  loss_giou_0: 0.6245 (0.6717)  loss_ce_dn_0: 0.0495 (0.0591)  loss_bbox_dn_0: 0.0307 (0.0209)  loss_giou_dn_0: 0.5580 (0.3779)  loss_ce_1: 0.1117 (0.1197)  loss_bbox_1: 0.0356 (0.0382)  loss_giou_1: 0.6140 (0.6658)  loss_ce_dn_1: 0.0351 (0.0516)  loss_bbox_dn_1: 0.0246 (0.0160)  loss_giou_dn_1: 0.4630 (0.3077)  loss_ce_2: 0.0838 (0.1091)  loss_bbox_2: 0.0342 (0.0379)  loss_giou_2: 0.6191 (0.6623)  loss_ce_dn_2: 0.0379 (0.0476)  loss_bbox_dn_2: 0.0245 (0.0150)  loss_giou_dn_2: 0.4314 (0.2927)  loss_ce_3: 0.0837 (0.1062)  loss_bbox_3: 0.0334 (0.0378)  loss_giou_3: 0.6184 (0.6600)  loss_ce_dn_3: 0.0340 (0.0454)  loss_bbox_dn_3: 0.0238 (0.0148)  loss_giou_dn_3: 0.4323 (0.2897)  loss_ce_4: 0.0767 (0.1049)  loss_bbox_4: 0.0336 (0.0378)  loss_giou_4: 0.6234 (0.6612)  loss_ce_dn_4: 0.0352 (0.0432)  loss_bbox_dn_4: 0.0233 (0.0148)  loss_giou_dn_4: 0.4324 (0.2902)  loss_ce_interm: 0.1443 (0.1467)  loss_bbox_interm: 0.0361 (0.0413)  loss_giou_interm: 0.6668 (0.7100)  loss_coverage: 0.1517 (0.1710)  loss_interval: 1.0682 (0.8459)  loss_count: 0.0265 (0.1961)  loss_spacing: 0.0000 (0.0227)  loss_boundary_guide: 0.0130 (0.0349)  ccm_loss: 0.3214 (0.3545)  loss_ce_dn_unscaled: 0.0356 (0.0427)  loss_bbox_dn_unscaled: 0.0047 (0.0030)  loss_giou_dn_unscaled: 0.2163 (0.1456)  loss_xy_dn_unscaled: 0.0016 (0.0011)  loss_hw_dn_unscaled: 0.0030 (0.0018)  cardinality_error_dn_unscaled: 169.0000 (177.2804)  loss_ce_unscaled: 0.0796 (0.1051)  class_error_unscaled: 0.0000 (0.7047)  loss_bbox_unscaled: 0.0067 (0.0076)  loss_giou_unscaled: 0.3121 (0.3312)  loss_xy_unscaled: 0.0025 (0.0026)  loss_hw_unscaled: 0.0045 (0.0050)  cardinality_error_unscaled: 1112.0000 (1097.1753)  loss_ce_0_unscaled: 0.1238 (0.1420)  loss_bbox_0_unscaled: 0.0072 (0.0077)  loss_giou_0_unscaled: 0.3122 (0.3358)  loss_xy_0_unscaled: 0.0023 (0.0026)  loss_hw_0_unscaled: 0.0045 (0.0051)  cardinality_error_0_unscaled: 1112.0000 (1097.1228)  loss_ce_dn_0_unscaled: 0.0495 (0.0591)  loss_bbox_dn_0_unscaled: 0.0061 (0.0042)  loss_giou_dn_0_unscaled: 0.2790 (0.1890)  loss_xy_dn_0_unscaled: 0.0021 (0.0015)  loss_hw_dn_0_unscaled: 0.0039 (0.0027)  cardinality_error_dn_0_unscaled: 169.0000 (177.2802)  loss_ce_1_unscaled: 0.1117 (0.1197)  loss_bbox_1_unscaled: 0.0071 (0.0076)  loss_giou_1_unscaled: 0.3070 (0.3329)  loss_xy_1_unscaled: 0.0024 (0.0026)  loss_hw_1_unscaled: 0.0045 (0.0050)  cardinality_error_1_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_1_unscaled: 0.0351 (0.0516)  loss_bbox_dn_1_unscaled: 0.0049 (0.0032)  loss_giou_dn_1_unscaled: 0.2315 (0.1538)  loss_xy_dn_1_unscaled: 0.0017 (0.0012)  loss_hw_dn_1_unscaled: 0.0030 (0.0020)  cardinality_error_dn_1_unscaled: 169.0000 (177.2794)  loss_ce_2_unscaled: 0.0838 (0.1091)  loss_bbox_2_unscaled: 0.0068 (0.0076)  loss_giou_2_unscaled: 0.3095 (0.3312)  loss_xy_2_unscaled: 0.0025 (0.0026)  loss_hw_2_unscaled: 0.0045 (0.0050)  cardinality_error_2_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_2_unscaled: 0.0379 (0.0476)  loss_bbox_dn_2_unscaled: 0.0049 (0.0030)  loss_giou_dn_2_unscaled: 0.2157 (0.1463)  loss_xy_dn_2_unscaled: 0.0017 (0.0011)  loss_hw_dn_2_unscaled: 0.0031 (0.0019)  cardinality_error_dn_2_unscaled: 169.0000 (177.2804)  loss_ce_3_unscaled: 0.0837 (0.1062)  loss_bbox_3_unscaled: 0.0067 (0.0076)  loss_giou_3_unscaled: 0.3092 (0.3300)  loss_xy_3_unscaled: 0.0025 (0.0026)  loss_hw_3_unscaled: 0.0044 (0.0050)  cardinality_error_3_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_3_unscaled: 0.0340 (0.0454)  loss_bbox_dn_3_unscaled: 0.0048 (0.0030)  loss_giou_dn_3_unscaled: 0.2161 (0.1448)  loss_xy_dn_3_unscaled: 0.0016 (0.0011)  loss_hw_dn_3_unscaled: 0.0030 (0.0018)  cardinality_error_dn_3_unscaled: 169.0000 (177.2804)  loss_ce_4_unscaled: 0.0767 (0.1049)  loss_bbox_4_unscaled: 0.0067 (0.0076)  loss_giou_4_unscaled: 0.3117 (0.3306)  loss_xy_4_unscaled: 0.0025 (0.0026)  loss_hw_4_unscaled: 0.0045 (0.0050)  cardinality_error_4_unscaled: 1112.0000 (1097.1753)  loss_ce_dn_4_unscaled: 0.0352 (0.0432)  loss_bbox_dn_4_unscaled: 0.0047 (0.0030)  loss_giou_dn_4_unscaled: 0.2162 (0.1451)  loss_xy_dn_4_unscaled: 0.0016 (0.0011)  loss_hw_dn_4_unscaled: 0.0030 (0.0018)  cardinality_error_dn_4_unscaled: 169.0000 (177.2804)  loss_ce_interm_unscaled: 0.1443 (0.1467)  loss_bbox_interm_unscaled: 0.0072 (0.0083)  loss_giou_interm_unscaled: 0.3334 (0.3550)  loss_xy_interm_unscaled: 0.0023 (0.0028)  loss_hw_interm_unscaled: 0.0048 (0.0054)  cardinality_error_interm_unscaled: 1112.0000 (1097.1697)  loss_coverage_unscaled: 0.1517 (0.1710)  loss_interval_unscaled: 1.0682 (0.8459)  loss_count_unscaled: 0.0265 (0.1961)  loss_spacing_unscaled: 0.0000 (0.0227)  loss_boundary_guide_unscaled: 0.0130 (0.0349)  ccm_loss_unscaled: 0.3214 (0.3545)
+Test:  [    0/14018]  eta: 4:58:05  class_error: 0.00  loss: 5.1250 (5.1250)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0927 (0.0927)  loss_bbox: 0.0212 (0.0212)  loss_giou: 0.5767 (0.5767)  loss_ce_0: 0.1262 (0.1262)  loss_bbox_0: 0.0206 (0.0206)  loss_giou_0: 0.6171 (0.6171)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.1015 (0.1015)  loss_bbox_1: 0.0199 (0.0199)  loss_giou_1: 0.5985 (0.5985)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.1140 (0.1140)  loss_bbox_2: 0.0213 (0.0213)  loss_giou_2: 0.5837 (0.5837)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.1077 (0.1077)  loss_bbox_3: 0.0214 (0.0214)  loss_giou_3: 0.5742 (0.5742)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.1027 (0.1027)  loss_bbox_4: 0.0212 (0.0212)  loss_giou_4: 0.5756 (0.5756)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0988 (0.0988)  loss_bbox_interm: 0.0238 (0.0238)  loss_giou_interm: 0.7063 (0.7063)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0927 (0.0927)  class_error_unscaled: 0.0000 (0.0000)  loss_bbox_unscaled: 0.0042 (0.0042)  loss_giou_unscaled: 0.2884 (0.2884)  loss_xy_unscaled: 0.0011 (0.0011)  loss_hw_unscaled: 0.0032 (0.0032)  cardinality_error_unscaled: 293.0000 (293.0000)  loss_ce_0_unscaled: 0.1262 (0.1262)  loss_bbox_0_unscaled: 0.0041 (0.0041)  loss_giou_0_unscaled: 0.3085 (0.3085)  loss_xy_0_unscaled: 0.0011 (0.0011)  loss_hw_0_unscaled: 0.0030 (0.0030)  cardinality_error_0_unscaled: 293.0000 (293.0000)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.1015 (0.1015)  loss_bbox_1_unscaled: 0.0040 (0.0040)  loss_giou_1_unscaled: 0.2992 (0.2992)  loss_xy_1_unscaled: 0.0010 (0.0010)  loss_hw_1_unscaled: 0.0030 (0.0030)  cardinality_error_1_unscaled: 293.0000 (293.0000)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.1140 (0.1140)  loss_bbox_2_unscaled: 0.0043 (0.0043)  loss_giou_2_unscaled: 0.2918 (0.2918)  loss_xy_2_unscaled: 0.0011 (0.0011)  loss_hw_2_unscaled: 0.0031 (0.0031)  cardinality_error_2_unscaled: 293.0000 (293.0000)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.1077 (0.1077)  loss_bbox_3_unscaled: 0.0043 (0.0043)  loss_giou_3_unscaled: 0.2871 (0.2871)  loss_xy_3_unscaled: 0.0011 (0.0011)  loss_hw_3_unscaled: 0.0032 (0.0032)  cardinality_error_3_unscaled: 293.0000 (293.0000)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.1027 (0.1027)  loss_bbox_4_unscaled: 0.0042 (0.0042)  loss_giou_4_unscaled: 0.2878 (0.2878)  loss_xy_4_unscaled: 0.0011 (0.0011)  loss_hw_4_unscaled: 0.0032 (0.0032)  cardinality_error_4_unscaled: 293.0000 (293.0000)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0988 (0.0988)  loss_bbox_interm_unscaled: 0.0048 (0.0048)  loss_giou_interm_unscaled: 0.3532 (0.3532)  loss_xy_interm_unscaled: 0.0014 (0.0014)  loss_hw_interm_unscaled: 0.0033 (0.0033)  cardinality_error_interm_unscaled: 293.0000 (293.0000)  time: 1.2759  data: 0.9943  max mem: 12339
+Test:  [ 5000/14018]  eta: 2:24:48  class_error: 0.00  loss: 5.0448 (6.0574)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0183 (0.1416)  loss_bbox: 0.0379 (0.0401)  loss_giou: 0.6457 (0.6719)  loss_ce_0: 0.0494 (0.1707)  loss_bbox_0: 0.0313 (0.0397)  loss_giou_0: 0.6129 (0.6710)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0381 (0.1510)  loss_bbox_1: 0.0320 (0.0396)  loss_giou_1: 0.5854 (0.6692)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0267 (0.1422)  loss_bbox_2: 0.0332 (0.0397)  loss_giou_2: 0.6042 (0.6691)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0249 (0.1375)  loss_bbox_3: 0.0374 (0.0401)  loss_giou_3: 0.6408 (0.6717)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0337 (0.1433)  loss_bbox_4: 0.0377 (0.0404)  loss_giou_4: 0.6454 (0.6721)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0614 (0.1730)  loss_bbox_interm: 0.0346 (0.0409)  loss_giou_interm: 0.7468 (0.6924)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0183 (0.1416)  class_error_unscaled: 0.0000 (1.2967)  loss_bbox_unscaled: 0.0076 (0.0080)  loss_giou_unscaled: 0.3229 (0.3360)  loss_xy_unscaled: 0.0022 (0.0029)  loss_hw_unscaled: 0.0045 (0.0051)  cardinality_error_unscaled: 299.0000 (522.1394)  loss_ce_0_unscaled: 0.0494 (0.1707)  loss_bbox_0_unscaled: 0.0063 (0.0079)  loss_giou_0_unscaled: 0.3065 (0.3355)  loss_xy_0_unscaled: 0.0022 (0.0029)  loss_hw_0_unscaled: 0.0042 (0.0050)  cardinality_error_0_unscaled: 299.0000 (522.1394)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0381 (0.1510)  loss_bbox_1_unscaled: 0.0064 (0.0079)  loss_giou_1_unscaled: 0.2927 (0.3346)  loss_xy_1_unscaled: 0.0022 (0.0029)  loss_hw_1_unscaled: 0.0043 (0.0050)  cardinality_error_1_unscaled: 299.0000 (522.1394)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0267 (0.1422)  loss_bbox_2_unscaled: 0.0066 (0.0079)  loss_giou_2_unscaled: 0.3021 (0.3346)  loss_xy_2_unscaled: 0.0021 (0.0029)  loss_hw_2_unscaled: 0.0043 (0.0050)  cardinality_error_2_unscaled: 299.0000 (522.1394)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0249 (0.1375)  loss_bbox_3_unscaled: 0.0075 (0.0080)  loss_giou_3_unscaled: 0.3204 (0.3359)  loss_xy_3_unscaled: 0.0021 (0.0029)  loss_hw_3_unscaled: 0.0045 (0.0051)  cardinality_error_3_unscaled: 299.0000 (522.1394)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0337 (0.1433)  loss_bbox_4_unscaled: 0.0075 (0.0081)  loss_giou_4_unscaled: 0.3227 (0.3361)  loss_xy_4_unscaled: 0.0022 (0.0030)  loss_hw_4_unscaled: 0.0045 (0.0051)  cardinality_error_4_unscaled: 299.0000 (522.1394)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0614 (0.1730)  loss_bbox_interm_unscaled: 0.0069 (0.0082)  loss_giou_interm_unscaled: 0.3734 (0.3462)  loss_xy_interm_unscaled: 0.0024 (0.0030)  loss_hw_interm_unscaled: 0.0045 (0.0052)  cardinality_error_interm_unscaled: 299.0000 (522.1394)  time: 1.1651  data: 0.0058  max mem: 12339
+Test:  [10000/14018]  eta: 1:03:47  class_error: 0.00  loss: 5.2581 (6.1176)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0092 (0.1472)  loss_bbox: 0.0287 (0.0405)  loss_giou: 0.6239 (0.6766)  loss_ce_0: 0.0898 (0.1706)  loss_bbox_0: 0.0281 (0.0402)  loss_giou_0: 0.6154 (0.6774)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0348 (0.1534)  loss_bbox_1: 0.0275 (0.0399)  loss_giou_1: 0.6137 (0.6746)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0102 (0.1456)  loss_bbox_2: 0.0290 (0.0401)  loss_giou_2: 0.6327 (0.6737)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0162 (0.1409)  loss_bbox_3: 0.0289 (0.0404)  loss_giou_3: 0.6353 (0.6765)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0115 (0.1481)  loss_bbox_4: 0.0287 (0.0407)  loss_giou_4: 0.6210 (0.6771)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0991 (0.1758)  loss_bbox_interm: 0.0315 (0.0414)  loss_giou_interm: 0.6511 (0.6966)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0092 (0.1472)  class_error_unscaled: 0.0000 (1.2395)  loss_bbox_unscaled: 0.0057 (0.0081)  loss_giou_unscaled: 0.3119 (0.3383)  loss_xy_unscaled: 0.0019 (0.0030)  loss_hw_unscaled: 0.0037 (0.0051)  cardinality_error_unscaled: 298.0000 (525.5327)  loss_ce_0_unscaled: 0.0898 (0.1706)  loss_bbox_0_unscaled: 0.0056 (0.0080)  loss_giou_0_unscaled: 0.3077 (0.3387)  loss_xy_0_unscaled: 0.0018 (0.0030)  loss_hw_0_unscaled: 0.0032 (0.0050)  cardinality_error_0_unscaled: 298.0000 (525.5327)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0348 (0.1534)  loss_bbox_1_unscaled: 0.0055 (0.0080)  loss_giou_1_unscaled: 0.3069 (0.3373)  loss_xy_1_unscaled: 0.0021 (0.0030)  loss_hw_1_unscaled: 0.0034 (0.0050)  cardinality_error_1_unscaled: 298.0000 (525.5327)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0102 (0.1456)  loss_bbox_2_unscaled: 0.0058 (0.0080)  loss_giou_2_unscaled: 0.3164 (0.3369)  loss_xy_2_unscaled: 0.0020 (0.0030)  loss_hw_2_unscaled: 0.0035 (0.0051)  cardinality_error_2_unscaled: 298.0000 (525.5327)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0162 (0.1409)  loss_bbox_3_unscaled: 0.0058 (0.0081)  loss_giou_3_unscaled: 0.3177 (0.3383)  loss_xy_3_unscaled: 0.0020 (0.0030)  loss_hw_3_unscaled: 0.0037 (0.0051)  cardinality_error_3_unscaled: 298.0000 (525.5327)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0115 (0.1481)  loss_bbox_4_unscaled: 0.0057 (0.0081)  loss_giou_4_unscaled: 0.3105 (0.3385)  loss_xy_4_unscaled: 0.0019 (0.0030)  loss_hw_4_unscaled: 0.0037 (0.0051)  cardinality_error_4_unscaled: 298.0000 (525.5327)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0991 (0.1758)  loss_bbox_interm_unscaled: 0.0063 (0.0083)  loss_giou_interm_unscaled: 0.3256 (0.3483)  loss_xy_interm_unscaled: 0.0018 (0.0031)  loss_hw_interm_unscaled: 0.0037 (0.0052)  cardinality_error_interm_unscaled: 298.0000 (525.5327)  time: 0.5524  data: 0.0055  max mem: 12339
+Test:  [14017/14018]  eta: 0:00:00  class_error: 0.00  loss: 5.5584 (6.1678)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0765 (0.1539)  loss_bbox: 0.0335 (0.0405)  loss_giou: 0.6549 (0.6788)  loss_ce_0: 0.1051 (0.1743)  loss_bbox_0: 0.0313 (0.0401)  loss_giou_0: 0.6956 (0.6791)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0802 (0.1579)  loss_bbox_1: 0.0292 (0.0399)  loss_giou_1: 0.6791 (0.6766)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0556 (0.1518)  loss_bbox_2: 0.0292 (0.0401)  loss_giou_2: 0.6570 (0.6757)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0624 (0.1464)  loss_bbox_3: 0.0334 (0.0405)  loss_giou_3: 0.6597 (0.6788)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0742 (0.1550)  loss_bbox_4: 0.0335 (0.0407)  loss_giou_4: 0.6488 (0.6794)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1170 (0.1789)  loss_bbox_interm: 0.0326 (0.0413)  loss_giou_interm: 0.6496 (0.6980)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0765 (0.1539)  class_error_unscaled: 0.0000 (1.1914)  loss_bbox_unscaled: 0.0067 (0.0081)  loss_giou_unscaled: 0.3274 (0.3394)  loss_xy_unscaled: 0.0020 (0.0030)  loss_hw_unscaled: 0.0046 (0.0051)  cardinality_error_unscaled: 299.0000 (522.2820)  loss_ce_0_unscaled: 0.1051 (0.1743)  loss_bbox_0_unscaled: 0.0063 (0.0080)  loss_giou_0_unscaled: 0.3478 (0.3396)  loss_xy_0_unscaled: 0.0020 (0.0030)  loss_hw_0_unscaled: 0.0048 (0.0051)  cardinality_error_0_unscaled: 299.0000 (522.2820)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0802 (0.1579)  loss_bbox_1_unscaled: 0.0058 (0.0080)  loss_giou_1_unscaled: 0.3396 (0.3383)  loss_xy_1_unscaled: 0.0020 (0.0029)  loss_hw_1_unscaled: 0.0040 (0.0050)  cardinality_error_1_unscaled: 299.0000 (522.2820)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0556 (0.1518)  loss_bbox_2_unscaled: 0.0058 (0.0080)  loss_giou_2_unscaled: 0.3285 (0.3379)  loss_xy_2_unscaled: 0.0020 (0.0029)  loss_hw_2_unscaled: 0.0040 (0.0051)  cardinality_error_2_unscaled: 299.0000 (522.2820)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0624 (0.1464)  loss_bbox_3_unscaled: 0.0067 (0.0081)  loss_giou_3_unscaled: 0.3298 (0.3394)  loss_xy_3_unscaled: 0.0020 (0.0030)  loss_hw_3_unscaled: 0.0046 (0.0051)  cardinality_error_3_unscaled: 299.0000 (522.2820)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0742 (0.1550)  loss_bbox_4_unscaled: 0.0067 (0.0081)  loss_giou_4_unscaled: 0.3244 (0.3397)  loss_xy_4_unscaled: 0.0020 (0.0030)  loss_hw_4_unscaled: 0.0046 (0.0051)  cardinality_error_4_unscaled: 299.0000 (522.2820)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1170 (0.1789)  loss_bbox_interm_unscaled: 0.0065 (0.0083)  loss_giou_interm_unscaled: 0.3248 (0.3490)  loss_xy_interm_unscaled: 0.0021 (0.0031)  loss_hw_interm_unscaled: 0.0043 (0.0052)  cardinality_error_interm_unscaled: 299.0000 (522.2820)  time: 0.3803  data: 0.0047  max mem: 12339
+Test: Total time: 3:41:33 (0.9483 s / it)
+Averaged stats: class_error: 0.00  loss: 5.5584 (6.1678)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0765 (0.1539)  loss_bbox: 0.0335 (0.0405)  loss_giou: 0.6549 (0.6788)  loss_ce_0: 0.1051 (0.1743)  loss_bbox_0: 0.0313 (0.0401)  loss_giou_0: 0.6956 (0.6791)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0802 (0.1579)  loss_bbox_1: 0.0292 (0.0399)  loss_giou_1: 0.6791 (0.6766)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0556 (0.1518)  loss_bbox_2: 0.0292 (0.0401)  loss_giou_2: 0.6570 (0.6757)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0624 (0.1464)  loss_bbox_3: 0.0334 (0.0405)  loss_giou_3: 0.6597 (0.6788)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0742 (0.1550)  loss_bbox_4: 0.0335 (0.0407)  loss_giou_4: 0.6488 (0.6794)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1170 (0.1789)  loss_bbox_interm: 0.0326 (0.0413)  loss_giou_interm: 0.6496 (0.6980)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0765 (0.1539)  class_error_unscaled: 0.0000 (1.1914)  loss_bbox_unscaled: 0.0067 (0.0081)  loss_giou_unscaled: 0.3274 (0.3394)  loss_xy_unscaled: 0.0020 (0.0030)  loss_hw_unscaled: 0.0046 (0.0051)  cardinality_error_unscaled: 299.0000 (522.2820)  loss_ce_0_unscaled: 0.1051 (0.1743)  loss_bbox_0_unscaled: 0.0063 (0.0080)  loss_giou_0_unscaled: 0.3478 (0.3396)  loss_xy_0_unscaled: 0.0020 (0.0030)  loss_hw_0_unscaled: 0.0048 (0.0051)  cardinality_error_0_unscaled: 299.0000 (522.2820)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0802 (0.1579)  loss_bbox_1_unscaled: 0.0058 (0.0080)  loss_giou_1_unscaled: 0.3396 (0.3383)  loss_xy_1_unscaled: 0.0020 (0.0029)  loss_hw_1_unscaled: 0.0040 (0.0050)  cardinality_error_1_unscaled: 299.0000 (522.2820)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0556 (0.1518)  loss_bbox_2_unscaled: 0.0058 (0.0080)  loss_giou_2_unscaled: 0.3285 (0.3379)  loss_xy_2_unscaled: 0.0020 (0.0029)  loss_hw_2_unscaled: 0.0040 (0.0051)  cardinality_error_2_unscaled: 299.0000 (522.2820)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0624 (0.1464)  loss_bbox_3_unscaled: 0.0067 (0.0081)  loss_giou_3_unscaled: 0.3298 (0.3394)  loss_xy_3_unscaled: 0.0020 (0.0030)  loss_hw_3_unscaled: 0.0046 (0.0051)  cardinality_error_3_unscaled: 299.0000 (522.2820)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0742 (0.1550)  loss_bbox_4_unscaled: 0.0067 (0.0081)  loss_giou_4_unscaled: 0.3244 (0.3397)  loss_xy_4_unscaled: 0.0020 (0.0030)  loss_hw_4_unscaled: 0.0046 (0.0051)  cardinality_error_4_unscaled: 299.0000 (522.2820)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1170 (0.1789)  loss_bbox_interm_unscaled: 0.0065 (0.0083)  loss_giou_interm_unscaled: 0.3248 (0.3490)  loss_xy_interm_unscaled: 0.0021 (0.0031)  loss_hw_interm_unscaled: 0.0043 (0.0052)  cardinality_error_interm_unscaled: 299.0000 (522.2820)
+Accumulating evaluation results...
+DONE (t=454.00s).
+IoU metric: bbox
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.237
+Average Precision  (AP) @[ IoU=0.25      | area=   all | maxDets=1500 ] = -1.000
+Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.588
+Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1500 ] = 0.145
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.125
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.236
+Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.285
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.363
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.069
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.383
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.430
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.232
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.436
+Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.458
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.549
+Optimal LRP             @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.784
+Optimal LRP Loc         @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.280
+Optimal LRP FP          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.311
+Optimal LRP FN          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.395
+# Class-specific LRP-Optimal Thresholds #
+ [0.459 0.331 0.38  0.473 0.355 0.382 0.321 0.541]
+Training time 5:38:55
+
+进程已结束，退出代码为 0

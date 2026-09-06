@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "name": "dqdetr_best305.pth",
+      "source": "D:\\PythonProject\\DQ-DETR\\DQ-DETR\\models\\dqdetr_best305.pth",
+      "size_bytes": 236322319,
+      "sha256": "F854EEC1F0D0EBF6E131D01E0B2826CE5690B593A5ED7F3FB8203453A62936E4"
+    },
+    {
+      "name": "pretrain_model.pth",
+      "source": "D:\\PythonProject\\DQ-DETR\\DQ-DETR\\models\\pretrain_model.pth",
+      "size_bytes": 226833878,
+      "sha256": "E6C3723B0F82C7AA6A6954576AD4E572BAB1F87B57281069DD1814AFEDC16ABE"
+    }
+  ]
+}

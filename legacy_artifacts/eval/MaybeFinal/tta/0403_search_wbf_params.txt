@@ -1,0 +1,122 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/search_wbf_params.py --variants_path logs/tta_variants_ver6/variants_raw.pt --ann_file /workspace/DQDetr/data/path/AITODv2/annotations/aitodv2_test.json --dataset_file aitodv2 --coco_path /workspace/DQDetr/data/path/AITODv2 -c config/DQ_5scale.py
+[Search] Loading variants from logs/tta_variants_ver6/variants_raw.pt ...
+[Search]   6 variants loaded, 14018 images each
+[Search] Loading COCO GT from /workspace/DQDetr/data/path/AITODv2/annotations/aitodv2_test.json ...
+[Search]   14018 images in GT
+
+[Search] 🚀 Randomly subsampling 1000 images for fast grid search...
+creating index...
+index created!
+
+[Search] Grid: 5 iou_thrs × 4 skip_thrs × 4 nms_ious = 80 combinations
+
+   #  iou_thr  skip_thr  nms_iou   AP(Sub)   time
+-------------------------------------------------
+   1     0.40     0.001     None    0.3130  923.9s ★
+   2     0.40     0.001     0.45    0.3130  943.7s
+   3     0.40     0.001     0.50    0.3130  962.7s
+   4     0.40     0.001     0.55    0.3130  932.1s
+   5     0.40     0.003     None    0.3130  911.3s
+   6     0.40     0.003     0.45    0.3130  919.6s
+   7     0.40     0.003     0.50    0.3130  936.6s
+   8     0.40     0.003     0.55    0.3130  931.7s
+   9     0.40     0.005     None    0.3130  920.1s
+
+
+  10     0.40     0.005     0.45    0.3130  935.8s
+  11     0.40     0.005     0.50    0.3130  925.7s
+  12     0.40     0.005     0.55    0.3130  930.2s
+  13     0.40     0.010     None    0.3331  640.4s ★
+  14     0.40     0.010     0.45    0.3330  646.1s
+  15     0.40     0.010     0.50    0.3331  654.7s
+  16     0.40     0.010     0.55    0.3331  648.9s
+  17     0.45     0.001     None    0.3160  926.0s
+  18     0.45     0.001     0.45    0.3160  941.6s
+  19     0.45     0.001     0.50    0.3160  963.0s
+  20     0.45     0.001     0.55    0.3161  962.4s
+  21     0.45     0.003     None    0.3160  943.8s
+  22     0.45     0.003     0.45    0.3160  971.8s
+  23     0.45     0.003     0.50    0.3160  994.4s
+  24     0.45     0.003     0.55    0.3161  973.5s
+  25     0.45     0.005     None    0.3160  942.2s
+  26     0.45     0.005     0.45    0.3160  943.6s
+  27     0.45     0.005     0.50    0.3160  954.4s
+  28     0.45     0.005     0.55    0.3161  979.0s
+  29     0.45     0.010     None    0.3342  665.7s ★
+  30     0.45     0.010     0.45    0.3342  662.5s
+  31     0.45     0.010     0.50    0.3342  671.9s
+  32     0.45     0.010     0.55    0.3342  676.0s
+  33     0.50     0.001     None    0.3191  946.7s
+  34     0.50     0.001     0.45    0.3188  949.3s
+  35     0.50     0.001     0.50    0.3190  977.3s
+  36     0.50     0.001     0.55    0.3191  973.0s
+  37     0.50     0.003     None    0.3191  942.3s
+  38     0.50     0.003     0.45    0.3188  939.6s
+  39     0.50     0.003     0.50    0.3190  968.0s
+  40     0.50     0.003     0.55    0.3191  971.6s
+  41     0.50     0.005     None    0.3191  949.6s
+  42     0.50     0.005     0.45    0.3188  940.4s
+  43     0.50     0.005     0.50    0.3190  952.2s
+  44     0.50     0.005     0.55    0.3191  956.3s
+  45     0.50     0.010     None    0.3360  683.2s ★
+  46     0.50     0.010     0.45    0.3357  671.7s
+  47     0.50     0.010     0.50    0.3359  699.3s
+  48     0.50     0.010     0.55    0.3360  694.8s
+  49     0.55     0.001     None    0.3213  967.2s
+  50     0.55     0.001     0.45    0.3208  942.5s
+  51     0.55     0.001     0.50    0.3209  968.6s
+  52     0.55     0.001     0.55    0.3212  990.1s
+  53     0.55     0.003     None    0.3213  965.4s
+  54     0.55     0.003     0.45    0.3208  953.9s
+  55     0.55     0.003     0.50    0.3209  968.2s
+  56     0.55     0.003     0.55    0.3212  983.3s
+  57     0.55     0.005     None    0.3213  967.8s
+  58     0.55     0.005     0.45    0.3208  933.8s
+  59     0.55     0.005     0.50    0.3209  961.3s
+  60     0.55     0.005     0.55    0.3212  972.1s
+  61     0.55     0.010     None    0.3367  699.3s ★
+  62     0.55     0.010     0.45    0.3360  669.8s
+  63     0.55     0.010     0.50    0.3362  695.0s
+  64     0.55     0.010     0.55    0.3365  700.8s
+  65     0.60     0.001     None    0.3241  974.6s
+  66     0.60     0.001     0.45    0.3233  914.8s
+  67     0.60     0.001     0.50    0.3235  949.2s
+  68     0.60     0.001     0.55    0.3238  973.6s
+  69     0.60     0.003     None    0.3241  973.9s
+  70     0.60     0.003     0.45    0.3233  926.1s
+  71     0.60     0.003     0.50    0.3235  958.4s
+  72     0.60     0.003     0.55    0.3238  982.9s
+  73     0.60     0.005     None    0.3241  969.4s
+  74     0.60     0.005     0.45    0.3233  932.3s
+  75     0.60     0.005     0.50    0.3235  956.6s
+  76     0.60     0.005     0.55    0.3238  971.9s
+  77     0.60     0.010     None    0.3376  705.6s ★
+  78     0.60     0.010     0.45    0.3366  684.9s
+  79     0.60     0.010     0.50    0.3368  720.7s
+  80     0.60     0.010     0.55    0.3372  765.9s
+
+============================================================
+🌟 Fast search complete. Evaluating best parameters on FULL dataset (14018 images)...
+✅ Full Dataset Eval Done in 11177.6s
+👑 FINAL FULL DATASET AP = 0.3226
+  wbf_iou_thr  = 0.6
+  wbf_skip_thr = 0.01
+  cls_nms_iou  = None
+
+Run command for eval_tta.py:
+  python eval_tta.py \
+    -c config/DQ_5scale_v6.py \
+    --checkpoint <your_checkpoint> \
+    --coco_path /workspace/DQDetr/data/path/AITODv2 \
+    --dataset_file aitodv2 \
+    --output_dir logs/tta_eval_best \
+    --scales 736 800 864 \
+    --flip \
+    --wbf_iou_thr 0.6 \
+    --wbf_skip_thr 0.01 \
+    --no_cls_nms \
+    --no_cls_threshold
+
+[Search] Full results saved → logs/tta_variants_ver6/wbf_search_results.txt
+
+进程已结束，退出代码为 0

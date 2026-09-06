@@ -1,0 +1,29 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/test_ParamsAndGFLops.py -c config/DQ_5scale.py --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=True dn_box_noise_scale=1.0
+=> 正在构建你的模型 (Building model)...
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+
+★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+[Params 指标]
+总参数量 (Total Params):     58.996 M
+可训练参数 (Trainable):      58.774 M
+★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+=> 正在构造带 Padding Mask 的真实 NestedTensor 输入...
+
+=> 正在启用 PyTorch 官方底层 ATen 运算级 FLOPs 追踪 (最精准，无视 JIT)...
+/workspace/DQDetr/test_ParamsAndGFLops.py:64: UserWarning: mods argument is not needed anymore, you can stop passing it
+  flop_counter = FlopCounterMode(model, display=False)
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/functional.py:513: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3609.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+
+★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+[最终极、最精确的计算量指标]
+底层浮点运算总数 (Raw FLOPs): 1842.330 G
+论文标准计算量 (GMACs / GFLOPs): 921.165 G
+★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+
+进程已结束，退出代码为 0

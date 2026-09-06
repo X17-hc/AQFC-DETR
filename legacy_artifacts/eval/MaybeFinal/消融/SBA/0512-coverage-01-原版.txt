@@ -1,0 +1,624 @@
+/opt/conda/envs/DQDetr/bin/python3.11
+/workspace/DQDetr/main_aitod.py
+--output_dir logs/DQDETR_ver12/0512-ablation_SBA-coverage/0_1
+-c config/DQ_5scale_fullV2.py
+--coco_path /workspace/DQDetr/data/path/AITODv2
+--pretrain_model_path /workspace/DQDetr/logs/DQDETR_ver3/0312-cgfev8完整训练/checkpoint0012.pth
+--options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=True --eval
+Not using distributed mode
+data_aug_scales [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+data_aug_max_size 1333
+data_aug_scales2_resize [400, 500, 600]
+data_aug_scales2_crop [384, 600]
+data_aug_scale_overlap None
+mosaic_p 0.25
+mosaic_center_ratio (0.35, 0.65)
+mosaic_fill_value 114
+mosaic_warmup_end 2
+mosaic_decay_start 8
+copy_paste_p 0.35
+num_classes 9
+batch_size 2
+epochs 12
+lr 0.0001
+lr_backbone 1e-05
+param_dict_type default
+lr_backbone_names ['backbone.0']
+lr_linear_proj_names ['reference_points', 'sampling_offsets']
+lr_linear_proj_mult 0.1
+ddetr_lr_param False
+weight_decay 0.0001
+lr_drop 11
+clip_max_norm 0.1
+onecyclelr False
+multi_step_lr True
+lr_drop_list [13, 23]
+val_epoch [23]
+save_checkpoint_interval 1
+use_dn True
+dn_number 100
+dn_box_noise_scale 1.0
+dn_label_noise_ratio 0.5
+embed_init_tgt False
+dn_labelbook_size 91
+match_unstable_error True
+use_ema True
+ema_decay 0.9997
+ema_epoch 0
+ccm_params [8, 16, 32]
+ccm_cls_num 4
+dynamic_query_list [300, 500, 900, 1500]
+find_unused_parameters False
+modelname dqdetr
+frozen_weights None
+backbone resnet50
+use_checkpoint False
+dilation False
+position_embedding sine
+pe_temperatureH 20
+pe_temperatureW 20
+return_interm_indices [0, 1, 2, 3]
+backbone_freeze_keywords None
+enc_layers 6
+dec_layers 6
+unic_layers 0
+pre_norm False
+dim_feedforward 2048
+hidden_dim 256
+dropout 0.0
+nheads 8
+num_queries 900
+query_dim 4
+num_patterns 0
+pdetr3_bbox_embed_diff_each_layer False
+pdetr3_refHW -1
+random_refpoints_xy False
+fix_refpoints_hw -1
+dabdetr_yolo_like_anchor_update False
+dabdetr_deformable_encoder False
+dabdetr_deformable_decoder False
+use_deformable_box_attn False
+box_attn_type roi_align
+dec_layer_number None
+num_feature_levels 5
+enc_n_points 4
+dec_n_points 4
+decoder_layer_noise False
+dln_xy_noise 0.2
+dln_hw_noise 0.2
+add_channel_attention False
+add_pos_value False
+two_stage_type standard
+two_stage_pat_embed 0
+two_stage_add_query_num 0
+two_stage_bbox_embed_share False
+two_stage_class_embed_share False
+two_stage_learn_wh False
+two_stage_default_hw 0.05
+two_stage_keep_all_tokens False
+num_select 300
+transformer_activation relu
+batch_norm_type FrozenBatchNorm2d
+masks False
+aux_loss True
+set_cost_class 2.0
+set_cost_bbox 5.0
+set_cost_giou 2.0
+cls_loss_coef 1.0
+mask_loss_coef 1.0
+dice_loss_coef 1.0
+bbox_loss_coef 5.0
+giou_loss_coef 2.0
+enc_loss_coef 1.0
+interm_loss_coef 1.0
+no_interm_box_loss False
+focal_alpha 0.25
+decoder_sa_type sa
+matcher_type HungarianMatcher
+decoder_module_seq ['sa', 'ca', 'ffn']
+nms_iou_threshold -1
+dec_pred_bbox_embed_share True
+dec_pred_class_embed_share True
+use_detached_boxes_dec_out False
+coverage_loss_coef 0.1
+interval_loss_coef 0.05
+spacing_loss_coef 0.2
+ccm_loss_coef 1.0
+nwd_loss_coef 1.0
+gate_type tanh
+cgfe_no_spatial False
+dn_scalar 100
+dn_bbox_coef 1.0
+dn_label_coef 1.0
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[05/12 08:04:26.732]: git:
+  sha: N/A, status: clean, branch: N/A
+
+[05/12 08:04:26.732]: Command: /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver12/0512-ablation_SBA-coverage/0_1 -c config/DQ_5scale_fullV2.py --coco_path /workspace/DQDetr/data/path/AITODv2 --pretrain_model_path /workspace/DQDetr/logs/DQDETR_ver3/0312-cgfev8完整训练/checkpoint0012.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=True --eval
+[05/12 08:04:26.733]: Full config saved to logs/DQDETR_ver12/0512-ablation_SBA-coverage/0_1/config_args_all.json
+[05/12 08:04:26.733]: world size: 1
+[05/12 08:04:26.733]: rank: 0
+[05/12 08:04:26.733]: local_rank: 0
+[05/12 08:04:26.733]: args: Namespace(config_file='config/DQ_5scale_fullV2.py', options={'dn_scalar': 100, 'embed_init_tgt': False, 'dn_bbox_coef': 1.0, 'dn_label_coef': 1.0, 'use_ema': True}, dataset_file='aitodv2', coco_path='/workspace/DQDetr/data/path/AITODv2', coco_panoptic_path=None, remove_difficult=False, fix_size=False, output_dir='logs/DQDETR_ver12/0512-ablation_SBA-coverage/0_1', note='', device='cuda', seed=42, resume='', pretrain_model_path='/workspace/DQDetr/logs/DQDETR_ver3/0312-cgfev8完整训练/checkpoint0012.pth', finetune_ignore=None, start_epoch=0, eval=True, num_workers=10, test=False, debug=False, find_unused_params=False, save_results=False, save_log=False, world_size=1, dist_url='env://', rank=0, local_rank=0, amp=True, distributed=False, data_aug_scales=[480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800], data_aug_max_size=1333, data_aug_scales2_resize=[400, 500, 600], data_aug_scales2_crop=[384, 600], data_aug_scale_overlap=None, mosaic_p=0.25, mosaic_center_ratio=(0.35, 0.65), mosaic_fill_value=114, mosaic_warmup_end=2, mosaic_decay_start=8, copy_paste_p=0.35, num_classes=9, batch_size=2, epochs=12, lr=0.0001, lr_backbone=1e-05, param_dict_type='default', lr_backbone_names=['backbone.0'], lr_linear_proj_names=['reference_points', 'sampling_offsets'], lr_linear_proj_mult=0.1, ddetr_lr_param=False, weight_decay=0.0001, lr_drop=11, clip_max_norm=0.1, onecyclelr=False, multi_step_lr=True, lr_drop_list=[13, 23], val_epoch=[23], save_checkpoint_interval=1, use_dn=True, dn_number=100, dn_box_noise_scale=1.0, dn_label_noise_ratio=0.5, embed_init_tgt=False, dn_labelbook_size=91, match_unstable_error=True, use_ema=True, ema_decay=0.9997, ema_epoch=0, ccm_params=[8, 16, 32], ccm_cls_num=4, dynamic_query_list=[300, 500, 900, 1500], find_unused_parameters=False, modelname='dqdetr', frozen_weights=None, backbone='resnet50', use_checkpoint=False, dilation=False, position_embedding='sine', pe_temperatureH=20, pe_temperatureW=20, return_interm_indices=[0, 1, 2, 3], backbone_freeze_keywords=None, enc_layers=6, dec_layers=6, unic_layers=0, pre_norm=False, dim_feedforward=2048, hidden_dim=256, dropout=0.0, nheads=8, num_queries=900, query_dim=4, num_patterns=0, pdetr3_bbox_embed_diff_each_layer=False, pdetr3_refHW=-1, random_refpoints_xy=False, fix_refpoints_hw=-1, dabdetr_yolo_like_anchor_update=False, dabdetr_deformable_encoder=False, dabdetr_deformable_decoder=False, use_deformable_box_attn=False, box_attn_type='roi_align', dec_layer_number=None, num_feature_levels=5, enc_n_points=4, dec_n_points=4, decoder_layer_noise=False, dln_xy_noise=0.2, dln_hw_noise=0.2, add_channel_attention=False, add_pos_value=False, two_stage_type='standard', two_stage_pat_embed=0, two_stage_add_query_num=0, two_stage_bbox_embed_share=False, two_stage_class_embed_share=False, two_stage_learn_wh=False, two_stage_default_hw=0.05, two_stage_keep_all_tokens=False, num_select=300, transformer_activation='relu', batch_norm_type='FrozenBatchNorm2d', masks=False, aux_loss=True, set_cost_class=2.0, set_cost_bbox=5.0, set_cost_giou=2.0, cls_loss_coef=1.0, mask_loss_coef=1.0, dice_loss_coef=1.0, bbox_loss_coef=5.0, giou_loss_coef=2.0, enc_loss_coef=1.0, interm_loss_coef=1.0, no_interm_box_loss=False, focal_alpha=0.25, decoder_sa_type='sa', matcher_type='HungarianMatcher', decoder_module_seq=['sa', 'ca', 'ffn'], nms_iou_threshold=-1, dec_pred_bbox_embed_share=True, dec_pred_class_embed_share=True, use_detached_boxes_dec_out=False, coverage_loss_coef=0.1, interval_loss_coef=0.05, spacing_loss_coef=0.2, ccm_loss_coef=1.0, nwd_loss_coef=1.0, gate_type='tanh', cgfe_no_spatial=False, dn_scalar=100, dn_bbox_coef=1.0, dn_label_coef=1.0)
+
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+[05/12 08:04:31.306]: number of params:58772248
+[05/12 08:04:31.308]: params:
+{
+  "transformer.level_embed": 1280,
+  "transformer.CCM.density_conv1.weight": 131072,
+  "transformer.CCM.density_conv1.bias": 512,
+  "transformer.CCM.ccm_backbone.0.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.0.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.0.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.1.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.1.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.1.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.2.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.2.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.2.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.3.conv.weight": 1179648,
+  "transformer.CCM.ccm_backbone.3.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.3.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.4.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.4.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.4.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.5.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.5.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.5.gn.bias": 256,
+  "transformer.CCM.boundary_head.1.weight": 32768,
+  "transformer.CCM.boundary_head.1.bias": 128,
+  "transformer.CCM.boundary_head.2.weight": 128,
+  "transformer.CCM.boundary_head.2.bias": 128,
+  "transformer.CCM.boundary_head.5.weight": 384,
+  "transformer.CCM.boundary_head.5.bias": 3,
+  "transformer.CCM.count_regressor.2.weight": 32768,
+  "transformer.CCM.count_regressor.2.bias": 128,
+  "transformer.CCM.count_regressor.3.weight": 128,
+  "transformer.CCM.count_regressor.3.bias": 128,
+  "transformer.CCM.count_regressor.6.weight": 128,
+  "transformer.CCM.count_regressor.6.bias": 1,
+  "transformer.CCM.ccm_classifier.weight": 1024,
+  "transformer.CCM.ccm_classifier.bias": 4,
+  "transformer.CCM.ref_point_conv.weight": 256,
+  "transformer.CCM.ref_point_conv.bias": 1,
+  "transformer.CGFE.ChannelGate.scale_factor": 1,
+  "transformer.CGFE.ChannelGate.mlp.1.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.1.bias": 16,
+  "transformer.CGFE.ChannelGate.mlp.3.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.3.bias": 256,
+  "transformer.CGFE.SpatialAttn.conv.conv.weight": 98,
+  "transformer.CGFE.SpatialAttn.conv.bn.weight": 1,
+  "transformer.CGFE.SpatialAttn.conv.bn.bias": 1,
+  "transformer.multiscale.conv1.conv.weight": 589824,
+  "transformer.multiscale.conv1.gn.weight": 256,
+  "transformer.multiscale.conv1.gn.bias": 256,
+  "transformer.multiscale.conv2.conv.weight": 589824,
+  "transformer.multiscale.conv2.gn.weight": 256,
+  "transformer.multiscale.conv2.gn.bias": 256,
+  "transformer.multiscale.conv3.conv.weight": 589824,
+  "transformer.multiscale.conv3.gn.weight": 256,
+  "transformer.multiscale.conv3.gn.bias": 256,
+  "transformer.multiscale.conv4.conv.weight": 589824,
+  "transformer.multiscale.conv4.gn.weight": 256,
+  "transformer.multiscale.conv4.gn.bias": 256,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.0.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.0.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.0.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.0.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.0.norm1.weight": 256,
+  "transformer.encoder.layers.0.norm1.bias": 256,
+  "transformer.encoder.layers.0.linear1.weight": 524288,
+  "transformer.encoder.layers.0.linear1.bias": 2048,
+  "transformer.encoder.layers.0.linear2.weight": 524288,
+  "transformer.encoder.layers.0.linear2.bias": 256,
+  "transformer.encoder.layers.0.norm2.weight": 256,
+  "transformer.encoder.layers.0.norm2.bias": 256,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.1.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.1.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.1.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.1.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.1.norm1.weight": 256,
+  "transformer.encoder.layers.1.norm1.bias": 256,
+  "transformer.encoder.layers.1.linear1.weight": 524288,
+  "transformer.encoder.layers.1.linear1.bias": 2048,
+  "transformer.encoder.layers.1.linear2.weight": 524288,
+  "transformer.encoder.layers.1.linear2.bias": 256,
+  "transformer.encoder.layers.1.norm2.weight": 256,
+  "transformer.encoder.layers.1.norm2.bias": 256,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.2.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.2.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.2.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.2.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.2.norm1.weight": 256,
+  "transformer.encoder.layers.2.norm1.bias": 256,
+  "transformer.encoder.layers.2.linear1.weight": 524288,
+  "transformer.encoder.layers.2.linear1.bias": 2048,
+  "transformer.encoder.layers.2.linear2.weight": 524288,
+  "transformer.encoder.layers.2.linear2.bias": 256,
+  "transformer.encoder.layers.2.norm2.weight": 256,
+  "transformer.encoder.layers.2.norm2.bias": 256,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.3.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.3.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.3.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.3.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.3.norm1.weight": 256,
+  "transformer.encoder.layers.3.norm1.bias": 256,
+  "transformer.encoder.layers.3.linear1.weight": 524288,
+  "transformer.encoder.layers.3.linear1.bias": 2048,
+  "transformer.encoder.layers.3.linear2.weight": 524288,
+  "transformer.encoder.layers.3.linear2.bias": 256,
+  "transformer.encoder.layers.3.norm2.weight": 256,
+  "transformer.encoder.layers.3.norm2.bias": 256,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.4.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.4.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.4.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.4.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.4.norm1.weight": 256,
+  "transformer.encoder.layers.4.norm1.bias": 256,
+  "transformer.encoder.layers.4.linear1.weight": 524288,
+  "transformer.encoder.layers.4.linear1.bias": 2048,
+  "transformer.encoder.layers.4.linear2.weight": 524288,
+  "transformer.encoder.layers.4.linear2.bias": 256,
+  "transformer.encoder.layers.4.norm2.weight": 256,
+  "transformer.encoder.layers.4.norm2.bias": 256,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.5.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.5.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.5.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.5.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.5.norm1.weight": 256,
+  "transformer.encoder.layers.5.norm1.bias": 256,
+  "transformer.encoder.layers.5.linear1.weight": 524288,
+  "transformer.encoder.layers.5.linear1.bias": 2048,
+  "transformer.encoder.layers.5.linear2.weight": 524288,
+  "transformer.encoder.layers.5.linear2.bias": 256,
+  "transformer.encoder.layers.5.norm2.weight": 256,
+  "transformer.encoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.0.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.0.norm1.weight": 256,
+  "transformer.decoder.layers.0.norm1.bias": 256,
+  "transformer.decoder.layers.0.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.0.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.0.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.0.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.0.norm2.weight": 256,
+  "transformer.decoder.layers.0.norm2.bias": 256,
+  "transformer.decoder.layers.0.linear1.weight": 524288,
+  "transformer.decoder.layers.0.linear1.bias": 2048,
+  "transformer.decoder.layers.0.linear2.weight": 524288,
+  "transformer.decoder.layers.0.linear2.bias": 256,
+  "transformer.decoder.layers.0.norm3.weight": 256,
+  "transformer.decoder.layers.0.norm3.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.1.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.1.norm1.weight": 256,
+  "transformer.decoder.layers.1.norm1.bias": 256,
+  "transformer.decoder.layers.1.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.1.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.1.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.1.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.1.norm2.weight": 256,
+  "transformer.decoder.layers.1.norm2.bias": 256,
+  "transformer.decoder.layers.1.linear1.weight": 524288,
+  "transformer.decoder.layers.1.linear1.bias": 2048,
+  "transformer.decoder.layers.1.linear2.weight": 524288,
+  "transformer.decoder.layers.1.linear2.bias": 256,
+  "transformer.decoder.layers.1.norm3.weight": 256,
+  "transformer.decoder.layers.1.norm3.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.2.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.2.norm1.weight": 256,
+  "transformer.decoder.layers.2.norm1.bias": 256,
+  "transformer.decoder.layers.2.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.2.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.2.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.2.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.2.norm2.weight": 256,
+  "transformer.decoder.layers.2.norm2.bias": 256,
+  "transformer.decoder.layers.2.linear1.weight": 524288,
+  "transformer.decoder.layers.2.linear1.bias": 2048,
+  "transformer.decoder.layers.2.linear2.weight": 524288,
+  "transformer.decoder.layers.2.linear2.bias": 256,
+  "transformer.decoder.layers.2.norm3.weight": 256,
+  "transformer.decoder.layers.2.norm3.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.3.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.3.norm1.weight": 256,
+  "transformer.decoder.layers.3.norm1.bias": 256,
+  "transformer.decoder.layers.3.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.3.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.3.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.3.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.3.norm2.weight": 256,
+  "transformer.decoder.layers.3.norm2.bias": 256,
+  "transformer.decoder.layers.3.linear1.weight": 524288,
+  "transformer.decoder.layers.3.linear1.bias": 2048,
+  "transformer.decoder.layers.3.linear2.weight": 524288,
+  "transformer.decoder.layers.3.linear2.bias": 256,
+  "transformer.decoder.layers.3.norm3.weight": 256,
+  "transformer.decoder.layers.3.norm3.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.4.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.4.norm1.weight": 256,
+  "transformer.decoder.layers.4.norm1.bias": 256,
+  "transformer.decoder.layers.4.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.4.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.4.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.4.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.4.norm2.weight": 256,
+  "transformer.decoder.layers.4.norm2.bias": 256,
+  "transformer.decoder.layers.4.linear1.weight": 524288,
+  "transformer.decoder.layers.4.linear1.bias": 2048,
+  "transformer.decoder.layers.4.linear2.weight": 524288,
+  "transformer.decoder.layers.4.linear2.bias": 256,
+  "transformer.decoder.layers.4.norm3.weight": 256,
+  "transformer.decoder.layers.4.norm3.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.5.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.5.norm1.weight": 256,
+  "transformer.decoder.layers.5.norm1.bias": 256,
+  "transformer.decoder.layers.5.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.5.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.5.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.5.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.5.norm2.weight": 256,
+  "transformer.decoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.5.linear1.weight": 524288,
+  "transformer.decoder.layers.5.linear1.bias": 2048,
+  "transformer.decoder.layers.5.linear2.weight": 524288,
+  "transformer.decoder.layers.5.linear2.bias": 256,
+  "transformer.decoder.layers.5.norm3.weight": 256,
+  "transformer.decoder.layers.5.norm3.bias": 256,
+  "transformer.decoder.norm.weight": 256,
+  "transformer.decoder.norm.bias": 256,
+  "transformer.decoder.ref_point_head.layers.0.weight": 131072,
+  "transformer.decoder.ref_point_head.layers.0.bias": 256,
+  "transformer.decoder.ref_point_head.layers.1.weight": 65536,
+  "transformer.decoder.ref_point_head.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.0.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.0.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.1.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.2.weight": 1024,
+  "transformer.decoder.bbox_embed.0.layers.2.bias": 4,
+  "transformer.decoder.class_embed.0.weight": 2304,
+  "transformer.decoder.class_embed.0.bias": 9,
+  "transformer.enc_output.weight": 65536,
+  "transformer.enc_output.bias": 256,
+  "transformer.enc_output_norm.weight": 256,
+  "transformer.enc_output_norm.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.0.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.0.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.1.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.1.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.2.weight": 1024,
+  "transformer.enc_out_bbox_embed.layers.2.bias": 4,
+  "transformer.enc_out_class_embed.weight": 2304,
+  "transformer.enc_out_class_embed.bias": 9,
+  "label_enc.weight": 23552,
+  "input_proj.0.0.weight": 65536,
+  "input_proj.0.0.bias": 256,
+  "input_proj.0.1.weight": 256,
+  "input_proj.0.1.bias": 256,
+  "input_proj.1.0.weight": 131072,
+  "input_proj.1.0.bias": 256,
+  "input_proj.1.1.weight": 256,
+  "input_proj.1.1.bias": 256,
+  "input_proj.2.0.weight": 262144,
+  "input_proj.2.0.bias": 256,
+  "input_proj.2.1.weight": 256,
+  "input_proj.2.1.bias": 256,
+  "input_proj.3.0.weight": 524288,
+  "input_proj.3.0.bias": 256,
+  "input_proj.3.1.weight": 256,
+  "input_proj.3.1.bias": 256,
+  "input_proj.4.0.weight": 4718592,
+  "input_proj.4.0.bias": 256,
+  "input_proj.4.1.weight": 256,
+  "input_proj.4.1.bias": 256,
+  "backbone.0.body.layer2.0.conv1.weight": 32768,
+  "backbone.0.body.layer2.0.conv2.weight": 147456,
+  "backbone.0.body.layer2.0.conv3.weight": 65536,
+  "backbone.0.body.layer2.0.downsample.0.weight": 131072,
+  "backbone.0.body.layer2.1.conv1.weight": 65536,
+  "backbone.0.body.layer2.1.conv2.weight": 147456,
+  "backbone.0.body.layer2.1.conv3.weight": 65536,
+  "backbone.0.body.layer2.2.conv1.weight": 65536,
+  "backbone.0.body.layer2.2.conv2.weight": 147456,
+  "backbone.0.body.layer2.2.conv3.weight": 65536,
+  "backbone.0.body.layer2.3.conv1.weight": 65536,
+  "backbone.0.body.layer2.3.conv2.weight": 147456,
+  "backbone.0.body.layer2.3.conv3.weight": 65536,
+  "backbone.0.body.layer3.0.conv1.weight": 131072,
+  "backbone.0.body.layer3.0.conv2.weight": 589824,
+  "backbone.0.body.layer3.0.conv3.weight": 262144,
+  "backbone.0.body.layer3.0.downsample.0.weight": 524288,
+  "backbone.0.body.layer3.1.conv1.weight": 262144,
+  "backbone.0.body.layer3.1.conv2.weight": 589824,
+  "backbone.0.body.layer3.1.conv3.weight": 262144,
+  "backbone.0.body.layer3.2.conv1.weight": 262144,
+  "backbone.0.body.layer3.2.conv2.weight": 589824,
+  "backbone.0.body.layer3.2.conv3.weight": 262144,
+  "backbone.0.body.layer3.3.conv1.weight": 262144,
+  "backbone.0.body.layer3.3.conv2.weight": 589824,
+  "backbone.0.body.layer3.3.conv3.weight": 262144,
+  "backbone.0.body.layer3.4.conv1.weight": 262144,
+  "backbone.0.body.layer3.4.conv2.weight": 589824,
+  "backbone.0.body.layer3.4.conv3.weight": 262144,
+  "backbone.0.body.layer3.5.conv1.weight": 262144,
+  "backbone.0.body.layer3.5.conv2.weight": 589824,
+  "backbone.0.body.layer3.5.conv3.weight": 262144,
+  "backbone.0.body.layer4.0.conv1.weight": 524288,
+  "backbone.0.body.layer4.0.conv2.weight": 2359296,
+  "backbone.0.body.layer4.0.conv3.weight": 1048576,
+  "backbone.0.body.layer4.0.downsample.0.weight": 2097152,
+  "backbone.0.body.layer4.1.conv1.weight": 1048576,
+  "backbone.0.body.layer4.1.conv2.weight": 2359296,
+  "backbone.0.body.layer4.1.conv3.weight": 1048576,
+  "backbone.0.body.layer4.2.conv1.weight": 1048576,
+  "backbone.0.body.layer4.2.conv2.weight": 2359296,
+  "backbone.0.body.layer4.2.conv3.weight": 1048576
+}
+[Dataset] Mosaic 已启用：p=0.25，Copy-Paste p=0.35，两者互斥触发
+  期望样本比例：Mosaic=25%  CopyPaste=35%  纯净=40%
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.70s)
+creating index...
+index created!
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.37s)
+creating index...
+index created!
+/workspace/DQDetr/main_aitod.py:269: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(args.pretrain_model_path, map_location='cpu')['model']
+[05/12 08:04:37.572]: Ignore keys: []
+[05/12 08:04:38.916]: <All keys matched successfully>
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/functional.py:513: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at ../aten/src/ATen/native/TensorShape.cpp:3609.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+Test:  [    0/14018]  eta: 21:32:42  class_error: 0.00  loss: 5.8619 (5.8619)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_nwd_dn: 0.0000 (0.0000)  loss_ce: 0.1384 (0.1384)  loss_bbox: 0.0198 (0.0198)  loss_giou: 0.5627 (0.5627)  loss_nwd: 0.0454 (0.0454)  loss_ce_0: 0.2149 (0.2149)  loss_bbox_0: 0.0214 (0.0214)  loss_giou_0: 0.6251 (0.6251)  loss_nwd_0: 0.0488 (0.0488)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_nwd_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.1904 (0.1904)  loss_bbox_1: 0.0206 (0.0206)  loss_giou_1: 0.5940 (0.5940)  loss_nwd_1: 0.0465 (0.0465)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_nwd_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.1499 (0.1499)  loss_bbox_2: 0.0197 (0.0197)  loss_giou_2: 0.5626 (0.5626)  loss_nwd_2: 0.0446 (0.0446)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_nwd_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.1257 (0.1257)  loss_bbox_3: 0.0201 (0.0201)  loss_giou_3: 0.5683 (0.5683)  loss_nwd_3: 0.0454 (0.0454)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_nwd_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.1505 (0.1505)  loss_bbox_4: 0.0199 (0.0199)  loss_giou_4: 0.5597 (0.5597)  loss_nwd_4: 0.0453 (0.0453)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_nwd_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1775 (0.1775)  loss_bbox_interm: 0.0247 (0.0247)  loss_giou_interm: 0.7604 (0.7604)  loss_nwd_interm: 0.0596 (0.0596)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_nwd_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.1384 (0.1384)  class_error_unscaled: 0.0000 (0.0000)  loss_bbox_unscaled: 0.0040 (0.0040)  loss_giou_unscaled: 0.2813 (0.2813)  loss_nwd_unscaled: 0.0454 (0.0454)  loss_xy_unscaled: 0.0009 (0.0009)  loss_hw_unscaled: 0.0030 (0.0030)  cardinality_error_unscaled: 893.0000 (893.0000)  loss_ce_0_unscaled: 0.2149 (0.2149)  loss_bbox_0_unscaled: 0.0043 (0.0043)  loss_giou_0_unscaled: 0.3125 (0.3125)  loss_nwd_0_unscaled: 0.0488 (0.0488)  loss_xy_0_unscaled: 0.0010 (0.0010)  loss_hw_0_unscaled: 0.0033 (0.0033)  cardinality_error_0_unscaled: 893.0000 (893.0000)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_nwd_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.1904 (0.1904)  loss_bbox_1_unscaled: 0.0041 (0.0041)  loss_giou_1_unscaled: 0.2970 (0.2970)  loss_nwd_1_unscaled: 0.0465 (0.0465)  loss_xy_1_unscaled: 0.0010 (0.0010)  loss_hw_1_unscaled: 0.0032 (0.0032)  cardinality_error_1_unscaled: 893.0000 (893.0000)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_nwd_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.1499 (0.1499)  loss_bbox_2_unscaled: 0.0039 (0.0039)  loss_giou_2_unscaled: 0.2813 (0.2813)  loss_nwd_2_unscaled: 0.0446 (0.0446)  loss_xy_2_unscaled: 0.0009 (0.0009)  loss_hw_2_unscaled: 0.0030 (0.0030)  cardinality_error_2_unscaled: 893.0000 (893.0000)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_nwd_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.1257 (0.1257)  loss_bbox_3_unscaled: 0.0040 (0.0040)  loss_giou_3_unscaled: 0.2842 (0.2842)  loss_nwd_3_unscaled: 0.0454 (0.0454)  loss_xy_3_unscaled: 0.0010 (0.0010)  loss_hw_3_unscaled: 0.0030 (0.0030)  cardinality_error_3_unscaled: 893.0000 (893.0000)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_nwd_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.1505 (0.1505)  loss_bbox_4_unscaled: 0.0040 (0.0040)  loss_giou_4_unscaled: 0.2799 (0.2799)  loss_nwd_4_unscaled: 0.0453 (0.0453)  loss_xy_4_unscaled: 0.0010 (0.0010)  loss_hw_4_unscaled: 0.0030 (0.0030)  cardinality_error_4_unscaled: 893.0000 (893.0000)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_nwd_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1775 (0.1775)  loss_bbox_interm_unscaled: 0.0049 (0.0049)  loss_giou_interm_unscaled: 0.3802 (0.3802)  loss_nwd_interm_unscaled: 0.0596 (0.0596)  loss_xy_interm_unscaled: 0.0013 (0.0013)  loss_hw_interm_unscaled: 0.0036 (0.0036)  cardinality_error_interm_unscaled: 893.0000 (893.0000)  time: 5.5330  data: 1.3105  max mem: 1366
+Test:  [ 5000/14018]  eta: 2:36:46  class_error: 0.00  loss: 5.2645 (6.1803)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_nwd_dn: 0.0000 (0.0000)  loss_ce: 0.0202 (0.1277)  loss_bbox: 0.0331 (0.0348)  loss_giou: 0.5932 (0.6197)  loss_nwd: 0.0836 (0.0822)  loss_ce_0: 0.0305 (0.1519)  loss_bbox_0: 0.0324 (0.0354)  loss_giou_0: 0.5840 (0.6280)  loss_nwd_0: 0.0815 (0.0838)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_nwd_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0300 (0.1351)  loss_bbox_1: 0.0326 (0.0353)  loss_giou_1: 0.5879 (0.6273)  loss_nwd_1: 0.0821 (0.0836)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_nwd_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0115 (0.1265)  loss_bbox_2: 0.0314 (0.0350)  loss_giou_2: 0.5722 (0.6233)  loss_nwd_2: 0.0785 (0.0829)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_nwd_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0152 (0.1245)  loss_bbox_3: 0.0331 (0.0346)  loss_giou_3: 0.5921 (0.6203)  loss_nwd_3: 0.0835 (0.0823)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_nwd_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0237 (0.1243)  loss_bbox_4: 0.0331 (0.0346)  loss_giou_4: 0.5935 (0.6197)  loss_nwd_4: 0.0837 (0.0822)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_nwd_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0440 (0.1609)  loss_bbox_interm: 0.0296 (0.0373)  loss_giou_interm: 0.6651 (0.6586)  loss_nwd_interm: 0.0738 (0.0885)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_nwd_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0202 (0.1277)  class_error_unscaled: 0.0000 (1.3735)  loss_bbox_unscaled: 0.0066 (0.0070)  loss_giou_unscaled: 0.2966 (0.3099)  loss_nwd_unscaled: 0.0836 (0.0822)  loss_xy_unscaled: 0.0019 (0.0023)  loss_hw_unscaled: 0.0038 (0.0046)  cardinality_error_unscaled: 899.0000 (1005.5627)  loss_ce_0_unscaled: 0.0305 (0.1519)  loss_bbox_0_unscaled: 0.0065 (0.0071)  loss_giou_0_unscaled: 0.2920 (0.3140)  loss_nwd_0_unscaled: 0.0815 (0.0838)  loss_xy_0_unscaled: 0.0019 (0.0024)  loss_hw_0_unscaled: 0.0038 (0.0047)  cardinality_error_0_unscaled: 899.0000 (1005.5023)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_nwd_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0300 (0.1351)  loss_bbox_1_unscaled: 0.0065 (0.0071)  loss_giou_1_unscaled: 0.2940 (0.3137)  loss_nwd_1_unscaled: 0.0821 (0.0836)  loss_xy_1_unscaled: 0.0019 (0.0024)  loss_hw_1_unscaled: 0.0037 (0.0047)  cardinality_error_1_unscaled: 899.0000 (1005.5627)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_nwd_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0115 (0.1265)  loss_bbox_2_unscaled: 0.0063 (0.0070)  loss_giou_2_unscaled: 0.2861 (0.3116)  loss_nwd_2_unscaled: 0.0785 (0.0829)  loss_xy_2_unscaled: 0.0019 (0.0023)  loss_hw_2_unscaled: 0.0037 (0.0047)  cardinality_error_2_unscaled: 899.0000 (1005.5627)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_nwd_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0152 (0.1245)  loss_bbox_3_unscaled: 0.0066 (0.0069)  loss_giou_3_unscaled: 0.2961 (0.3102)  loss_nwd_3_unscaled: 0.0835 (0.0823)  loss_xy_3_unscaled: 0.0019 (0.0023)  loss_hw_3_unscaled: 0.0037 (0.0046)  cardinality_error_3_unscaled: 899.0000 (1005.5627)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_nwd_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0237 (0.1243)  loss_bbox_4_unscaled: 0.0066 (0.0069)  loss_giou_4_unscaled: 0.2967 (0.3099)  loss_nwd_4_unscaled: 0.0837 (0.0822)  loss_xy_4_unscaled: 0.0019 (0.0023)  loss_hw_4_unscaled: 0.0038 (0.0046)  cardinality_error_4_unscaled: 899.0000 (1005.5627)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_nwd_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0440 (0.1609)  loss_bbox_interm_unscaled: 0.0059 (0.0075)  loss_giou_interm_unscaled: 0.3325 (0.3293)  loss_nwd_interm_unscaled: 0.0738 (0.0885)  loss_xy_interm_unscaled: 0.0023 (0.0025)  loss_hw_interm_unscaled: 0.0040 (0.0050)  cardinality_error_interm_unscaled: 899.0000 (1005.5555)  time: 1.1887  data: 0.0042  max mem: 1406
+Test:  [10000/14018]  eta: 1:09:22  class_error: 0.00  loss: 5.3838 (6.2559)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_nwd_dn: 0.0000 (0.0000)  loss_ce: 0.0277 (0.1348)  loss_bbox: 0.0226 (0.0349)  loss_giou: 0.5465 (0.6223)  loss_nwd: 0.0590 (0.0826)  loss_ce_0: 0.0882 (0.1581)  loss_bbox_0: 0.0243 (0.0355)  loss_giou_0: 0.6175 (0.6304)  loss_nwd_0: 0.0644 (0.0840)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_nwd_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0355 (0.1449)  loss_bbox_1: 0.0231 (0.0356)  loss_giou_1: 0.6267 (0.6300)  loss_nwd_1: 0.0638 (0.0839)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_nwd_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0195 (0.1346)  loss_bbox_2: 0.0232 (0.0353)  loss_giou_2: 0.6215 (0.6263)  loss_nwd_2: 0.0630 (0.0833)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_nwd_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0304 (0.1327)  loss_bbox_3: 0.0245 (0.0348)  loss_giou_3: 0.6073 (0.6225)  loss_nwd_3: 0.0612 (0.0825)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_nwd_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0215 (0.1307)  loss_bbox_4: 0.0241 (0.0348)  loss_giou_4: 0.6080 (0.6223)  loss_nwd_4: 0.0609 (0.0825)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_nwd_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0984 (0.1695)  loss_bbox_interm: 0.0273 (0.0375)  loss_giou_interm: 0.6363 (0.6610)  loss_nwd_interm: 0.0663 (0.0886)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_nwd_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0277 (0.1348)  class_error_unscaled: 0.0000 (1.3726)  loss_bbox_unscaled: 0.0045 (0.0070)  loss_giou_unscaled: 0.2733 (0.3112)  loss_nwd_unscaled: 0.0590 (0.0826)  loss_xy_unscaled: 0.0016 (0.0024)  loss_hw_unscaled: 0.0027 (0.0046)  cardinality_error_unscaled: 898.0000 (1007.6207)  loss_ce_0_unscaled: 0.0882 (0.1581)  loss_bbox_0_unscaled: 0.0049 (0.0071)  loss_giou_0_unscaled: 0.3087 (0.3152)  loss_nwd_0_unscaled: 0.0644 (0.0840)  loss_xy_0_unscaled: 0.0016 (0.0024)  loss_hw_0_unscaled: 0.0033 (0.0047)  cardinality_error_0_unscaled: 898.0000 (1007.5647)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_nwd_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0355 (0.1449)  loss_bbox_1_unscaled: 0.0046 (0.0071)  loss_giou_1_unscaled: 0.3134 (0.3150)  loss_nwd_1_unscaled: 0.0638 (0.0839)  loss_xy_1_unscaled: 0.0017 (0.0024)  loss_hw_1_unscaled: 0.0028 (0.0047)  cardinality_error_1_unscaled: 898.0000 (1007.6207)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_nwd_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0195 (0.1346)  loss_bbox_2_unscaled: 0.0046 (0.0071)  loss_giou_2_unscaled: 0.3107 (0.3131)  loss_nwd_2_unscaled: 0.0630 (0.0833)  loss_xy_2_unscaled: 0.0016 (0.0024)  loss_hw_2_unscaled: 0.0027 (0.0047)  cardinality_error_2_unscaled: 898.0000 (1007.6207)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_nwd_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0304 (0.1327)  loss_bbox_3_unscaled: 0.0049 (0.0070)  loss_giou_3_unscaled: 0.3037 (0.3113)  loss_nwd_3_unscaled: 0.0612 (0.0825)  loss_xy_3_unscaled: 0.0017 (0.0024)  loss_hw_3_unscaled: 0.0028 (0.0046)  cardinality_error_3_unscaled: 898.0000 (1007.6207)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_nwd_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0215 (0.1307)  loss_bbox_4_unscaled: 0.0048 (0.0070)  loss_giou_4_unscaled: 0.3040 (0.3111)  loss_nwd_4_unscaled: 0.0609 (0.0825)  loss_xy_4_unscaled: 0.0016 (0.0024)  loss_hw_4_unscaled: 0.0027 (0.0046)  cardinality_error_4_unscaled: 898.0000 (1007.6207)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_nwd_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0984 (0.1695)  loss_bbox_interm_unscaled: 0.0055 (0.0075)  loss_giou_interm_unscaled: 0.3181 (0.3305)  loss_nwd_interm_unscaled: 0.0663 (0.0886)  loss_xy_interm_unscaled: 0.0018 (0.0025)  loss_hw_interm_unscaled: 0.0037 (0.0050)  cardinality_error_interm_unscaled: 898.0000 (1007.6133)  time: 0.4070  data: 0.0041  max mem: 1428
+Test:  [14017/14018]  eta: 0:00:00  class_error: 0.00  loss: 5.7602 (6.2699)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_nwd_dn: 0.0000 (0.0000)  loss_ce: 0.0394 (0.1385)  loss_bbox: 0.0285 (0.0346)  loss_giou: 0.5763 (0.6210)  loss_nwd: 0.0698 (0.0821)  loss_ce_0: 0.0751 (0.1618)  loss_bbox_0: 0.0281 (0.0353)  loss_giou_0: 0.5852 (0.6292)  loss_nwd_0: 0.0695 (0.0835)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_nwd_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0455 (0.1494)  loss_bbox_1: 0.0282 (0.0353)  loss_giou_1: 0.5767 (0.6288)  loss_nwd_1: 0.0734 (0.0835)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_nwd_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0467 (0.1386)  loss_bbox_2: 0.0314 (0.0350)  loss_giou_2: 0.5906 (0.6251)  loss_nwd_2: 0.0736 (0.0829)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_nwd_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0399 (0.1364)  loss_bbox_3: 0.0283 (0.0346)  loss_giou_3: 0.5743 (0.6213)  loss_nwd_3: 0.0707 (0.0820)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_nwd_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0403 (0.1345)  loss_bbox_4: 0.0285 (0.0345)  loss_giou_4: 0.5761 (0.6210)  loss_nwd_4: 0.0699 (0.0820)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_nwd_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0741 (0.1731)  loss_bbox_interm: 0.0304 (0.0373)  loss_giou_interm: 0.6100 (0.6605)  loss_nwd_interm: 0.0731 (0.0882)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_nwd_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0394 (0.1385)  class_error_unscaled: 0.0000 (1.3056)  loss_bbox_unscaled: 0.0057 (0.0069)  loss_giou_unscaled: 0.2881 (0.3105)  loss_nwd_unscaled: 0.0698 (0.0821)  loss_xy_unscaled: 0.0017 (0.0023)  loss_hw_unscaled: 0.0042 (0.0046)  cardinality_error_unscaled: 898.0000 (1005.3011)  loss_ce_0_unscaled: 0.0751 (0.1618)  loss_bbox_0_unscaled: 0.0056 (0.0071)  loss_giou_0_unscaled: 0.2926 (0.3146)  loss_nwd_0_unscaled: 0.0695 (0.0835)  loss_xy_0_unscaled: 0.0016 (0.0024)  loss_hw_0_unscaled: 0.0041 (0.0047)  cardinality_error_0_unscaled: 898.0000 (1005.2431)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_nwd_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0455 (0.1494)  loss_bbox_1_unscaled: 0.0056 (0.0071)  loss_giou_1_unscaled: 0.2884 (0.3144)  loss_nwd_1_unscaled: 0.0734 (0.0835)  loss_xy_1_unscaled: 0.0017 (0.0024)  loss_hw_1_unscaled: 0.0042 (0.0047)  cardinality_error_1_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_nwd_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0467 (0.1386)  loss_bbox_2_unscaled: 0.0063 (0.0070)  loss_giou_2_unscaled: 0.2953 (0.3126)  loss_nwd_2_unscaled: 0.0736 (0.0829)  loss_xy_2_unscaled: 0.0017 (0.0024)  loss_hw_2_unscaled: 0.0041 (0.0046)  cardinality_error_2_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_nwd_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0399 (0.1364)  loss_bbox_3_unscaled: 0.0057 (0.0069)  loss_giou_3_unscaled: 0.2871 (0.3107)  loss_nwd_3_unscaled: 0.0707 (0.0820)  loss_xy_3_unscaled: 0.0017 (0.0023)  loss_hw_3_unscaled: 0.0042 (0.0046)  cardinality_error_3_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_nwd_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0403 (0.1345)  loss_bbox_4_unscaled: 0.0057 (0.0069)  loss_giou_4_unscaled: 0.2880 (0.3105)  loss_nwd_4_unscaled: 0.0699 (0.0820)  loss_xy_4_unscaled: 0.0017 (0.0023)  loss_hw_4_unscaled: 0.0042 (0.0046)  cardinality_error_4_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_nwd_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0741 (0.1731)  loss_bbox_interm_unscaled: 0.0061 (0.0075)  loss_giou_interm_unscaled: 0.3050 (0.3302)  loss_nwd_interm_unscaled: 0.0731 (0.0882)  loss_xy_interm_unscaled: 0.0018 (0.0025)  loss_hw_interm_unscaled: 0.0042 (0.0050)  cardinality_error_interm_unscaled: 898.0000 (1005.2936)  time: 0.4191  data: 0.0041  max mem: 1428
+Test: Total time: 3:35:42 (0.9233 s / it)
+Averaged stats: class_error: 0.00  loss: 5.7602 (6.2699)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_nwd_dn: 0.0000 (0.0000)  loss_ce: 0.0394 (0.1385)  loss_bbox: 0.0285 (0.0346)  loss_giou: 0.5763 (0.6210)  loss_nwd: 0.0698 (0.0821)  loss_ce_0: 0.0751 (0.1618)  loss_bbox_0: 0.0281 (0.0353)  loss_giou_0: 0.5852 (0.6292)  loss_nwd_0: 0.0695 (0.0835)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_nwd_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0455 (0.1494)  loss_bbox_1: 0.0282 (0.0353)  loss_giou_1: 0.5767 (0.6288)  loss_nwd_1: 0.0734 (0.0835)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_nwd_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0467 (0.1386)  loss_bbox_2: 0.0314 (0.0350)  loss_giou_2: 0.5906 (0.6251)  loss_nwd_2: 0.0736 (0.0829)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_nwd_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0399 (0.1364)  loss_bbox_3: 0.0283 (0.0346)  loss_giou_3: 0.5743 (0.6213)  loss_nwd_3: 0.0707 (0.0820)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_nwd_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0403 (0.1345)  loss_bbox_4: 0.0285 (0.0345)  loss_giou_4: 0.5761 (0.6210)  loss_nwd_4: 0.0699 (0.0820)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_nwd_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0741 (0.1731)  loss_bbox_interm: 0.0304 (0.0373)  loss_giou_interm: 0.6100 (0.6605)  loss_nwd_interm: 0.0731 (0.0882)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_nwd_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0394 (0.1385)  class_error_unscaled: 0.0000 (1.3056)  loss_bbox_unscaled: 0.0057 (0.0069)  loss_giou_unscaled: 0.2881 (0.3105)  loss_nwd_unscaled: 0.0698 (0.0821)  loss_xy_unscaled: 0.0017 (0.0023)  loss_hw_unscaled: 0.0042 (0.0046)  cardinality_error_unscaled: 898.0000 (1005.3011)  loss_ce_0_unscaled: 0.0751 (0.1618)  loss_bbox_0_unscaled: 0.0056 (0.0071)  loss_giou_0_unscaled: 0.2926 (0.3146)  loss_nwd_0_unscaled: 0.0695 (0.0835)  loss_xy_0_unscaled: 0.0016 (0.0024)  loss_hw_0_unscaled: 0.0041 (0.0047)  cardinality_error_0_unscaled: 898.0000 (1005.2431)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_nwd_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0455 (0.1494)  loss_bbox_1_unscaled: 0.0056 (0.0071)  loss_giou_1_unscaled: 0.2884 (0.3144)  loss_nwd_1_unscaled: 0.0734 (0.0835)  loss_xy_1_unscaled: 0.0017 (0.0024)  loss_hw_1_unscaled: 0.0042 (0.0047)  cardinality_error_1_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_nwd_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0467 (0.1386)  loss_bbox_2_unscaled: 0.0063 (0.0070)  loss_giou_2_unscaled: 0.2953 (0.3126)  loss_nwd_2_unscaled: 0.0736 (0.0829)  loss_xy_2_unscaled: 0.0017 (0.0024)  loss_hw_2_unscaled: 0.0041 (0.0046)  cardinality_error_2_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_nwd_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0399 (0.1364)  loss_bbox_3_unscaled: 0.0057 (0.0069)  loss_giou_3_unscaled: 0.2871 (0.3107)  loss_nwd_3_unscaled: 0.0707 (0.0820)  loss_xy_3_unscaled: 0.0017 (0.0023)  loss_hw_3_unscaled: 0.0042 (0.0046)  cardinality_error_3_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_nwd_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0403 (0.1345)  loss_bbox_4_unscaled: 0.0057 (0.0069)  loss_giou_4_unscaled: 0.2880 (0.3105)  loss_nwd_4_unscaled: 0.0699 (0.0820)  loss_xy_4_unscaled: 0.0017 (0.0023)  loss_hw_4_unscaled: 0.0042 (0.0046)  cardinality_error_4_unscaled: 898.0000 (1005.3011)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_nwd_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0741 (0.1731)  loss_bbox_interm_unscaled: 0.0061 (0.0075)  loss_giou_interm_unscaled: 0.3050 (0.3302)  loss_nwd_interm_unscaled: 0.0731 (0.0882)  loss_xy_interm_unscaled: 0.0018 (0.0025)  loss_hw_interm_unscaled: 0.0042 (0.0050)  cardinality_error_interm_unscaled: 898.0000 (1005.2936)
+Accumulating evaluation results...
+DONE (t=333.11s).
+IoU metric: bbox
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.264
+Average Precision  (AP) @[ IoU=0.25      | area=   all | maxDets=1500 ] = -1.000
+Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.628
+Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1500 ] = 0.172
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.114
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.271
+Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.312
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.408
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.075
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.390
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.438
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.238
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.448
+Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.484
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.557
+Optimal LRP             @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.762
+Optimal LRP Loc         @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.271
+Optimal LRP FP          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.278
+Optimal LRP FN          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.371
+# Class-specific LRP-Optimal Thresholds #
+ [0.254 0.486 0.315 0.36  0.415 0.391 0.332 0.445]
+
+进程已结束，退出代码为 0

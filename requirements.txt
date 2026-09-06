@@ -1,0 +1,11 @@
+git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI&egg=pycocotools
+git+https://github.com/cocodataset/panopticapi.git#egg=panopticapi
+submitit
+scipy
+termcolor
+addict
+yapf
+timm
+pytest
+Pillow
+ensemble-boxes

@@ -1,0 +1,1165 @@
+/opt/conda/envs/DQDetr/bin/python3.11 /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver1 -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AI-TOD --pretrain_model_path /workspace/DQDetr/models/dqdetr_best305.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=False dn_box_noise_scale=1.0
+Not using distributed mode
+data_aug_scales [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+data_aug_max_size 1333
+data_aug_scales2_resize [400, 500, 600]
+data_aug_scales2_crop [384, 600]
+data_aug_scale_overlap None
+num_classes 9
+lr 0.0001
+param_dict_type default
+lr_backbone 1e-05
+lr_backbone_names ['backbone.0']
+lr_linear_proj_names ['reference_points', 'sampling_offsets']
+lr_linear_proj_mult 0.1
+ddetr_lr_param False
+batch_size 1
+weight_decay 0.0001
+epochs 1
+lr_drop 11
+save_checkpoint_interval 1
+clip_max_norm 0.1
+onecyclelr False
+multi_step_lr True
+lr_drop_list [13, 23]
+val_epoch [0]
+ccm_params [10, 100, 500]
+ccm_cls_num 4
+dynamic_query_list [300, 500, 900, 1500]
+find_unused_parameters False
+modelname dqdetr
+frozen_weights None
+backbone resnet50
+use_checkpoint False
+dilation False
+position_embedding sine
+pe_temperatureH 20
+pe_temperatureW 20
+return_interm_indices [0, 1, 2, 3]
+backbone_freeze_keywords None
+enc_layers 6
+dec_layers 6
+unic_layers 0
+pre_norm False
+dim_feedforward 2048
+hidden_dim 256
+dropout 0.0
+nheads 8
+num_queries 900
+query_dim 4
+num_patterns 0
+pdetr3_bbox_embed_diff_each_layer False
+pdetr3_refHW -1
+random_refpoints_xy False
+fix_refpoints_hw -1
+dabdetr_yolo_like_anchor_update False
+dabdetr_deformable_encoder False
+dabdetr_deformable_decoder False
+use_deformable_box_attn False
+box_attn_type roi_align
+dec_layer_number None
+num_feature_levels 5
+enc_n_points 4
+dec_n_points 4
+decoder_layer_noise False
+dln_xy_noise 0.2
+dln_hw_noise 0.2
+add_channel_attention False
+add_pos_value False
+two_stage_type standard
+two_stage_pat_embed 0
+two_stage_add_query_num 0
+two_stage_bbox_embed_share False
+two_stage_class_embed_share False
+two_stage_learn_wh False
+two_stage_default_hw 0.05
+two_stage_keep_all_tokens False
+num_select 300
+transformer_activation relu
+batch_norm_type FrozenBatchNorm2d
+masks False
+aux_loss True
+set_cost_class 2.0
+set_cost_bbox 5.0
+set_cost_giou 2.0
+cls_loss_coef 1.0
+mask_loss_coef 1.0
+dice_loss_coef 1.0
+bbox_loss_coef 5.0
+giou_loss_coef 2.0
+enc_loss_coef 1.0
+interm_loss_coef 1.0
+no_interm_box_loss False
+focal_alpha 0.25
+decoder_sa_type sa
+matcher_type HungarianMatcher
+decoder_module_seq ['sa', 'ca', 'ffn']
+nms_iou_threshold -1
+dec_pred_bbox_embed_share True
+dec_pred_class_embed_share True
+use_dn True
+dn_number 100
+dn_box_noise_scale 1.0
+dn_label_noise_ratio 0.5
+embed_init_tgt False
+dn_labelbook_size 91
+match_unstable_error True
+use_ema False
+ema_decay 0.9997
+ema_epoch 0
+use_detached_boxes_dec_out False
+dn_scalar 100
+dn_bbox_coef 1.0
+dn_label_coef 1.0
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[12/19 07:16:39.259]: git:
+  sha: N/A, status: clean, branch: N/A
+
+[12/19 07:16:39.259]: Command: /workspace/DQDetr/main_aitod.py --output_dir logs/DQDETR_ver1 -c config/DQ_5scale.py --coco_path /workspace/DQDetr/data/path/AI-TOD --pretrain_model_path /workspace/DQDetr/models/dqdetr_best305.pth --options dn_scalar=100 embed_init_tgt=False dn_bbox_coef=1.0 dn_label_coef=1.0 use_ema=False dn_box_noise_scale=1.0
+[12/19 07:16:39.259]: Full config saved to logs/DQDETR_ver1/config_args_all.json
+[12/19 07:16:39.259]: world size: 1
+[12/19 07:16:39.259]: rank: 0
+[12/19 07:16:39.259]: local_rank: 0
+[12/19 07:16:39.259]: args: Namespace(config_file='config/DQ_5scale.py', options={'dn_scalar': 100, 'embed_init_tgt': False, 'dn_bbox_coef': 1.0, 'dn_label_coef': 1.0, 'use_ema': False, 'dn_box_noise_scale': 1.0}, dataset_file='aitod', coco_path='/workspace/DQDetr/data/path/AI-TOD', coco_panoptic_path=None, remove_difficult=False, fix_size=False, output_dir='logs/DQDETR_ver1', note='', device='cuda', seed=42, resume='', pretrain_model_path='/workspace/DQDetr/models/dqdetr_best305.pth', finetune_ignore=None, start_epoch=0, eval=False, num_workers=10, test=False, debug=False, find_unused_params=False, save_results=False, save_log=False, world_size=1, dist_url='env://', rank=0, local_rank=0, amp=True, distributed=False, data_aug_scales=[480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800], data_aug_max_size=1333, data_aug_scales2_resize=[400, 500, 600], data_aug_scales2_crop=[384, 600], data_aug_scale_overlap=None, num_classes=9, lr=0.0001, param_dict_type='default', lr_backbone=1e-05, lr_backbone_names=['backbone.0'], lr_linear_proj_names=['reference_points', 'sampling_offsets'], lr_linear_proj_mult=0.1, ddetr_lr_param=False, batch_size=1, weight_decay=0.0001, epochs=1, lr_drop=11, save_checkpoint_interval=1, clip_max_norm=0.1, onecyclelr=False, multi_step_lr=True, lr_drop_list=[13, 23], val_epoch=[0], ccm_params=[10, 100, 500], ccm_cls_num=4, dynamic_query_list=[300, 500, 900, 1500], find_unused_parameters=False, modelname='dqdetr', frozen_weights=None, backbone='resnet50', use_checkpoint=False, dilation=False, position_embedding='sine', pe_temperatureH=20, pe_temperatureW=20, return_interm_indices=[0, 1, 2, 3], backbone_freeze_keywords=None, enc_layers=6, dec_layers=6, unic_layers=0, pre_norm=False, dim_feedforward=2048, hidden_dim=256, dropout=0.0, nheads=8, num_queries=900, query_dim=4, num_patterns=0, pdetr3_bbox_embed_diff_each_layer=False, pdetr3_refHW=-1, random_refpoints_xy=False, fix_refpoints_hw=-1, dabdetr_yolo_like_anchor_update=False, dabdetr_deformable_encoder=False, dabdetr_deformable_decoder=False, use_deformable_box_attn=False, box_attn_type='roi_align', dec_layer_number=None, num_feature_levels=5, enc_n_points=4, dec_n_points=4, decoder_layer_noise=False, dln_xy_noise=0.2, dln_hw_noise=0.2, add_channel_attention=False, add_pos_value=False, two_stage_type='standard', two_stage_pat_embed=0, two_stage_add_query_num=0, two_stage_bbox_embed_share=False, two_stage_class_embed_share=False, two_stage_learn_wh=False, two_stage_default_hw=0.05, two_stage_keep_all_tokens=False, num_select=300, transformer_activation='relu', batch_norm_type='FrozenBatchNorm2d', masks=False, aux_loss=True, set_cost_class=2.0, set_cost_bbox=5.0, set_cost_giou=2.0, cls_loss_coef=1.0, mask_loss_coef=1.0, dice_loss_coef=1.0, bbox_loss_coef=5.0, giou_loss_coef=2.0, enc_loss_coef=1.0, interm_loss_coef=1.0, no_interm_box_loss=False, focal_alpha=0.25, decoder_sa_type='sa', matcher_type='HungarianMatcher', decoder_module_seq=['sa', 'ca', 'ffn'], nms_iou_threshold=-1, dec_pred_bbox_embed_share=True, dec_pred_class_embed_share=True, use_dn=True, dn_number=100, dn_box_noise_scale=1.0, dn_label_noise_ratio=0.5, embed_init_tgt=False, dn_labelbook_size=91, match_unstable_error=True, use_ema=False, ema_decay=0.9997, ema_epoch=0, use_detached_boxes_dec_out=False, dn_scalar=100, dn_bbox_coef=1.0, dn_label_coef=1.0)
+
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+[12/19 07:16:40.490]: number of params:58771735
+[12/19 07:16:40.492]: params:
+{
+  "transformer.level_embed": 1280,
+  "transformer.CCM.density_conv1.weight": 131072,
+  "transformer.CCM.density_conv1.bias": 512,
+  "transformer.CCM.ccm_backbone.0.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.0.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.0.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.1.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.1.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.1.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.2.conv.weight": 2359296,
+  "transformer.CCM.ccm_backbone.2.gn.weight": 512,
+  "transformer.CCM.ccm_backbone.2.gn.bias": 512,
+  "transformer.CCM.ccm_backbone.3.conv.weight": 1179648,
+  "transformer.CCM.ccm_backbone.3.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.3.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.4.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.4.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.4.gn.bias": 256,
+  "transformer.CCM.ccm_backbone.5.conv.weight": 589824,
+  "transformer.CCM.ccm_backbone.5.gn.weight": 256,
+  "transformer.CCM.ccm_backbone.5.gn.bias": 256,
+  "transformer.CCM.boundary_head.1.weight": 32768,
+  "transformer.CCM.boundary_head.1.bias": 128,
+  "transformer.CCM.boundary_head.4.weight": 384,
+  "transformer.CCM.boundary_head.4.bias": 3,
+  "transformer.CCM.count_regressor.2.weight": 32768,
+  "transformer.CCM.count_regressor.2.bias": 128,
+  "transformer.CCM.count_regressor.5.weight": 128,
+  "transformer.CCM.count_regressor.5.bias": 1,
+  "transformer.CCM.ccm_classifier.weight": 1024,
+  "transformer.CCM.ccm_classifier.bias": 4,
+  "transformer.CCM.ref_point_conv.weight": 256,
+  "transformer.CCM.ref_point_conv.bias": 1,
+  "transformer.CGFE.ChannelGate.mlp.1.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.1.bias": 16,
+  "transformer.CGFE.ChannelGate.mlp.3.weight": 4096,
+  "transformer.CGFE.ChannelGate.mlp.3.bias": 256,
+  "transformer.CGFE.SpatialGate.spatial.conv.weight": 98,
+  "transformer.CGFE.SpatialGate.spatial.bn.weight": 1,
+  "transformer.CGFE.SpatialGate.spatial.bn.bias": 1,
+  "transformer.multiscale.conv1.conv.weight": 589824,
+  "transformer.multiscale.conv1.gn.weight": 256,
+  "transformer.multiscale.conv1.gn.bias": 256,
+  "transformer.multiscale.conv2.conv.weight": 589824,
+  "transformer.multiscale.conv2.gn.weight": 256,
+  "transformer.multiscale.conv2.gn.bias": 256,
+  "transformer.multiscale.conv3.conv.weight": 589824,
+  "transformer.multiscale.conv3.gn.weight": 256,
+  "transformer.multiscale.conv3.gn.bias": 256,
+  "transformer.multiscale.conv4.conv.weight": 589824,
+  "transformer.multiscale.conv4.gn.weight": 256,
+  "transformer.multiscale.conv4.gn.bias": 256,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.0.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.0.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.0.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.0.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.0.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.0.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.0.norm1.weight": 256,
+  "transformer.encoder.layers.0.norm1.bias": 256,
+  "transformer.encoder.layers.0.linear1.weight": 524288,
+  "transformer.encoder.layers.0.linear1.bias": 2048,
+  "transformer.encoder.layers.0.linear2.weight": 524288,
+  "transformer.encoder.layers.0.linear2.bias": 256,
+  "transformer.encoder.layers.0.norm2.weight": 256,
+  "transformer.encoder.layers.0.norm2.bias": 256,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.1.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.1.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.1.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.1.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.1.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.1.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.1.norm1.weight": 256,
+  "transformer.encoder.layers.1.norm1.bias": 256,
+  "transformer.encoder.layers.1.linear1.weight": 524288,
+  "transformer.encoder.layers.1.linear1.bias": 2048,
+  "transformer.encoder.layers.1.linear2.weight": 524288,
+  "transformer.encoder.layers.1.linear2.bias": 256,
+  "transformer.encoder.layers.1.norm2.weight": 256,
+  "transformer.encoder.layers.1.norm2.bias": 256,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.2.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.2.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.2.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.2.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.2.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.2.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.2.norm1.weight": 256,
+  "transformer.encoder.layers.2.norm1.bias": 256,
+  "transformer.encoder.layers.2.linear1.weight": 524288,
+  "transformer.encoder.layers.2.linear1.bias": 2048,
+  "transformer.encoder.layers.2.linear2.weight": 524288,
+  "transformer.encoder.layers.2.linear2.bias": 256,
+  "transformer.encoder.layers.2.norm2.weight": 256,
+  "transformer.encoder.layers.2.norm2.bias": 256,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.3.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.3.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.3.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.3.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.3.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.3.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.3.norm1.weight": 256,
+  "transformer.encoder.layers.3.norm1.bias": 256,
+  "transformer.encoder.layers.3.linear1.weight": 524288,
+  "transformer.encoder.layers.3.linear1.bias": 2048,
+  "transformer.encoder.layers.3.linear2.weight": 524288,
+  "transformer.encoder.layers.3.linear2.bias": 256,
+  "transformer.encoder.layers.3.norm2.weight": 256,
+  "transformer.encoder.layers.3.norm2.bias": 256,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.4.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.4.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.4.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.4.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.4.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.4.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.4.norm1.weight": 256,
+  "transformer.encoder.layers.4.norm1.bias": 256,
+  "transformer.encoder.layers.4.linear1.weight": 524288,
+  "transformer.encoder.layers.4.linear1.bias": 2048,
+  "transformer.encoder.layers.4.linear2.weight": 524288,
+  "transformer.encoder.layers.4.linear2.bias": 256,
+  "transformer.encoder.layers.4.norm2.weight": 256,
+  "transformer.encoder.layers.4.norm2.bias": 256,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.weight": 81920,
+  "transformer.encoder.layers.5.self_attn.sampling_offsets.bias": 320,
+  "transformer.encoder.layers.5.self_attn.attention_weights.weight": 40960,
+  "transformer.encoder.layers.5.self_attn.attention_weights.bias": 160,
+  "transformer.encoder.layers.5.self_attn.value_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.value_proj.bias": 256,
+  "transformer.encoder.layers.5.self_attn.output_proj.weight": 65536,
+  "transformer.encoder.layers.5.self_attn.output_proj.bias": 256,
+  "transformer.encoder.layers.5.norm1.weight": 256,
+  "transformer.encoder.layers.5.norm1.bias": 256,
+  "transformer.encoder.layers.5.linear1.weight": 524288,
+  "transformer.encoder.layers.5.linear1.bias": 2048,
+  "transformer.encoder.layers.5.linear2.weight": 524288,
+  "transformer.encoder.layers.5.linear2.bias": 256,
+  "transformer.encoder.layers.5.norm2.weight": 256,
+  "transformer.encoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.0.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.0.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.0.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.0.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.0.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.0.norm1.weight": 256,
+  "transformer.decoder.layers.0.norm1.bias": 256,
+  "transformer.decoder.layers.0.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.0.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.0.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.0.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.0.norm2.weight": 256,
+  "transformer.decoder.layers.0.norm2.bias": 256,
+  "transformer.decoder.layers.0.linear1.weight": 524288,
+  "transformer.decoder.layers.0.linear1.bias": 2048,
+  "transformer.decoder.layers.0.linear2.weight": 524288,
+  "transformer.decoder.layers.0.linear2.bias": 256,
+  "transformer.decoder.layers.0.norm3.weight": 256,
+  "transformer.decoder.layers.0.norm3.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.1.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.1.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.1.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.1.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.1.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.1.norm1.weight": 256,
+  "transformer.decoder.layers.1.norm1.bias": 256,
+  "transformer.decoder.layers.1.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.1.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.1.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.1.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.1.norm2.weight": 256,
+  "transformer.decoder.layers.1.norm2.bias": 256,
+  "transformer.decoder.layers.1.linear1.weight": 524288,
+  "transformer.decoder.layers.1.linear1.bias": 2048,
+  "transformer.decoder.layers.1.linear2.weight": 524288,
+  "transformer.decoder.layers.1.linear2.bias": 256,
+  "transformer.decoder.layers.1.norm3.weight": 256,
+  "transformer.decoder.layers.1.norm3.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.2.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.2.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.2.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.2.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.2.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.2.norm1.weight": 256,
+  "transformer.decoder.layers.2.norm1.bias": 256,
+  "transformer.decoder.layers.2.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.2.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.2.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.2.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.2.norm2.weight": 256,
+  "transformer.decoder.layers.2.norm2.bias": 256,
+  "transformer.decoder.layers.2.linear1.weight": 524288,
+  "transformer.decoder.layers.2.linear1.bias": 2048,
+  "transformer.decoder.layers.2.linear2.weight": 524288,
+  "transformer.decoder.layers.2.linear2.bias": 256,
+  "transformer.decoder.layers.2.norm3.weight": 256,
+  "transformer.decoder.layers.2.norm3.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.3.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.3.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.3.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.3.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.3.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.3.norm1.weight": 256,
+  "transformer.decoder.layers.3.norm1.bias": 256,
+  "transformer.decoder.layers.3.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.3.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.3.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.3.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.3.norm2.weight": 256,
+  "transformer.decoder.layers.3.norm2.bias": 256,
+  "transformer.decoder.layers.3.linear1.weight": 524288,
+  "transformer.decoder.layers.3.linear1.bias": 2048,
+  "transformer.decoder.layers.3.linear2.weight": 524288,
+  "transformer.decoder.layers.3.linear2.bias": 256,
+  "transformer.decoder.layers.3.norm3.weight": 256,
+  "transformer.decoder.layers.3.norm3.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.4.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.4.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.4.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.4.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.4.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.4.norm1.weight": 256,
+  "transformer.decoder.layers.4.norm1.bias": 256,
+  "transformer.decoder.layers.4.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.4.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.4.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.4.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.4.norm2.weight": 256,
+  "transformer.decoder.layers.4.norm2.bias": 256,
+  "transformer.decoder.layers.4.linear1.weight": 524288,
+  "transformer.decoder.layers.4.linear1.bias": 2048,
+  "transformer.decoder.layers.4.linear2.weight": 524288,
+  "transformer.decoder.layers.4.linear2.bias": 256,
+  "transformer.decoder.layers.4.norm3.weight": 256,
+  "transformer.decoder.layers.4.norm3.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.weight": 81920,
+  "transformer.decoder.layers.5.cross_attn.sampling_offsets.bias": 320,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.weight": 40960,
+  "transformer.decoder.layers.5.cross_attn.attention_weights.bias": 160,
+  "transformer.decoder.layers.5.cross_attn.value_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.value_proj.bias": 256,
+  "transformer.decoder.layers.5.cross_attn.output_proj.weight": 65536,
+  "transformer.decoder.layers.5.cross_attn.output_proj.bias": 256,
+  "transformer.decoder.layers.5.norm1.weight": 256,
+  "transformer.decoder.layers.5.norm1.bias": 256,
+  "transformer.decoder.layers.5.self_attn.in_proj_weight": 196608,
+  "transformer.decoder.layers.5.self_attn.in_proj_bias": 768,
+  "transformer.decoder.layers.5.self_attn.out_proj.weight": 65536,
+  "transformer.decoder.layers.5.self_attn.out_proj.bias": 256,
+  "transformer.decoder.layers.5.norm2.weight": 256,
+  "transformer.decoder.layers.5.norm2.bias": 256,
+  "transformer.decoder.layers.5.linear1.weight": 524288,
+  "transformer.decoder.layers.5.linear1.bias": 2048,
+  "transformer.decoder.layers.5.linear2.weight": 524288,
+  "transformer.decoder.layers.5.linear2.bias": 256,
+  "transformer.decoder.layers.5.norm3.weight": 256,
+  "transformer.decoder.layers.5.norm3.bias": 256,
+  "transformer.decoder.norm.weight": 256,
+  "transformer.decoder.norm.bias": 256,
+  "transformer.decoder.ref_point_head.layers.0.weight": 131072,
+  "transformer.decoder.ref_point_head.layers.0.bias": 256,
+  "transformer.decoder.ref_point_head.layers.1.weight": 65536,
+  "transformer.decoder.ref_point_head.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.0.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.0.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.1.weight": 65536,
+  "transformer.decoder.bbox_embed.0.layers.1.bias": 256,
+  "transformer.decoder.bbox_embed.0.layers.2.weight": 1024,
+  "transformer.decoder.bbox_embed.0.layers.2.bias": 4,
+  "transformer.decoder.class_embed.0.weight": 2304,
+  "transformer.decoder.class_embed.0.bias": 9,
+  "transformer.enc_output.weight": 65536,
+  "transformer.enc_output.bias": 256,
+  "transformer.enc_output_norm.weight": 256,
+  "transformer.enc_output_norm.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.0.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.0.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.1.weight": 65536,
+  "transformer.enc_out_bbox_embed.layers.1.bias": 256,
+  "transformer.enc_out_bbox_embed.layers.2.weight": 1024,
+  "transformer.enc_out_bbox_embed.layers.2.bias": 4,
+  "transformer.enc_out_class_embed.weight": 2304,
+  "transformer.enc_out_class_embed.bias": 9,
+  "label_enc.weight": 23552,
+  "input_proj.0.0.weight": 65536,
+  "input_proj.0.0.bias": 256,
+  "input_proj.0.1.weight": 256,
+  "input_proj.0.1.bias": 256,
+  "input_proj.1.0.weight": 131072,
+  "input_proj.1.0.bias": 256,
+  "input_proj.1.1.weight": 256,
+  "input_proj.1.1.bias": 256,
+  "input_proj.2.0.weight": 262144,
+  "input_proj.2.0.bias": 256,
+  "input_proj.2.1.weight": 256,
+  "input_proj.2.1.bias": 256,
+  "input_proj.3.0.weight": 524288,
+  "input_proj.3.0.bias": 256,
+  "input_proj.3.1.weight": 256,
+  "input_proj.3.1.bias": 256,
+  "input_proj.4.0.weight": 4718592,
+  "input_proj.4.0.bias": 256,
+  "input_proj.4.1.weight": 256,
+  "input_proj.4.1.bias": 256,
+  "backbone.0.body.layer2.0.conv1.weight": 32768,
+  "backbone.0.body.layer2.0.conv2.weight": 147456,
+  "backbone.0.body.layer2.0.conv3.weight": 65536,
+  "backbone.0.body.layer2.0.downsample.0.weight": 131072,
+  "backbone.0.body.layer2.1.conv1.weight": 65536,
+  "backbone.0.body.layer2.1.conv2.weight": 147456,
+  "backbone.0.body.layer2.1.conv3.weight": 65536,
+  "backbone.0.body.layer2.2.conv1.weight": 65536,
+  "backbone.0.body.layer2.2.conv2.weight": 147456,
+  "backbone.0.body.layer2.2.conv3.weight": 65536,
+  "backbone.0.body.layer2.3.conv1.weight": 65536,
+  "backbone.0.body.layer2.3.conv2.weight": 147456,
+  "backbone.0.body.layer2.3.conv3.weight": 65536,
+  "backbone.0.body.layer3.0.conv1.weight": 131072,
+  "backbone.0.body.layer3.0.conv2.weight": 589824,
+  "backbone.0.body.layer3.0.conv3.weight": 262144,
+  "backbone.0.body.layer3.0.downsample.0.weight": 524288,
+  "backbone.0.body.layer3.1.conv1.weight": 262144,
+  "backbone.0.body.layer3.1.conv2.weight": 589824,
+  "backbone.0.body.layer3.1.conv3.weight": 262144,
+  "backbone.0.body.layer3.2.conv1.weight": 262144,
+  "backbone.0.body.layer3.2.conv2.weight": 589824,
+  "backbone.0.body.layer3.2.conv3.weight": 262144,
+  "backbone.0.body.layer3.3.conv1.weight": 262144,
+  "backbone.0.body.layer3.3.conv2.weight": 589824,
+  "backbone.0.body.layer3.3.conv3.weight": 262144,
+  "backbone.0.body.layer3.4.conv1.weight": 262144,
+  "backbone.0.body.layer3.4.conv2.weight": 589824,
+  "backbone.0.body.layer3.4.conv3.weight": 262144,
+  "backbone.0.body.layer3.5.conv1.weight": 262144,
+  "backbone.0.body.layer3.5.conv2.weight": 589824,
+  "backbone.0.body.layer3.5.conv3.weight": 262144,
+  "backbone.0.body.layer4.0.conv1.weight": 524288,
+  "backbone.0.body.layer4.0.conv2.weight": 2359296,
+  "backbone.0.body.layer4.0.conv3.weight": 1048576,
+  "backbone.0.body.layer4.0.downsample.0.weight": 2097152,
+  "backbone.0.body.layer4.1.conv1.weight": 1048576,
+  "backbone.0.body.layer4.1.conv2.weight": 2359296,
+  "backbone.0.body.layer4.1.conv3.weight": 1048576,
+  "backbone.0.body.layer4.2.conv1.weight": 1048576,
+  "backbone.0.body.layer4.2.conv2.weight": 2359296,
+  "backbone.0.body.layer4.2.conv3.weight": 1048576
+}
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=2.49s)
+creating index...
+index created!
+data_aug_params: {
+  "scales": [
+    480,
+    512,
+    544,
+    576,
+    608,
+    640,
+    672,
+    704,
+    736,
+    768,
+    800
+  ],
+  "max_size": 1333,
+  "scales2_resize": [
+    400,
+    500,
+    600
+  ],
+  "scales2_crop": [
+    384,
+    600
+  ]
+}
+loading annotations into memory...
+Done (t=0.28s)
+creating index...
+index created!
+[12/19 07:16:43.645]: Ignore keys: []
+[12/19 07:16:43.683]: _IncompatibleKeys(missing_keys=['transformer.CCM.density_conv1.weight', 'transformer.CCM.density_conv1.bias', 'transformer.CCM.ccm_backbone.0.conv.weight', 'transformer.CCM.ccm_backbone.0.gn.weight', 'transformer.CCM.ccm_backbone.0.gn.bias', 'transformer.CCM.ccm_backbone.1.conv.weight', 'transformer.CCM.ccm_backbone.1.gn.weight', 'transformer.CCM.ccm_backbone.1.gn.bias', 'transformer.CCM.ccm_backbone.2.conv.weight', 'transformer.CCM.ccm_backbone.2.gn.weight', 'transformer.CCM.ccm_backbone.2.gn.bias', 'transformer.CCM.ccm_backbone.3.conv.weight', 'transformer.CCM.ccm_backbone.3.gn.weight', 'transformer.CCM.ccm_backbone.3.gn.bias', 'transformer.CCM.ccm_backbone.4.conv.weight', 'transformer.CCM.ccm_backbone.4.gn.weight', 'transformer.CCM.ccm_backbone.4.gn.bias', 'transformer.CCM.ccm_backbone.5.conv.weight', 'transformer.CCM.ccm_backbone.5.gn.weight', 'transformer.CCM.ccm_backbone.5.gn.bias', 'transformer.CCM.boundary_head.1.weight', 'transformer.CCM.boundary_head.1.bias', 'transformer.CCM.boundary_head.4.weight', 'transformer.CCM.boundary_head.4.bias', 'transformer.CCM.count_regressor.2.weight', 'transformer.CCM.count_regressor.2.bias', 'transformer.CCM.count_regressor.5.weight', 'transformer.CCM.count_regressor.5.bias', 'transformer.CCM.ccm_classifier.weight', 'transformer.CCM.ccm_classifier.bias', 'transformer.CCM.ref_point_conv.weight', 'transformer.CCM.ref_point_conv.bias'], unexpected_keys=['transformer.CCM.conv1.weight', 'transformer.CCM.conv1.bias', 'transformer.CCM.ccm.0.weight', 'transformer.CCM.ccm.0.bias', 'transformer.CCM.ccm.2.weight', 'transformer.CCM.ccm.2.bias', 'transformer.CCM.ccm.4.weight', 'transformer.CCM.ccm.4.bias', 'transformer.CCM.ccm.6.weight', 'transformer.CCM.ccm.6.bias', 'transformer.CCM.ccm.8.weight', 'transformer.CCM.ccm.8.bias', 'transformer.CCM.ccm.10.weight', 'transformer.CCM.ccm.10.bias', 'transformer.CCM.linear.weight', 'transformer.CCM.linear.bias'])
+/opt/conda/envs/DQDetr/lib/python3.11/site-packages/torch/functional.py:539: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at /pytorch/aten/src/ATen/native/TensorShape.cpp:3637.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+Epoch: [0]  [    0/11214]  eta: 7:16:06  lr: 0.000100  class_error: 100.00  loss: 33.6861 (33.6861)  loss_ce_dn: 3.3841 (3.3841)  loss_bbox_dn: 0.0129 (0.0129)  loss_giou_dn: 0.2893 (0.2893)  loss_ce: 1.4877 (1.4877)  loss_bbox: 0.0262 (0.0262)  loss_giou: 0.5118 (0.5118)  loss_ce_0: 1.6112 (1.6112)  loss_bbox_0: 0.0255 (0.0255)  loss_giou_0: 0.5001 (0.5001)  loss_ce_dn_0: 1.3537 (1.3537)  loss_bbox_dn_0: 0.0158 (0.0158)  loss_giou_dn_0: 0.3428 (0.3428)  loss_ce_1: 1.5915 (1.5915)  loss_bbox_1: 0.0262 (0.0262)  loss_giou_1: 0.5155 (0.5155)  loss_ce_dn_1: 2.0132 (2.0132)  loss_bbox_dn_1: 0.0136 (0.0136)  loss_giou_dn_1: 0.2969 (0.2969)  loss_ce_2: 1.5831 (1.5831)  loss_bbox_2: 0.0263 (0.0263)  loss_giou_2: 0.5162 (0.5162)  loss_ce_dn_2: 2.3704 (2.3704)  loss_bbox_dn_2: 0.0130 (0.0130)  loss_giou_dn_2: 0.2914 (0.2914)  loss_ce_3: 1.5955 (1.5955)  loss_bbox_3: 0.0262 (0.0262)  loss_giou_3: 0.5131 (0.5131)  loss_ce_dn_3: 2.8176 (2.8176)  loss_bbox_dn_3: 0.0129 (0.0129)  loss_giou_dn_3: 0.2886 (0.2886)  loss_ce_4: 1.6809 (1.6809)  loss_bbox_4: 0.0262 (0.0262)  loss_giou_4: 0.5124 (0.5124)  loss_ce_dn_4: 3.2800 (3.2800)  loss_bbox_dn_4: 0.0129 (0.0129)  loss_giou_dn_4: 0.2891 (0.2891)  loss_ce_interm: 1.4932 (1.4932)  loss_bbox_interm: 0.0274 (0.0274)  loss_giou_interm: 0.5357 (0.5357)  ccm_loss: 1.7559 (1.7559)  loss_ce_dn_unscaled: 3.3841 (3.3841)  loss_bbox_dn_unscaled: 0.0026 (0.0026)  loss_giou_dn_unscaled: 0.1446 (0.1446)  loss_xy_dn_unscaled: 0.0008 (0.0008)  loss_hw_dn_unscaled: 0.0018 (0.0018)  cardinality_error_dn_unscaled: 189.0000 (189.0000)  loss_ce_unscaled: 1.4877 (1.4877)  class_error_unscaled: 100.0000 (100.0000)  loss_bbox_unscaled: 0.0052 (0.0052)  loss_giou_unscaled: 0.2559 (0.2559)  loss_xy_unscaled: 0.0017 (0.0017)  loss_hw_unscaled: 0.0036 (0.0036)  cardinality_error_unscaled: 491.0000 (491.0000)  loss_ce_0_unscaled: 1.6112 (1.6112)  loss_bbox_0_unscaled: 0.0051 (0.0051)  loss_giou_0_unscaled: 0.2501 (0.2501)  loss_xy_0_unscaled: 0.0017 (0.0017)  loss_hw_0_unscaled: 0.0034 (0.0034)  cardinality_error_0_unscaled: 491.0000 (491.0000)  loss_ce_dn_0_unscaled: 1.3537 (1.3537)  loss_bbox_dn_0_unscaled: 0.0032 (0.0032)  loss_giou_dn_0_unscaled: 0.1714 (0.1714)  loss_xy_dn_0_unscaled: 0.0010 (0.0010)  loss_hw_dn_0_unscaled: 0.0021 (0.0021)  cardinality_error_dn_0_unscaled: 189.0000 (189.0000)  loss_ce_1_unscaled: 1.5915 (1.5915)  loss_bbox_1_unscaled: 0.0052 (0.0052)  loss_giou_1_unscaled: 0.2578 (0.2578)  loss_xy_1_unscaled: 0.0017 (0.0017)  loss_hw_1_unscaled: 0.0035 (0.0035)  cardinality_error_1_unscaled: 491.0000 (491.0000)  loss_ce_dn_1_unscaled: 2.0132 (2.0132)  loss_bbox_dn_1_unscaled: 0.0027 (0.0027)  loss_giou_dn_1_unscaled: 0.1484 (0.1484)  loss_xy_dn_1_unscaled: 0.0009 (0.0009)  loss_hw_dn_1_unscaled: 0.0019 (0.0019)  cardinality_error_dn_1_unscaled: 189.0000 (189.0000)  loss_ce_2_unscaled: 1.5831 (1.5831)  loss_bbox_2_unscaled: 0.0053 (0.0053)  loss_giou_2_unscaled: 0.2581 (0.2581)  loss_xy_2_unscaled: 0.0017 (0.0017)  loss_hw_2_unscaled: 0.0035 (0.0035)  cardinality_error_2_unscaled: 491.0000 (491.0000)  loss_ce_dn_2_unscaled: 2.3704 (2.3704)  loss_bbox_dn_2_unscaled: 0.0026 (0.0026)  loss_giou_dn_2_unscaled: 0.1457 (0.1457)  loss_xy_dn_2_unscaled: 0.0008 (0.0008)  loss_hw_dn_2_unscaled: 0.0018 (0.0018)  cardinality_error_dn_2_unscaled: 189.0000 (189.0000)  loss_ce_3_unscaled: 1.5955 (1.5955)  loss_bbox_3_unscaled: 0.0052 (0.0052)  loss_giou_3_unscaled: 0.2565 (0.2565)  loss_xy_3_unscaled: 0.0017 (0.0017)  loss_hw_3_unscaled: 0.0035 (0.0035)  cardinality_error_3_unscaled: 491.0000 (491.0000)  loss_ce_dn_3_unscaled: 2.8176 (2.8176)  loss_bbox_dn_3_unscaled: 0.0026 (0.0026)  loss_giou_dn_3_unscaled: 0.1443 (0.1443)  loss_xy_dn_3_unscaled: 0.0008 (0.0008)  loss_hw_dn_3_unscaled: 0.0017 (0.0017)  cardinality_error_dn_3_unscaled: 189.0000 (189.0000)  loss_ce_4_unscaled: 1.6809 (1.6809)  loss_bbox_4_unscaled: 0.0052 (0.0052)  loss_giou_4_unscaled: 0.2562 (0.2562)  loss_xy_4_unscaled: 0.0017 (0.0017)  loss_hw_4_unscaled: 0.0036 (0.0036)  cardinality_error_4_unscaled: 491.0000 (491.0000)  loss_ce_dn_4_unscaled: 3.2800 (3.2800)  loss_bbox_dn_4_unscaled: 0.0026 (0.0026)  loss_giou_dn_4_unscaled: 0.1445 (0.1445)  loss_xy_dn_4_unscaled: 0.0008 (0.0008)  loss_hw_dn_4_unscaled: 0.0018 (0.0018)  cardinality_error_dn_4_unscaled: 189.0000 (189.0000)  loss_ce_interm_unscaled: 1.4932 (1.4932)  loss_bbox_interm_unscaled: 0.0055 (0.0055)  loss_giou_interm_unscaled: 0.2678 (0.2678)  loss_xy_interm_unscaled: 0.0019 (0.0019)  loss_hw_interm_unscaled: 0.0036 (0.0036)  cardinality_error_interm_unscaled: 491.0000 (491.0000)  time: 2.3333  data: 0.3701  max mem: 6520
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0070, 1.0000], device='cuda:0')
+  warnings.warn(
+Epoch: [0]  [ 5000/11214]  eta: 0:52:29  lr: 0.000100  class_error: 55.56  loss: 9.8592 (8.8206)  loss_ce_dn: 0.0518 (0.0568)  loss_bbox_dn: 0.0111 (0.0144)  loss_giou_dn: 0.3931 (0.2773)  loss_ce: 0.1297 (0.1606)  loss_bbox: 0.0362 (0.0448)  loss_giou: 0.7219 (0.6684)  loss_ce_0: 0.1790 (0.1926)  loss_bbox_0: 0.0384 (0.0463)  loss_giou_0: 0.6888 (0.6757)  loss_ce_dn_0: 0.0700 (0.0687)  loss_bbox_dn_0: 0.0159 (0.0202)  loss_giou_dn_0: 0.5452 (0.3591)  loss_ce_1: 0.1328 (0.1741)  loss_bbox_1: 0.0383 (0.0455)  loss_giou_1: 0.7254 (0.6698)  loss_ce_dn_1: 0.0615 (0.0624)  loss_bbox_dn_1: 0.0109 (0.0154)  loss_giou_dn_1: 0.4013 (0.2922)  loss_ce_2: 0.1303 (0.1647)  loss_bbox_2: 0.0372 (0.0452)  loss_giou_2: 0.7351 (0.6690)  loss_ce_dn_2: 0.0483 (0.0586)  loss_bbox_dn_2: 0.0111 (0.0145)  loss_giou_dn_2: 0.3890 (0.2783)  loss_ce_3: 0.1292 (0.1628)  loss_bbox_3: 0.0371 (0.0449)  loss_giou_3: 0.7184 (0.6679)  loss_ce_dn_3: 0.0485 (0.0566)  loss_bbox_dn_3: 0.0111 (0.0143)  loss_giou_dn_3: 0.3877 (0.2758)  loss_ce_4: 0.1267 (0.1599)  loss_bbox_4: 0.0365 (0.0450)  loss_giou_4: 0.7204 (0.6685)  loss_ce_dn_4: 0.0519 (0.0558)  loss_bbox_dn_4: 0.0111 (0.0143)  loss_giou_dn_4: 0.3911 (0.2764)  loss_ce_interm: 0.1546 (0.2001)  loss_bbox_interm: 0.0415 (0.0490)  loss_giou_interm: 0.7880 (0.7105)  ccm_loss: 0.0035 (0.3438)  loss_ce_dn_unscaled: 0.0518 (0.0568)  loss_bbox_dn_unscaled: 0.0022 (0.0029)  loss_giou_dn_unscaled: 0.1965 (0.1386)  loss_xy_dn_unscaled: 0.0010 (0.0011)  loss_hw_dn_unscaled: 0.0012 (0.0018)  cardinality_error_dn_unscaled: 187.0000 (172.4405)  loss_ce_unscaled: 0.1297 (0.1606)  class_error_unscaled: 0.0000 (6.6748)  loss_bbox_unscaled: 0.0072 (0.0090)  loss_giou_unscaled: 0.3609 (0.3342)  loss_xy_unscaled: 0.0027 (0.0036)  loss_hw_unscaled: 0.0045 (0.0053)  cardinality_error_unscaled: 299.0000 (366.7764)  loss_ce_0_unscaled: 0.1790 (0.1926)  loss_bbox_0_unscaled: 0.0077 (0.0093)  loss_giou_0_unscaled: 0.3444 (0.3379)  loss_xy_0_unscaled: 0.0028 (0.0038)  loss_hw_0_unscaled: 0.0050 (0.0055)  cardinality_error_0_unscaled: 299.0000 (365.6101)  loss_ce_dn_0_unscaled: 0.0700 (0.0687)  loss_bbox_dn_0_unscaled: 0.0032 (0.0040)  loss_giou_dn_0_unscaled: 0.2726 (0.1796)  loss_xy_dn_0_unscaled: 0.0015 (0.0014)  loss_hw_dn_0_unscaled: 0.0017 (0.0026)  cardinality_error_dn_0_unscaled: 187.0000 (172.4191)  loss_ce_1_unscaled: 0.1328 (0.1741)  loss_bbox_1_unscaled: 0.0077 (0.0091)  loss_giou_1_unscaled: 0.3627 (0.3349)  loss_xy_1_unscaled: 0.0029 (0.0037)  loss_hw_1_unscaled: 0.0048 (0.0054)  cardinality_error_1_unscaled: 299.0000 (366.7764)  loss_ce_dn_1_unscaled: 0.0615 (0.0624)  loss_bbox_dn_1_unscaled: 0.0022 (0.0031)  loss_giou_dn_1_unscaled: 0.2006 (0.1461)  loss_xy_dn_1_unscaled: 0.0010 (0.0012)  loss_hw_dn_1_unscaled: 0.0012 (0.0019)  cardinality_error_dn_1_unscaled: 187.0000 (172.4387)  loss_ce_2_unscaled: 0.1303 (0.1647)  loss_bbox_2_unscaled: 0.0074 (0.0090)  loss_giou_2_unscaled: 0.3675 (0.3345)  loss_xy_2_unscaled: 0.0028 (0.0036)  loss_hw_2_unscaled: 0.0046 (0.0054)  cardinality_error_2_unscaled: 299.0000 (366.7764)  loss_ce_dn_2_unscaled: 0.0483 (0.0586)  loss_bbox_dn_2_unscaled: 0.0022 (0.0029)  loss_giou_dn_2_unscaled: 0.1945 (0.1391)  loss_xy_dn_2_unscaled: 0.0010 (0.0011)  loss_hw_dn_2_unscaled: 0.0012 (0.0018)  cardinality_error_dn_2_unscaled: 187.0000 (172.4405)  loss_ce_3_unscaled: 0.1292 (0.1628)  loss_bbox_3_unscaled: 0.0074 (0.0090)  loss_giou_3_unscaled: 0.3592 (0.3340)  loss_xy_3_unscaled: 0.0027 (0.0036)  loss_hw_3_unscaled: 0.0045 (0.0053)  cardinality_error_3_unscaled: 299.0000 (366.7764)  loss_ce_dn_3_unscaled: 0.0485 (0.0566)  loss_bbox_dn_3_unscaled: 0.0022 (0.0029)  loss_giou_dn_3_unscaled: 0.1939 (0.1379)  loss_xy_dn_3_unscaled: 0.0010 (0.0011)  loss_hw_dn_3_unscaled: 0.0012 (0.0018)  cardinality_error_dn_3_unscaled: 187.0000 (172.4405)  loss_ce_4_unscaled: 0.1267 (0.1599)  loss_bbox_4_unscaled: 0.0073 (0.0090)  loss_giou_4_unscaled: 0.3602 (0.3343)  loss_xy_4_unscaled: 0.0027 (0.0036)  loss_hw_4_unscaled: 0.0045 (0.0053)  cardinality_error_4_unscaled: 299.0000 (366.7764)  loss_ce_dn_4_unscaled: 0.0519 (0.0558)  loss_bbox_dn_4_unscaled: 0.0022 (0.0029)  loss_giou_dn_4_unscaled: 0.1955 (0.1382)  loss_xy_dn_4_unscaled: 0.0010 (0.0011)  loss_hw_dn_4_unscaled: 0.0012 (0.0018)  cardinality_error_dn_4_unscaled: 187.0000 (172.4405)  loss_ce_interm_unscaled: 0.1546 (0.2001)  loss_bbox_interm_unscaled: 0.0083 (0.0098)  loss_giou_interm_unscaled: 0.3940 (0.3552)  loss_xy_interm_unscaled: 0.0030 (0.0040)  loss_hw_interm_unscaled: 0.0055 (0.0058)  cardinality_error_interm_unscaled: 296.0000 (365.0402)  time: 0.5002  data: 0.0016  max mem: 12245
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0060, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 5.3695e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0027, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 3 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 7.5541e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 8.2006e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 6.3955e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 9.2873e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3529, 1.0000, 0.3591, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 2.2623e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2855, 1.0000, 0.2905, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 6.6080e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 7 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0404, 1.0000, 0.1014, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 4 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0174, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2587, 1.0000, 0.4615, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3316, 1.0000, 0.3413, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 5.1643e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 3.6588e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2980, 1.0000, 0.3090, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 6.5681e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 6.1515e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 5.6609e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0744, 1.0000, 0.1019, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 7.2394e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0028, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0160, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0051, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0292, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0036, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 3 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0079, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0362, 1.0000, 0.6891, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 8 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2914, 1.0000, 0.3276, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000e+00, 1.0000e+00, 6.4307e-04, 1.0000e+00], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0860, 1.0000, 0.1410, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0018, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0026, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0011, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3693, 1.0000, 0.4365, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0270, 1.0000, 0.9099, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7566, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9267, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9393, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8223, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9563, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8848, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0384, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0229, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0976, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 4 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7422, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8928, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0571, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0407, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8678, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0181, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0356, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9023, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7904, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 4 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0117, 1.0000, 0.9536, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4955, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0377, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8539, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0314, 1.0000, 0.9809, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8762, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3843, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0696, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1723, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.6358, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0675, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8577, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0261, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0686, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0816, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0288, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8760, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1526, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9408, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9076, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8450, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0270, 1.0000, 0.9852, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1368, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0188, 1.0000, 0.9798, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7290, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0447, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0438, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1421, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9114, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1158, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7140, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1580, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1459, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1195, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9085, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1164, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9490, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0682, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8860, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0043, 1.0000, 0.9670, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7837, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0429, 1.0000, 0.7899, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0302, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0329, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1881, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1776, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0284, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2605, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0402, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8814, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1874, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0230, 1.0000, 0.9356, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7639, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1033, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9553, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1981, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1974, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9844, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1467, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7964, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0967, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0664, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0018, 1.0000, 0.9695, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8649, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1474, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.6913, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0538, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0159, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0613, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7879, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2375, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9435, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0020, 1.0000, 0.9876, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0079, 1.0000, 0.9961, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1449, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0989, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1045, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0022, 1.0000, 0.9868, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9379, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7838, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8726, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0014, 1.0000, 0.9815, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9463, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2370, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1554, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0389, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0353, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0263, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1041, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2895, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0108, 1.0000, 0.9781, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1476, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0201, 1.0000, 0.9940, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 3 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0223, 1.0000, 0.9567, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0371, 1.0000, 0.8996, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0913, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4654, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1016, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0314, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8140, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9441, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8238, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2383, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0632, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1127, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7689, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2881, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.6615, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1023, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0156, 1.0000, 0.7882, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0621, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8915, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7567, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0773, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0442, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0066, 1.0000, 0.9842, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9380, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7654, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9229, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4758, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7294, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0704, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0121, 1.0000, 0.9890, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1202, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8773, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1324, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0273, 1.0000, 0.8336, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0424, 1.0000, 0.8324, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0462, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0191, 1.0000, 0.9739, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7896, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9477, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0476, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1947, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9647, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0156, 1.0000, 0.9949, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9156, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0857, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1638, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2187, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0083, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 3 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0737, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1141, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9144, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0318, 1.0000, 0.9706, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0514, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2738, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0178, 1.0000, 0.9726, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0670, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0522, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0339, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9644, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1059, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0122, 1.0000, 0.9953, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0940, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0837, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0695, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2666, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0762, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1709, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0536, 1.0000, 0.9782, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1031, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0572, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2348, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2670, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1866, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2626, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3006, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1724, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2114, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3353, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3526, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3128, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.4024, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3798, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.3438, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2164, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.4332, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.5040, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4888, 1.0000], device='cuda:0')
+  warnings.warn(
+Epoch: [0]  [10000/11214]  eta: 0:10:14  lr: 0.000100  class_error: 4.00  loss: 9.6519 (8.7328)  loss_ce_dn: 0.0384 (0.0497)  loss_bbox_dn: 0.0210 (0.0146)  loss_giou_dn: 0.4321 (0.2792)  loss_ce: 0.0837 (0.1528)  loss_bbox: 0.0311 (0.0438)  loss_giou: 0.7106 (0.6751)  loss_ce_0: 0.0984 (0.1861)  loss_bbox_0: 0.0312 (0.0451)  loss_giou_0: 0.7263 (0.6836)  loss_ce_dn_0: 0.0607 (0.0631)  loss_bbox_dn_0: 0.0293 (0.0206)  loss_giou_dn_0: 0.5514 (0.3617)  loss_ce_1: 0.0895 (0.1668)  loss_bbox_1: 0.0313 (0.0444)  loss_giou_1: 0.7028 (0.6781)  loss_ce_dn_1: 0.0451 (0.0558)  loss_bbox_dn_1: 0.0216 (0.0157)  loss_giou_dn_1: 0.4529 (0.2944)  loss_ce_2: 0.0782 (0.1566)  loss_bbox_2: 0.0329 (0.0441)  loss_giou_2: 0.7093 (0.6759)  loss_ce_dn_2: 0.0443 (0.0523)  loss_bbox_dn_2: 0.0213 (0.0147)  loss_giou_dn_2: 0.4312 (0.2803)  loss_ce_3: 0.0791 (0.1544)  loss_bbox_3: 0.0311 (0.0439)  loss_giou_3: 0.7204 (0.6743)  loss_ce_dn_3: 0.0405 (0.0506)  loss_bbox_dn_3: 0.0211 (0.0145)  loss_giou_dn_3: 0.4344 (0.2777)  loss_ce_4: 0.0792 (0.1523)  loss_bbox_4: 0.0312 (0.0439)  loss_giou_4: 0.7112 (0.6748)  loss_ce_dn_4: 0.0397 (0.0492)  loss_bbox_dn_4: 0.0211 (0.0145)  loss_giou_dn_4: 0.4322 (0.2783)  loss_ce_interm: 0.1256 (0.1923)  loss_bbox_interm: 0.0365 (0.0479)  loss_giou_interm: 0.7524 (0.7178)  ccm_loss: 0.0307 (0.2919)  loss_ce_dn_unscaled: 0.0384 (0.0497)  loss_bbox_dn_unscaled: 0.0042 (0.0029)  loss_giou_dn_unscaled: 0.2160 (0.1396)  loss_xy_dn_unscaled: 0.0016 (0.0011)  loss_hw_dn_unscaled: 0.0026 (0.0018)  cardinality_error_dn_unscaled: 189.0000 (172.7618)  loss_ce_unscaled: 0.0837 (0.1528)  class_error_unscaled: 0.0000 (6.1798)  loss_bbox_unscaled: 0.0062 (0.0088)  loss_giou_unscaled: 0.3553 (0.3375)  loss_xy_unscaled: 0.0023 (0.0035)  loss_hw_unscaled: 0.0044 (0.0053)  cardinality_error_unscaled: 299.0000 (366.8660)  loss_ce_0_unscaled: 0.0984 (0.1861)  loss_bbox_0_unscaled: 0.0062 (0.0090)  loss_giou_0_unscaled: 0.3631 (0.3418)  loss_xy_0_unscaled: 0.0024 (0.0036)  loss_hw_0_unscaled: 0.0048 (0.0054)  cardinality_error_0_unscaled: 299.0000 (366.3004)  loss_ce_dn_0_unscaled: 0.0607 (0.0631)  loss_bbox_dn_0_unscaled: 0.0059 (0.0041)  loss_giou_dn_0_unscaled: 0.2757 (0.1809)  loss_xy_dn_0_unscaled: 0.0022 (0.0015)  loss_hw_dn_0_unscaled: 0.0036 (0.0027)  cardinality_error_dn_0_unscaled: 189.0000 (172.6175)  loss_ce_1_unscaled: 0.0895 (0.1668)  loss_bbox_1_unscaled: 0.0063 (0.0089)  loss_giou_1_unscaled: 0.3514 (0.3391)  loss_xy_1_unscaled: 0.0023 (0.0035)  loss_hw_1_unscaled: 0.0043 (0.0054)  cardinality_error_1_unscaled: 299.0000 (366.8836)  loss_ce_dn_1_unscaled: 0.0451 (0.0558)  loss_bbox_dn_1_unscaled: 0.0043 (0.0031)  loss_giou_dn_1_unscaled: 0.2264 (0.1472)  loss_xy_dn_1_unscaled: 0.0017 (0.0012)  loss_hw_dn_1_unscaled: 0.0027 (0.0020)  cardinality_error_dn_1_unscaled: 189.0000 (172.6390)  loss_ce_2_unscaled: 0.0782 (0.1566)  loss_bbox_2_unscaled: 0.0066 (0.0088)  loss_giou_2_unscaled: 0.3547 (0.3379)  loss_xy_2_unscaled: 0.0023 (0.0035)  loss_hw_2_unscaled: 0.0043 (0.0053)  cardinality_error_2_unscaled: 299.0000 (366.8817)  loss_ce_dn_2_unscaled: 0.0443 (0.0523)  loss_bbox_dn_2_unscaled: 0.0043 (0.0029)  loss_giou_dn_2_unscaled: 0.2156 (0.1402)  loss_xy_dn_2_unscaled: 0.0016 (0.0011)  loss_hw_dn_2_unscaled: 0.0026 (0.0018)  cardinality_error_dn_2_unscaled: 189.0000 (172.7625)  loss_ce_3_unscaled: 0.0791 (0.1544)  loss_bbox_3_unscaled: 0.0062 (0.0088)  loss_giou_3_unscaled: 0.3602 (0.3372)  loss_xy_3_unscaled: 0.0023 (0.0035)  loss_hw_3_unscaled: 0.0044 (0.0053)  cardinality_error_3_unscaled: 299.0000 (366.8805)  loss_ce_dn_3_unscaled: 0.0405 (0.0506)  loss_bbox_dn_3_unscaled: 0.0042 (0.0029)  loss_giou_dn_3_unscaled: 0.2172 (0.1388)  loss_xy_dn_3_unscaled: 0.0016 (0.0011)  loss_hw_dn_3_unscaled: 0.0026 (0.0018)  cardinality_error_dn_3_unscaled: 189.0000 (172.7681)  loss_ce_4_unscaled: 0.0792 (0.1523)  loss_bbox_4_unscaled: 0.0062 (0.0088)  loss_giou_4_unscaled: 0.3556 (0.3374)  loss_xy_4_unscaled: 0.0023 (0.0035)  loss_hw_4_unscaled: 0.0044 (0.0053)  cardinality_error_4_unscaled: 299.0000 (366.8724)  loss_ce_dn_4_unscaled: 0.0397 (0.0492)  loss_bbox_dn_4_unscaled: 0.0042 (0.0029)  loss_giou_dn_4_unscaled: 0.2161 (0.1391)  loss_xy_dn_4_unscaled: 0.0016 (0.0011)  loss_hw_dn_4_unscaled: 0.0026 (0.0018)  cardinality_error_dn_4_unscaled: 189.0000 (172.7642)  loss_ce_interm_unscaled: 0.1256 (0.1923)  loss_bbox_interm_unscaled: 0.0073 (0.0096)  loss_giou_interm_unscaled: 0.3762 (0.3589)  loss_xy_interm_unscaled: 0.0027 (0.0038)  loss_hw_interm_unscaled: 0.0050 (0.0058)  cardinality_error_interm_unscaled: 297.0000 (358.4621)  time: 0.5292  data: 0.0018  max mem: 12245
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4994, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.5001, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.3909, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.3640, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.2045, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1821, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0813, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0696, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0851, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1788, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.2668, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1972, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0235, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4156, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.2324, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4752, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1418, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1589, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1530, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.3960, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.0423, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1454, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2228, 1.0000, 0.4603, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4616, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9120, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.7457, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1381, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9779, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4938, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1383, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2513, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4789, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9588, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.8845, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.1552, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.9044, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.3174, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.1433, 1.0000, 0.4875, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0415, 1.0000, 0.8597, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.2710, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0848, 1.0000, 0.8051, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0833, 1.0000, 1.0000, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.2633, 1.0000, 0.6667, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 1 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0952, 1.0000, 0.8436, 1.0000], device='cuda:0')
+  warnings.warn(
+/workspace/DQDetr/util/box_ops.py:225: UserWarning: 检测到 2 个预测框（含NaN/异常值），已强制修正为有效框。修正后无效框示例: tensor([0.0000, 1.0000, 0.4180, 1.0000], device='cuda:0')
+  warnings.warn(
+Epoch: [0]  [11213/11214]  eta: 0:00:00  lr: 0.000100  class_error: 0.00  loss: 6.4554 (8.7631)  loss_ce_dn: 0.0478 (0.0490)  loss_bbox_dn: 0.0108 (0.0147)  loss_giou_dn: 0.1433 (0.2822)  loss_ce: 0.0766 (0.1533)  loss_bbox: 0.0368 (0.0439)  loss_giou: 0.6058 (0.6768)  loss_ce_0: 0.0710 (0.1864)  loss_bbox_0: 0.0338 (0.0451)  loss_giou_0: 0.5976 (0.6858)  loss_ce_dn_0: 0.0570 (0.0624)  loss_bbox_dn_0: 0.0202 (0.0208)  loss_giou_dn_0: 0.2163 (0.3654)  loss_ce_1: 0.0728 (0.1674)  loss_bbox_1: 0.0357 (0.0445)  loss_giou_1: 0.6088 (0.6802)  loss_ce_dn_1: 0.0518 (0.0551)  loss_bbox_dn_1: 0.0115 (0.0159)  loss_giou_dn_1: 0.1559 (0.2975)  loss_ce_2: 0.0907 (0.1575)  loss_bbox_2: 0.0375 (0.0442)  loss_giou_2: 0.6224 (0.6776)  loss_ce_dn_2: 0.0415 (0.0516)  loss_bbox_dn_2: 0.0104 (0.0149)  loss_giou_dn_2: 0.1434 (0.2833)  loss_ce_3: 0.0810 (0.1550)  loss_bbox_3: 0.0372 (0.0440)  loss_giou_3: 0.6166 (0.6763)  loss_ce_dn_3: 0.0479 (0.0500)  loss_bbox_dn_3: 0.0103 (0.0147)  loss_giou_dn_3: 0.1411 (0.2806)  loss_ce_4: 0.0680 (0.1528)  loss_bbox_4: 0.0372 (0.0440)  loss_giou_4: 0.6098 (0.6765)  loss_ce_dn_4: 0.0483 (0.0485)  loss_bbox_dn_4: 0.0108 (0.0147)  loss_giou_dn_4: 0.1406 (0.2812)  loss_ce_interm: 0.0699 (0.1928)  loss_bbox_interm: 0.0405 (0.0479)  loss_giou_interm: 0.6801 (0.7204)  ccm_loss: 0.0003 (0.2882)  loss_ce_dn_unscaled: 0.0478 (0.0490)  loss_bbox_dn_unscaled: 0.0022 (0.0029)  loss_giou_dn_unscaled: 0.0717 (0.1411)  loss_xy_dn_unscaled: 0.0008 (0.0011)  loss_hw_dn_unscaled: 0.0014 (0.0018)  cardinality_error_dn_unscaled: 198.0000 (172.2880)  loss_ce_unscaled: 0.0766 (0.1533)  class_error_unscaled: 0.0000 (6.1216)  loss_bbox_unscaled: 0.0074 (0.0088)  loss_giou_unscaled: 0.3029 (0.3384)  loss_xy_unscaled: 0.0023 (0.0034)  loss_hw_unscaled: 0.0047 (0.0053)  cardinality_error_unscaled: 299.0000 (367.9773)  loss_ce_0_unscaled: 0.0710 (0.1864)  loss_bbox_0_unscaled: 0.0068 (0.0090)  loss_giou_0_unscaled: 0.2988 (0.3429)  loss_xy_0_unscaled: 0.0019 (0.0036)  loss_hw_0_unscaled: 0.0038 (0.0054)  cardinality_error_0_unscaled: 299.0000 (367.4731)  loss_ce_dn_0_unscaled: 0.0570 (0.0624)  loss_bbox_dn_0_unscaled: 0.0040 (0.0042)  loss_giou_dn_0_unscaled: 0.1082 (0.1827)  loss_xy_dn_0_unscaled: 0.0010 (0.0015)  loss_hw_dn_0_unscaled: 0.0024 (0.0027)  cardinality_error_dn_0_unscaled: 197.0000 (172.1213)  loss_ce_1_unscaled: 0.0728 (0.1674)  loss_bbox_1_unscaled: 0.0071 (0.0089)  loss_giou_1_unscaled: 0.3044 (0.3401)  loss_xy_1_unscaled: 0.0024 (0.0035)  loss_hw_1_unscaled: 0.0045 (0.0054)  cardinality_error_1_unscaled: 299.0000 (367.9932)  loss_ce_dn_1_unscaled: 0.0518 (0.0551)  loss_bbox_dn_1_unscaled: 0.0023 (0.0032)  loss_giou_dn_1_unscaled: 0.0780 (0.1488)  loss_xy_dn_1_unscaled: 0.0008 (0.0012)  loss_hw_dn_1_unscaled: 0.0015 (0.0020)  cardinality_error_dn_1_unscaled: 198.0000 (172.1403)  loss_ce_2_unscaled: 0.0907 (0.1575)  loss_bbox_2_unscaled: 0.0075 (0.0088)  loss_giou_2_unscaled: 0.3112 (0.3388)  loss_xy_2_unscaled: 0.0024 (0.0035)  loss_hw_2_unscaled: 0.0048 (0.0054)  cardinality_error_2_unscaled: 299.0000 (367.9915)  loss_ce_dn_2_unscaled: 0.0415 (0.0516)  loss_bbox_dn_2_unscaled: 0.0021 (0.0030)  loss_giou_dn_2_unscaled: 0.0717 (0.1416)  loss_xy_dn_2_unscaled: 0.0008 (0.0011)  loss_hw_dn_2_unscaled: 0.0015 (0.0019)  cardinality_error_dn_2_unscaled: 198.0000 (172.2823)  loss_ce_3_unscaled: 0.0810 (0.1550)  loss_bbox_3_unscaled: 0.0074 (0.0088)  loss_giou_3_unscaled: 0.3083 (0.3381)  loss_xy_3_unscaled: 0.0024 (0.0035)  loss_hw_3_unscaled: 0.0048 (0.0053)  cardinality_error_3_unscaled: 299.0000 (367.9903)  loss_ce_dn_3_unscaled: 0.0479 (0.0500)  loss_bbox_dn_3_unscaled: 0.0021 (0.0029)  loss_giou_dn_3_unscaled: 0.0705 (0.1403)  loss_xy_dn_3_unscaled: 0.0007 (0.0011)  loss_hw_dn_3_unscaled: 0.0014 (0.0018)  cardinality_error_dn_3_unscaled: 198.0000 (172.2939)  loss_ce_4_unscaled: 0.0680 (0.1528)  loss_bbox_4_unscaled: 0.0074 (0.0088)  loss_giou_4_unscaled: 0.3049 (0.3383)  loss_xy_4_unscaled: 0.0023 (0.0035)  loss_hw_4_unscaled: 0.0048 (0.0053)  cardinality_error_4_unscaled: 299.0000 (367.9830)  loss_ce_dn_4_unscaled: 0.0483 (0.0485)  loss_bbox_dn_4_unscaled: 0.0022 (0.0029)  loss_giou_dn_4_unscaled: 0.0703 (0.1406)  loss_xy_dn_4_unscaled: 0.0008 (0.0011)  loss_hw_dn_4_unscaled: 0.0014 (0.0018)  cardinality_error_dn_4_unscaled: 198.0000 (172.2905)  loss_ce_interm_unscaled: 0.0699 (0.1928)  loss_bbox_interm_unscaled: 0.0081 (0.0096)  loss_giou_interm_unscaled: 0.3400 (0.3602)  loss_xy_interm_unscaled: 0.0021 (0.0038)  loss_hw_interm_unscaled: 0.0063 (0.0058)  cardinality_error_interm_unscaled: 281.0000 (359.6156)  time: 0.4735  data: 0.0014  max mem: 12245
+Epoch: [0] Total time: 1:34:28 (0.5055 s / it)
+Averaged stats: lr: 0.000100  class_error: 0.00  loss: 6.4554 (8.7631)  loss_ce_dn: 0.0478 (0.0490)  loss_bbox_dn: 0.0108 (0.0147)  loss_giou_dn: 0.1433 (0.2822)  loss_ce: 0.0766 (0.1533)  loss_bbox: 0.0368 (0.0439)  loss_giou: 0.6058 (0.6768)  loss_ce_0: 0.0710 (0.1864)  loss_bbox_0: 0.0338 (0.0451)  loss_giou_0: 0.5976 (0.6858)  loss_ce_dn_0: 0.0570 (0.0624)  loss_bbox_dn_0: 0.0202 (0.0208)  loss_giou_dn_0: 0.2163 (0.3654)  loss_ce_1: 0.0728 (0.1674)  loss_bbox_1: 0.0357 (0.0445)  loss_giou_1: 0.6088 (0.6802)  loss_ce_dn_1: 0.0518 (0.0551)  loss_bbox_dn_1: 0.0115 (0.0159)  loss_giou_dn_1: 0.1559 (0.2975)  loss_ce_2: 0.0907 (0.1575)  loss_bbox_2: 0.0375 (0.0442)  loss_giou_2: 0.6224 (0.6776)  loss_ce_dn_2: 0.0415 (0.0516)  loss_bbox_dn_2: 0.0104 (0.0149)  loss_giou_dn_2: 0.1434 (0.2833)  loss_ce_3: 0.0810 (0.1550)  loss_bbox_3: 0.0372 (0.0440)  loss_giou_3: 0.6166 (0.6763)  loss_ce_dn_3: 0.0479 (0.0500)  loss_bbox_dn_3: 0.0103 (0.0147)  loss_giou_dn_3: 0.1411 (0.2806)  loss_ce_4: 0.0680 (0.1528)  loss_bbox_4: 0.0372 (0.0440)  loss_giou_4: 0.6098 (0.6765)  loss_ce_dn_4: 0.0483 (0.0485)  loss_bbox_dn_4: 0.0108 (0.0147)  loss_giou_dn_4: 0.1406 (0.2812)  loss_ce_interm: 0.0699 (0.1928)  loss_bbox_interm: 0.0405 (0.0479)  loss_giou_interm: 0.6801 (0.7204)  ccm_loss: 0.0003 (0.2882)  loss_ce_dn_unscaled: 0.0478 (0.0490)  loss_bbox_dn_unscaled: 0.0022 (0.0029)  loss_giou_dn_unscaled: 0.0717 (0.1411)  loss_xy_dn_unscaled: 0.0008 (0.0011)  loss_hw_dn_unscaled: 0.0014 (0.0018)  cardinality_error_dn_unscaled: 198.0000 (172.2880)  loss_ce_unscaled: 0.0766 (0.1533)  class_error_unscaled: 0.0000 (6.1216)  loss_bbox_unscaled: 0.0074 (0.0088)  loss_giou_unscaled: 0.3029 (0.3384)  loss_xy_unscaled: 0.0023 (0.0034)  loss_hw_unscaled: 0.0047 (0.0053)  cardinality_error_unscaled: 299.0000 (367.9773)  loss_ce_0_unscaled: 0.0710 (0.1864)  loss_bbox_0_unscaled: 0.0068 (0.0090)  loss_giou_0_unscaled: 0.2988 (0.3429)  loss_xy_0_unscaled: 0.0019 (0.0036)  loss_hw_0_unscaled: 0.0038 (0.0054)  cardinality_error_0_unscaled: 299.0000 (367.4731)  loss_ce_dn_0_unscaled: 0.0570 (0.0624)  loss_bbox_dn_0_unscaled: 0.0040 (0.0042)  loss_giou_dn_0_unscaled: 0.1082 (0.1827)  loss_xy_dn_0_unscaled: 0.0010 (0.0015)  loss_hw_dn_0_unscaled: 0.0024 (0.0027)  cardinality_error_dn_0_unscaled: 197.0000 (172.1213)  loss_ce_1_unscaled: 0.0728 (0.1674)  loss_bbox_1_unscaled: 0.0071 (0.0089)  loss_giou_1_unscaled: 0.3044 (0.3401)  loss_xy_1_unscaled: 0.0024 (0.0035)  loss_hw_1_unscaled: 0.0045 (0.0054)  cardinality_error_1_unscaled: 299.0000 (367.9932)  loss_ce_dn_1_unscaled: 0.0518 (0.0551)  loss_bbox_dn_1_unscaled: 0.0023 (0.0032)  loss_giou_dn_1_unscaled: 0.0780 (0.1488)  loss_xy_dn_1_unscaled: 0.0008 (0.0012)  loss_hw_dn_1_unscaled: 0.0015 (0.0020)  cardinality_error_dn_1_unscaled: 198.0000 (172.1403)  loss_ce_2_unscaled: 0.0907 (0.1575)  loss_bbox_2_unscaled: 0.0075 (0.0088)  loss_giou_2_unscaled: 0.3112 (0.3388)  loss_xy_2_unscaled: 0.0024 (0.0035)  loss_hw_2_unscaled: 0.0048 (0.0054)  cardinality_error_2_unscaled: 299.0000 (367.9915)  loss_ce_dn_2_unscaled: 0.0415 (0.0516)  loss_bbox_dn_2_unscaled: 0.0021 (0.0030)  loss_giou_dn_2_unscaled: 0.0717 (0.1416)  loss_xy_dn_2_unscaled: 0.0008 (0.0011)  loss_hw_dn_2_unscaled: 0.0015 (0.0019)  cardinality_error_dn_2_unscaled: 198.0000 (172.2823)  loss_ce_3_unscaled: 0.0810 (0.1550)  loss_bbox_3_unscaled: 0.0074 (0.0088)  loss_giou_3_unscaled: 0.3083 (0.3381)  loss_xy_3_unscaled: 0.0024 (0.0035)  loss_hw_3_unscaled: 0.0048 (0.0053)  cardinality_error_3_unscaled: 299.0000 (367.9903)  loss_ce_dn_3_unscaled: 0.0479 (0.0500)  loss_bbox_dn_3_unscaled: 0.0021 (0.0029)  loss_giou_dn_3_unscaled: 0.0705 (0.1403)  loss_xy_dn_3_unscaled: 0.0007 (0.0011)  loss_hw_dn_3_unscaled: 0.0014 (0.0018)  cardinality_error_dn_3_unscaled: 198.0000 (172.2939)  loss_ce_4_unscaled: 0.0680 (0.1528)  loss_bbox_4_unscaled: 0.0074 (0.0088)  loss_giou_4_unscaled: 0.3049 (0.3383)  loss_xy_4_unscaled: 0.0023 (0.0035)  loss_hw_4_unscaled: 0.0048 (0.0053)  cardinality_error_4_unscaled: 299.0000 (367.9830)  loss_ce_dn_4_unscaled: 0.0483 (0.0485)  loss_bbox_dn_4_unscaled: 0.0022 (0.0029)  loss_giou_dn_4_unscaled: 0.0703 (0.1406)  loss_xy_dn_4_unscaled: 0.0008 (0.0011)  loss_hw_dn_4_unscaled: 0.0014 (0.0018)  cardinality_error_dn_4_unscaled: 198.0000 (172.2905)  loss_ce_interm_unscaled: 0.0699 (0.1928)  loss_bbox_interm_unscaled: 0.0081 (0.0096)  loss_giou_interm_unscaled: 0.3400 (0.3602)  loss_xy_interm_unscaled: 0.0021 (0.0038)  loss_hw_interm_unscaled: 0.0063 (0.0058)  cardinality_error_interm_unscaled: 281.0000 (359.6156)
+Test:  [   0/2804]  eta: 0:38:36  class_error: 0.00  loss: 5.3442 (5.3442)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.0190 (0.0190)  loss_bbox: 0.0425 (0.0425)  loss_giou: 0.7452 (0.7452)  loss_ce_0: 0.0203 (0.0203)  loss_bbox_0: 0.0381 (0.0381)  loss_giou_0: 0.7027 (0.7027)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.0149 (0.0149)  loss_bbox_1: 0.0388 (0.0388)  loss_giou_1: 0.7303 (0.7303)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.0307 (0.0307)  loss_bbox_2: 0.0421 (0.0421)  loss_giou_2: 0.7610 (0.7610)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.0340 (0.0340)  loss_bbox_3: 0.0430 (0.0430)  loss_giou_3: 0.7505 (0.7505)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.0260 (0.0260)  loss_bbox_4: 0.0424 (0.0424)  loss_giou_4: 0.7445 (0.7445)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.0480 (0.0480)  loss_bbox_interm: 0.0229 (0.0229)  loss_giou_interm: 0.4474 (0.4474)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.0190 (0.0190)  class_error_unscaled: 0.0000 (0.0000)  loss_bbox_unscaled: 0.0085 (0.0085)  loss_giou_unscaled: 0.3726 (0.3726)  loss_xy_unscaled: 0.0014 (0.0014)  loss_hw_unscaled: 0.0071 (0.0071)  cardinality_error_unscaled: 298.0000 (298.0000)  loss_ce_0_unscaled: 0.0203 (0.0203)  loss_bbox_0_unscaled: 0.0076 (0.0076)  loss_giou_0_unscaled: 0.3513 (0.3513)  loss_xy_0_unscaled: 0.0012 (0.0012)  loss_hw_0_unscaled: 0.0065 (0.0065)  cardinality_error_0_unscaled: 298.0000 (298.0000)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.0149 (0.0149)  loss_bbox_1_unscaled: 0.0078 (0.0078)  loss_giou_1_unscaled: 0.3651 (0.3651)  loss_xy_1_unscaled: 0.0011 (0.0011)  loss_hw_1_unscaled: 0.0067 (0.0067)  cardinality_error_1_unscaled: 298.0000 (298.0000)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.0307 (0.0307)  loss_bbox_2_unscaled: 0.0084 (0.0084)  loss_giou_2_unscaled: 0.3805 (0.3805)  loss_xy_2_unscaled: 0.0011 (0.0011)  loss_hw_2_unscaled: 0.0073 (0.0073)  cardinality_error_2_unscaled: 298.0000 (298.0000)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.0340 (0.0340)  loss_bbox_3_unscaled: 0.0086 (0.0086)  loss_giou_3_unscaled: 0.3752 (0.3752)  loss_xy_3_unscaled: 0.0014 (0.0014)  loss_hw_3_unscaled: 0.0072 (0.0072)  cardinality_error_3_unscaled: 298.0000 (298.0000)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.0260 (0.0260)  loss_bbox_4_unscaled: 0.0085 (0.0085)  loss_giou_4_unscaled: 0.3723 (0.3723)  loss_xy_4_unscaled: 0.0014 (0.0014)  loss_hw_4_unscaled: 0.0071 (0.0071)  cardinality_error_4_unscaled: 298.0000 (298.0000)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.0480 (0.0480)  loss_bbox_interm_unscaled: 0.0046 (0.0046)  loss_giou_interm_unscaled: 0.2237 (0.2237)  loss_xy_interm_unscaled: 0.0008 (0.0008)  loss_hw_interm_unscaled: 0.0038 (0.0038)  cardinality_error_interm_unscaled: 257.0000 (257.0000)  time: 0.8261  data: 0.5619  max mem: 12245
+Test:  [2803/2804]  eta: 0:00:00  class_error: 0.00  loss: 6.2605 (6.1827)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.1689 (0.1733)  loss_bbox: 0.0311 (0.0390)  loss_giou: 0.6086 (0.6574)  loss_ce_0: 0.1949 (0.2058)  loss_bbox_0: 0.0323 (0.0399)  loss_giou_0: 0.6589 (0.6575)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.1926 (0.1766)  loss_bbox_1: 0.0302 (0.0397)  loss_giou_1: 0.5992 (0.6585)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.1764 (0.1771)  loss_bbox_2: 0.0314 (0.0396)  loss_giou_2: 0.7069 (0.6600)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.1878 (0.1759)  loss_bbox_3: 0.0309 (0.0392)  loss_giou_3: 0.6221 (0.6583)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.1547 (0.1758)  loss_bbox_4: 0.0308 (0.0392)  loss_giou_4: 0.6131 (0.6589)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1706 (0.1842)  loss_bbox_interm: 0.0329 (0.0422)  loss_giou_interm: 0.6074 (0.6847)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.1689 (0.1733)  class_error_unscaled: 0.0000 (0.8109)  loss_bbox_unscaled: 0.0062 (0.0078)  loss_giou_unscaled: 0.3043 (0.3287)  loss_xy_unscaled: 0.0020 (0.0031)  loss_hw_unscaled: 0.0041 (0.0047)  cardinality_error_unscaled: 298.0000 (352.6305)  loss_ce_0_unscaled: 0.1949 (0.2058)  loss_bbox_0_unscaled: 0.0065 (0.0080)  loss_giou_0_unscaled: 0.3295 (0.3287)  loss_xy_0_unscaled: 0.0023 (0.0032)  loss_hw_0_unscaled: 0.0042 (0.0048)  cardinality_error_0_unscaled: 298.0000 (352.7019)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.1926 (0.1766)  loss_bbox_1_unscaled: 0.0060 (0.0079)  loss_giou_1_unscaled: 0.2996 (0.3292)  loss_xy_1_unscaled: 0.0021 (0.0032)  loss_hw_1_unscaled: 0.0042 (0.0048)  cardinality_error_1_unscaled: 298.0000 (352.6965)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.1764 (0.1771)  loss_bbox_2_unscaled: 0.0063 (0.0079)  loss_giou_2_unscaled: 0.3535 (0.3300)  loss_xy_2_unscaled: 0.0021 (0.0032)  loss_hw_2_unscaled: 0.0041 (0.0048)  cardinality_error_2_unscaled: 298.0000 (352.6801)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.1878 (0.1759)  loss_bbox_3_unscaled: 0.0062 (0.0078)  loss_giou_3_unscaled: 0.3110 (0.3292)  loss_xy_3_unscaled: 0.0020 (0.0031)  loss_hw_3_unscaled: 0.0041 (0.0047)  cardinality_error_3_unscaled: 298.0000 (352.6655)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.1547 (0.1758)  loss_bbox_4_unscaled: 0.0062 (0.0078)  loss_giou_4_unscaled: 0.3065 (0.3294)  loss_xy_4_unscaled: 0.0020 (0.0031)  loss_hw_4_unscaled: 0.0041 (0.0047)  cardinality_error_4_unscaled: 298.0000 (352.6580)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1706 (0.1842)  loss_bbox_interm_unscaled: 0.0066 (0.0084)  loss_giou_interm_unscaled: 0.3037 (0.3423)  loss_xy_interm_unscaled: 0.0023 (0.0034)  loss_hw_interm_unscaled: 0.0042 (0.0050)  cardinality_error_interm_unscaled: 296.0000 (338.4718)  time: 0.3996  data: 0.0048  max mem: 12245
+Test: Total time: 0:18:48 (0.4024 s / it)
+Averaged stats: class_error: 0.00  loss: 6.2605 (6.1827)  loss_bbox_dn: 0.0000 (0.0000)  loss_giou_dn: 0.0000 (0.0000)  loss_ce_dn: 0.0000 (0.0000)  loss_ce: 0.1689 (0.1733)  loss_bbox: 0.0311 (0.0390)  loss_giou: 0.6086 (0.6574)  loss_ce_0: 0.1949 (0.2058)  loss_bbox_0: 0.0323 (0.0399)  loss_giou_0: 0.6589 (0.6575)  loss_bbox_dn_0: 0.0000 (0.0000)  loss_giou_dn_0: 0.0000 (0.0000)  loss_ce_dn_0: 0.0000 (0.0000)  loss_ce_1: 0.1926 (0.1766)  loss_bbox_1: 0.0302 (0.0397)  loss_giou_1: 0.5992 (0.6585)  loss_bbox_dn_1: 0.0000 (0.0000)  loss_giou_dn_1: 0.0000 (0.0000)  loss_ce_dn_1: 0.0000 (0.0000)  loss_ce_2: 0.1764 (0.1771)  loss_bbox_2: 0.0314 (0.0396)  loss_giou_2: 0.7069 (0.6600)  loss_bbox_dn_2: 0.0000 (0.0000)  loss_giou_dn_2: 0.0000 (0.0000)  loss_ce_dn_2: 0.0000 (0.0000)  loss_ce_3: 0.1878 (0.1759)  loss_bbox_3: 0.0309 (0.0392)  loss_giou_3: 0.6221 (0.6583)  loss_bbox_dn_3: 0.0000 (0.0000)  loss_giou_dn_3: 0.0000 (0.0000)  loss_ce_dn_3: 0.0000 (0.0000)  loss_ce_4: 0.1547 (0.1758)  loss_bbox_4: 0.0308 (0.0392)  loss_giou_4: 0.6131 (0.6589)  loss_bbox_dn_4: 0.0000 (0.0000)  loss_giou_dn_4: 0.0000 (0.0000)  loss_ce_dn_4: 0.0000 (0.0000)  loss_ce_interm: 0.1706 (0.1842)  loss_bbox_interm: 0.0329 (0.0422)  loss_giou_interm: 0.6074 (0.6847)  loss_bbox_dn_unscaled: 0.0000 (0.0000)  loss_giou_dn_unscaled: 0.0000 (0.0000)  loss_ce_dn_unscaled: 0.0000 (0.0000)  loss_xy_dn_unscaled: 0.0000 (0.0000)  loss_hw_dn_unscaled: 0.0000 (0.0000)  cardinality_error_dn_unscaled: 0.0000 (0.0000)  loss_ce_unscaled: 0.1689 (0.1733)  class_error_unscaled: 0.0000 (0.8109)  loss_bbox_unscaled: 0.0062 (0.0078)  loss_giou_unscaled: 0.3043 (0.3287)  loss_xy_unscaled: 0.0020 (0.0031)  loss_hw_unscaled: 0.0041 (0.0047)  cardinality_error_unscaled: 298.0000 (352.6305)  loss_ce_0_unscaled: 0.1949 (0.2058)  loss_bbox_0_unscaled: 0.0065 (0.0080)  loss_giou_0_unscaled: 0.3295 (0.3287)  loss_xy_0_unscaled: 0.0023 (0.0032)  loss_hw_0_unscaled: 0.0042 (0.0048)  cardinality_error_0_unscaled: 298.0000 (352.7019)  loss_bbox_dn_0_unscaled: 0.0000 (0.0000)  loss_giou_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_dn_0_unscaled: 0.0000 (0.0000)  loss_xy_dn_0_unscaled: 0.0000 (0.0000)  loss_hw_dn_0_unscaled: 0.0000 (0.0000)  cardinality_error_dn_0_unscaled: 0.0000 (0.0000)  loss_ce_1_unscaled: 0.1926 (0.1766)  loss_bbox_1_unscaled: 0.0060 (0.0079)  loss_giou_1_unscaled: 0.2996 (0.3292)  loss_xy_1_unscaled: 0.0021 (0.0032)  loss_hw_1_unscaled: 0.0042 (0.0048)  cardinality_error_1_unscaled: 298.0000 (352.6965)  loss_bbox_dn_1_unscaled: 0.0000 (0.0000)  loss_giou_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_dn_1_unscaled: 0.0000 (0.0000)  loss_xy_dn_1_unscaled: 0.0000 (0.0000)  loss_hw_dn_1_unscaled: 0.0000 (0.0000)  cardinality_error_dn_1_unscaled: 0.0000 (0.0000)  loss_ce_2_unscaled: 0.1764 (0.1771)  loss_bbox_2_unscaled: 0.0063 (0.0079)  loss_giou_2_unscaled: 0.3535 (0.3300)  loss_xy_2_unscaled: 0.0021 (0.0032)  loss_hw_2_unscaled: 0.0041 (0.0048)  cardinality_error_2_unscaled: 298.0000 (352.6801)  loss_bbox_dn_2_unscaled: 0.0000 (0.0000)  loss_giou_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_dn_2_unscaled: 0.0000 (0.0000)  loss_xy_dn_2_unscaled: 0.0000 (0.0000)  loss_hw_dn_2_unscaled: 0.0000 (0.0000)  cardinality_error_dn_2_unscaled: 0.0000 (0.0000)  loss_ce_3_unscaled: 0.1878 (0.1759)  loss_bbox_3_unscaled: 0.0062 (0.0078)  loss_giou_3_unscaled: 0.3110 (0.3292)  loss_xy_3_unscaled: 0.0020 (0.0031)  loss_hw_3_unscaled: 0.0041 (0.0047)  cardinality_error_3_unscaled: 298.0000 (352.6655)  loss_bbox_dn_3_unscaled: 0.0000 (0.0000)  loss_giou_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_dn_3_unscaled: 0.0000 (0.0000)  loss_xy_dn_3_unscaled: 0.0000 (0.0000)  loss_hw_dn_3_unscaled: 0.0000 (0.0000)  cardinality_error_dn_3_unscaled: 0.0000 (0.0000)  loss_ce_4_unscaled: 0.1547 (0.1758)  loss_bbox_4_unscaled: 0.0062 (0.0078)  loss_giou_4_unscaled: 0.3065 (0.3294)  loss_xy_4_unscaled: 0.0020 (0.0031)  loss_hw_4_unscaled: 0.0041 (0.0047)  cardinality_error_4_unscaled: 298.0000 (352.6580)  loss_bbox_dn_4_unscaled: 0.0000 (0.0000)  loss_giou_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_dn_4_unscaled: 0.0000 (0.0000)  loss_xy_dn_4_unscaled: 0.0000 (0.0000)  loss_hw_dn_4_unscaled: 0.0000 (0.0000)  cardinality_error_dn_4_unscaled: 0.0000 (0.0000)  loss_ce_interm_unscaled: 0.1706 (0.1842)  loss_bbox_interm_unscaled: 0.0066 (0.0084)  loss_giou_interm_unscaled: 0.3037 (0.3423)  loss_xy_interm_unscaled: 0.0023 (0.0034)  loss_hw_interm_unscaled: 0.0042 (0.0050)  cardinality_error_interm_unscaled: 296.0000 (338.4718)
+Accumulating evaluation results...
+DONE (t=16.35s).
+IoU metric: bbox
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.235
+Average Precision  (AP) @[ IoU=0.25      | area=   all | maxDets=1500 ] = -1.000
+Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.560
+Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=1500 ] = 0.152
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.126
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.259
+Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.295
+Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.397
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.072
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.355
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=1500 ] = 0.415
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=verytiny | maxDets=1500 ] = 0.240
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=  tiny | maxDets=1500 ] = 0.463
+Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=1500 ] = 0.453
+Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=1500 ] = 0.513
+Optimal LRP             @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.792
+Optimal LRP Loc         @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.280
+Optimal LRP FP          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.353
+Optimal LRP FN          @[ IoU=0.50      | area=   all | maxDets=1500 ] = 0.424
+# Class-specific LRP-Optimal Thresholds #
+ [0.097 0.302 0.276 0.189 0.131 0.213 0.279 0.368]
+Training time 1:53:36
+
+进程已结束，退出代码为 0
