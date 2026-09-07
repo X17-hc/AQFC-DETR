@@ -29,11 +29,18 @@ def prepare_for_cdn(dn_args, training, num_queries, num_classes, hidden_dim, lab
         :param label_enc: encode labels in dn
         :return:
         """
+    if not training or dn_args[1] <= 0:
+        return None, None, None, None
     if training:
         targets, dn_number, label_noise_ratio, box_noise_scale = dn_args
+        if targets is None:
+            raise ValueError('DN training requires targets')
+        if not targets or not any(len(target['labels']) for target in targets):
+            return None, None, None, None
+        device = label_enc.weight.device
         # positive and negative dn queries
         dn_number = dn_number * 2
-        known = [(torch.ones_like(t['labels'])).cuda() for t in targets]
+        known = [torch.ones_like(t['labels'], device=device) for t in targets]
         batch_size = len(known)
         known_num = [sum(k) for k in known]
         if int(max(known_num)) == 0:
@@ -68,8 +75,8 @@ def prepare_for_cdn(dn_args, training, num_queries, num_classes, hidden_dim, lab
         single_pad = int(max(known_num))
 
         pad_size = int(single_pad * 2 * dn_number)
-        positive_idx = torch.tensor(range(len(boxes))).long().cuda().unsqueeze(0).repeat(dn_number, 1)
-        positive_idx += (torch.tensor(range(dn_number)) * len(boxes) * 2).long().cuda().unsqueeze(1)
+        positive_idx = torch.arange(len(boxes), device=device).unsqueeze(0).repeat(dn_number, 1)
+        positive_idx += (torch.arange(dn_number, device=device) * len(boxes) * 2).unsqueeze(1)
         positive_idx = positive_idx.flatten()
         negative_idx = positive_idx + len(boxes)
         if box_noise_scale > 0:
@@ -85,32 +92,31 @@ def prepare_for_cdn(dn_args, training, num_queries, num_classes, hidden_dim, lab
             rand_part = torch.rand_like(known_bboxs)
             rand_part[negative_idx] += 1.0
             rand_part *= rand_sign
-            known_bbox_ = known_bbox_ + torch.mul(rand_part,
-                                                  diff).cuda() * box_noise_scale
+            known_bbox_ = known_bbox_ + torch.mul(rand_part, diff) * box_noise_scale
             known_bbox_ = known_bbox_.clamp(min=0.0, max=1.0)
             known_bbox_expand[:, :2] = (known_bbox_[:, :2] + known_bbox_[:, 2:]) / 2
             known_bbox_expand[:, 2:] = known_bbox_[:, 2:] - known_bbox_[:, :2]
 
-        m = known_labels_expaned.long().to('cuda')
+        m = known_labels_expaned.long().to(device)
         input_label_embed = label_enc(m)
         input_bbox_embed = inverse_sigmoid(known_bbox_expand)
 
-        padding_label = torch.zeros(pad_size, hidden_dim).cuda()
-        padding_bbox = torch.zeros(pad_size, 4).cuda()
+        padding_label = torch.zeros(pad_size, hidden_dim, device=device)
+        padding_bbox = torch.zeros(pad_size, 4, device=device)
 
         input_query_label = padding_label.repeat(batch_size, 1, 1)
         input_query_bbox = padding_bbox.repeat(batch_size, 1, 1)
 
-        map_known_indice = torch.tensor([]).to('cuda')
+        map_known_indice = torch.empty(0, device=device, dtype=torch.long)
         if len(known_num):
-            map_known_indice = torch.cat([torch.tensor(range(num)) for num in known_num])  # [1,2, 1,2,3]
+            map_known_indice = torch.cat([torch.arange(int(num), device=device) for num in known_num])
             map_known_indice = torch.cat([map_known_indice + single_pad * i for i in range(2 * dn_number)]).long()
         if len(known_bid):
             input_query_label[(known_bid.long(), map_known_indice)] = input_label_embed
             input_query_bbox[(known_bid.long(), map_known_indice)] = input_bbox_embed
 
         tgt_size = pad_size + num_queries
-        attn_mask = torch.ones(tgt_size, tgt_size).to('cuda') < 0
+        attn_mask = torch.zeros(tgt_size, tgt_size, device=device, dtype=torch.bool)
         # match query cannot see the reconstruct
         attn_mask[pad_size:, :pad_size] = True
         # reconstruct cannot see each other

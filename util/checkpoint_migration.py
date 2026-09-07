@@ -94,6 +94,15 @@ def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=
     load_result = model.load_state_dict(compatible, strict=False)
     loaded_numel = sum(current[key].numel() for key in compatible)
     total_numel = sum(value.numel() for value in current.values())
+    module_coverage = {}
+    for key, value in current.items():
+        module = '.'.join(key.split('.')[:2]) if key.startswith('transformer.') else key.split('.')[0]
+        counts = module_coverage.setdefault(module, {'loaded_numel': 0, 'total_numel': 0})
+        counts['total_numel'] += value.numel()
+        if key in compatible:
+            counts['loaded_numel'] += value.numel()
+    for counts in module_coverage.values():
+        counts['coverage'] = counts['loaded_numel'] / max(counts['total_numel'], 1)
     report = {
         'source_checkpoint': str(checkpoint_path.resolve()),
         'source_format': 'legacy_dqdetr' if is_legacy_state_dict(source) else 'compatible_pretrained',
@@ -104,6 +113,8 @@ def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=
         'loaded_parameter_count': loaded_numel,
         'total_parameter_count': total_numel,
         'coverage_by_numel': loaded_numel / max(total_numel, 1),
+        'coverage_definition': 'state_dict tensor elements, including buffers; not functional equivalence',
+        'coverage_by_module': module_coverage,
     }
     if report_path is not None:
         report_path = Path(report_path)

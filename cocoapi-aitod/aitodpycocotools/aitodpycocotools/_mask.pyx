@@ -1,5 +1,4 @@
 # distutils: language = c
-# distutils: sources = ../common/maskApi.c
 
 #**************************************************************************
 # Microsoft COCO Toolbox.      version 2.0
@@ -26,6 +25,7 @@ np.import_array()
 # we use PyArray_ENABLEFLAGS to make Numpy ndarray responsible to memoery management
 cdef extern from "numpy/arrayobject.h":
     void PyArray_ENABLEFLAGS(np.ndarray arr, int flags)
+    int NPY_OWNDATA
 
 # Declare the prototype of the C functions in MaskApi.h
 cdef extern from "maskApi.h":

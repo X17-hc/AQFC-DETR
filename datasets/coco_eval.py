@@ -9,6 +9,7 @@ in the end of the file, as python3 can suppress prints with contextlib
 import os
 import contextlib
 import copy
+import io
 import numpy as np
 import torch
 
@@ -27,12 +28,17 @@ class CocoEvaluator(object):
 
         self.iou_types = iou_types  # 为每种IoU类型创建独立的COCO_eval对象，这是评估的核心
         self.coco_eval = {}
+        self.coco_eval25 = {}
         for iou_type in iou_types:
             self.coco_eval[iou_type] = COCOeval(coco_gt, iouType=iou_type)
             self.coco_eval[iou_type].useCats = useCats
+            if iou_type in ('bbox', 'segm'):
+                self.coco_eval25[iou_type] = COCOeval(coco_gt, iouType=iou_type)
+                self.coco_eval25[iou_type].params.iouThrs = np.array([.25])
 
         self.img_ids = []
         self.eval_imgs = {k: [] for k in iou_types}
+        self.eval_imgs25 = {k: [] for k in self.coco_eval25}
         self.useCats = useCats  # useCats参数控制是否按类别进行评估，对类别不平衡问题尤为重要
 
     def update(self, predictions):  # 评估核心流程：准备结果→加载结果→设置参数→执行评估
@@ -54,20 +60,57 @@ class CocoEvaluator(object):
             img_ids, eval_imgs = evaluate(coco_eval)  # evaluate函数是重写的版本，支持分布式评估，这是与原始pycocotools的主要区别
 
             self.eval_imgs[iou_type].append(eval_imgs)
+            if iou_type in self.coco_eval25:
+                auxiliary = self.coco_eval25[iou_type]
+                auxiliary.cocoDt = coco_dt
+                auxiliary.params.imgIds = list(img_ids)
+                auxiliary.params.useCats = self.useCats
+                _, auxiliary_imgs = evaluate(auxiliary)
+                self.eval_imgs25[iou_type].append(auxiliary_imgs)
 
     def synchronize_between_processes(self):  # 分布式评估机制，可以将各进程的评估结果合并
         for iou_type in self.iou_types:
             self.eval_imgs[iou_type] = np.concatenate(self.eval_imgs[iou_type], 2)  # np.concatenate(..., 2)沿第三维拼接，保持评估结果的多维结构
             create_common_coco_eval(self.coco_eval[iou_type], self.img_ids, self.eval_imgs[iou_type])
+        for iou_type, evaluator in self.coco_eval25.items():
+            images = np.concatenate(self.eval_imgs25[iou_type], 2)
+            create_common_coco_eval(evaluator, self.img_ids, images)
 
     def accumulate(self):
         for coco_eval in self.coco_eval.values():
             coco_eval.accumulate()
+        for coco_eval in self.coco_eval25.values():
+            # AP25 is independent: standard AP and oLRP keep the original .50:.95 grid.
+            with contextlib.redirect_stdout(io.StringIO()):
+                coco_eval.accumulate()
 
     def summarize(self):
         for iou_type, coco_eval in self.coco_eval.items():
             print("IoU metric: {}".format(iou_type))
-            coco_eval.summarize()
+            if iou_type not in self.coco_eval25:
+                coco_eval.summarize()
+                continue
+            original_summary = io.StringIO()
+            with contextlib.redirect_stdout(original_summary):
+                coco_eval.summarize()
+            precision = self.coco_eval25[iou_type].eval['precision'][:, :, :, 0, -1]
+            valid = precision[precision >= 0]
+            coco_eval.stats[1] = float(valid.mean()) if valid.size else -1.
+            # Restore the native AP/AR/area/maxDets/LRP table. Its AP25 row was
+            # computed on the .50:.95 grid, so replace ONLY that displayed value
+            # with the independent AP25 result; never change standard AP or LRP.
+            for line in original_summary.getvalue().splitlines():
+                if line.startswith('Average Precision') and 'IoU=0.25' in line:
+                    line = line.rsplit('=', 1)[0] + f'= {coco_eval.stats[1]:0.3f}'
+                print(line)
+
+    def named_metrics(self, iou_type='bbox'):
+        """Stable named fields; unavailable area/class metrics are JSON null, not scores."""
+        names = ('AP', 'AP25', 'AP50', 'AP75', 'APvt', 'APt', 'APs', 'APm',
+                 'AR1', 'AR100', 'AR1500', 'ARvt', 'ARt', 'ARs', 'ARm',
+                 'oLRP', 'oLRP_loc', 'oLRP_FP', 'oLRP_FN')
+        return {name: float(value) if np.isfinite(value) and value >= 0 else None
+                for name, value in zip(names, self.coco_eval[iou_type].stats)}
 
     def prepare(self, predictions, iou_type):
         if iou_type == "bbox":

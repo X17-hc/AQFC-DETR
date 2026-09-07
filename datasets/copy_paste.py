@@ -25,7 +25,7 @@ class CopyPasteSmallObjects:
         area_threshold  面积阈值（归一化面积，w*h），只粘贴小于此值的目标
                         32*32 在 800px 图中约为 0.0016
         min_area        最小面积，过滤噪声 patch（归一化）
-        iou_threshold   粘贴框与现有框的最大允许 IoU
+        iou_threshold   最大允许重叠（IoU 或现有目标被遮挡的面积比例）
         cache_size      缓存最大容量
     """
 
@@ -59,11 +59,11 @@ class CopyPasteSmallObjects:
         return torch.stack([cx - bw/2, cy - bh/2,
                             cx + bw/2, cy + bh/2], dim=1)
 
-    def _iou_with_existing(self, new_xyxy, existing_xyxy):
+    def _overlap_with_existing(self, new_xyxy, existing_xyxy):
         """
         new_xyxy: [4]  (单个框)
         existing_xyxy: [N, 4]
-        返回最大 IoU（float）
+        返回最大 IoU/现有目标遮挡比例；防止大 patch 完全覆盖微小 GT。
         """
         if existing_xyxy.shape[0] == 0:
             return 0.0
@@ -79,7 +79,9 @@ class CopyPasteSmallObjects:
         area_nb = (nb[:, 2]-nb[:, 0]) * (nb[:, 3]-nb[:, 1])
         area_eb = (eb[:, 2]-eb[:, 0]) * (eb[:, 3]-eb[:, 1])
         union = area_nb + area_eb - inter
-        return (inter / (union + 1e-6)).max().item()
+        iou = inter / union.clamp(min=1e-6)
+        occlusion = inter / area_eb.clamp(min=1e-6)
+        return torch.maximum(iou, occlusion).max().item()
 
     # ────────────────────────────────────────────
     # 缓存更新
@@ -128,6 +130,8 @@ class CopyPasteSmallObjects:
         img:    FloatTensor [3, H, W]，已归一化
         target: dict，包含 'boxes'(cxcywh norm) 和 'labels'
         """
+        if 'masks' in target or 'keypoints' in target:
+            raise ValueError('Copy-Paste supports detection boxes only, not masks/keypoints')
         boxes  = target.get('boxes',  torch.zeros(0, 4))
         labels = target.get('labels', torch.zeros(0, dtype=torch.long))
 
@@ -177,7 +181,7 @@ class CopyPasteSmallObjects:
                  float(px + pw), float(py + ph)])
 
             # 重叠检测
-            if self._iou_with_existing(new_box_xyxy, existing_xyxy) > self.iou_threshold:
+            if self._overlap_with_existing(new_box_xyxy, existing_xyxy) > self.iou_threshold:
                 continue
 
             # 执行粘贴

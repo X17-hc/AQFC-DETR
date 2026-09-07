@@ -14,8 +14,12 @@ from datasets.coco_eval import CocoEvaluator
 from datasets.panoptic_eval import PanopticEvaluator
 
 from models.aqfcdetr.query_allocator import QueryBudgetLoss
+from util.runtime import LimitedLoader, optimizer_step_statistics
 
-print_freq = 5000
+print_freq = 100
+# None restores the original full MetricLogger output (including DN, auxiliary
+# layers and unscaled losses). This changes presentation only, not loss weights.
+DISPLAY_KEYS = None
 
 
 # Mosaic probability scheduler (epoch-aware warmup and decay).
@@ -88,9 +92,11 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                     device: torch.device, epoch: int, max_norm: float = 0,
                     wo_class_error=False, lr_scheduler=None, args=None,
                     logger=None, ema_m=None,
-                    mosaic_scheduler=None):
+                    mosaic_scheduler=None, scaler=None):
 
-    scaler = torch.amp.GradScaler('cuda', enabled=args.amp)
+    if scaler is None:
+        scaler = torch.amp.GradScaler('cuda', enabled=args.amp,
+                                    init_scale=getattr(args, 'amp_init_scale', 128.))
 
     try:
         need_tgt_for_training = args.use_dn
@@ -142,7 +148,12 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
     header = 'Epoch: [{}]'.format(epoch)
 
     _cnt = 0
-    for samples, targets in metric_logger.log_every(data_loader, print_freq, header, logger=logger):
+    local_optimizer_steps = 0
+    run_loader = LimitedLoader(data_loader, getattr(args, 'max_train_steps', 0))
+    frequency = min(print_freq, 5) if getattr(args, 'max_train_steps', 0) else print_freq
+    first_nonfinite_reported = False
+    for samples, targets in metric_logger.log_every(run_loader, frequency, header, logger=logger,
+                                                   display_keys=DISPLAY_KEYS):
 
         samples = samples.to(device)
 
@@ -154,13 +165,12 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
-        current_allocator_weight = allocator_weight_scheduler.get_weight(epoch, _cnt)
+        current_allocator_weight = allocator_weight_scheduler.get_weight(
+            epoch, _cnt, len(data_loader))
 
         with torch.amp.autocast('cuda', enabled=args.amp):
-            if need_tgt_for_training:
-                outputs = model(samples, targets)
-            else:
-                outputs = model(samples)
+            # AQBA needs GT counts for teacher routing even when DN is disabled.
+            outputs = model(samples, targets)
 
             loss_dict = criterion(outputs, targets)
             weight_dict = criterion.weight_dict
@@ -208,31 +218,43 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         if not math.isfinite(loss_value):
             print("Loss is {}, stopping training".format(loss_value))
             print(loss_dict_reduced)
-            sys.exit(1)
+            raise FloatingPointError(f'Non-finite training loss at epoch={epoch}, iteration={_cnt}')
 
         if args.amp:
             optimizer.zero_grad()
+            previous_scale = scaler.get_scale()
             scaler.scale(losses).backward()
-            if max_norm > 0:
-                scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
+            scaler.unscale_(optimizer)
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm if max_norm > 0 else float('inf'))
+            if not torch.isfinite(grad_norm) and not first_nonfinite_reported:
+                bad = [name for name, p in model.named_parameters()
+                       if p.grad is not None and not torch.isfinite(p.grad).all()]
+                print(f'[AMP] non-finite gradients at step {_cnt}; first parameters: {bad[:8]}')
+                first_nonfinite_reported = True
             scaler.step(optimizer)
             scaler.update()
+            step_applied = scaler.get_scale() >= previous_scale
         else:
             optimizer.zero_grad()
             losses.backward()
-            if max_norm > 0:
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
+            grad_norm = torch.nn.utils.clip_grad_norm_(
+                model.parameters(), max_norm if max_norm > 0 else float('inf'), error_if_nonfinite=True)
             optimizer.step()
+            step_applied = True
 
-        if args.onecyclelr:
+        if args.onecyclelr and step_applied:
             lr_scheduler.step()
-        if args.use_ema:
+        local_optimizer_steps += int(step_applied)
+        if args.use_ema and step_applied:
             if epoch >= args.ema_epoch:
                 ema_m.update(model)
 
         metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
         metric_logger.update(allocator_weight=current_allocator_weight)
+        metric_logger.update(optimizer_step_applied=float(step_applied))
+        metric_logger.update(grad_scale=scaler.get_scale() if args.amp else 1.)
+        if torch.isfinite(grad_norm):
+            metric_logger.update(grad_norm=float(grad_norm))
         if allocator_outputs:
             executed = outputs['executed_query_counts'].float()
             predicted = allocator_outputs['predicted_count'].float()
@@ -244,6 +266,8 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                 mean_executed_queries=executed.mean().item(),
                 invalid_allocator_fallback_count=float(
                     allocator_outputs.get('invalid_fallback_count', 0)),
+                invalid_boundary_fallback_count=float(
+                    allocator_outputs.get('invalid_boundary_fallback_count', 0)),
                 query_token_reduction=float(
                     allocator_outputs.get('query_token_reduction', 0.0)))
             for level in args.query_budget_levels:
@@ -267,8 +291,12 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         criterion.tuning_matching(epoch)
 
     metric_logger.synchronize_between_processes()
-    print("Averaged stats:", metric_logger)
+    print("Averaged stats:", metric_logger.format_meters(DISPLAY_KEYS))
     resstat = {k: meter.global_avg for k, meter in metric_logger.meters.items() if meter.count > 0}
+    resstat.update(optimizer_step_statistics(
+        _cnt, local_optimizer_steps, metric_logger.meters['optimizer_step_applied']))
+    if resstat['optimizer_steps'] == 0:
+        raise RuntimeError('No optimizer update succeeded; inspect AMP/gradient diagnostics')
     if getattr(criterion, 'loss_weight_decay', False):
         resstat.update({f'weight_{k}': v for k, v in criterion.weight_dict.items()})
     return resstat
@@ -286,9 +314,9 @@ class AllocatorWeightScheduler:
         self.final_weight  = final_weight
         self.total_epochs  = total_epochs
 
-    def get_weight(self, epoch: int, iteration: int) -> float:
+    def get_weight(self, epoch: int, iteration: int, steps_per_epoch: int = 1) -> float:
         if epoch < self.warmup_epochs:
-            return self.peak_weight * (epoch + iteration / 14018) / self.warmup_epochs
+            return self.peak_weight * (epoch + iteration / max(steps_per_epoch, 1)) / self.warmup_epochs
         elif epoch < int(self.total_epochs * 0.75):
             return self.peak_weight
         else:
@@ -334,8 +362,12 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
 
     _cnt = 0
     evaluated_query_counts = []
+    executed_tokens = 0
+    legacy_tokens = 0
     output_state_dict = {}
-    for samples, targets in metric_logger.log_every(data_loader, print_freq, header, logger=logger):
+    run_loader = LimitedLoader(data_loader, getattr(args, 'max_eval_steps', 0))
+    for samples, targets in metric_logger.log_every(run_loader, min(print_freq, 10), header, logger=logger,
+                                                   display_keys=DISPLAY_KEYS):
 
         samples = samples.to(device)
         targets = [{k: to_device(v, device) for k, v in t.items()} for t in targets]
@@ -370,6 +402,8 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
             evaluated_query_counts.extend(query_counts.cpu().tolist())
             metric_logger.update(mean_executed_queries=query_counts.mean().item())
             allocator_outputs = outputs.get('allocator_outputs', {})
+            executed_tokens += int(allocator_outputs.get('decoder_query_tokens', query_counts.sum()))
+            legacy_tokens += int(query_counts.max()) * len(query_counts)
             metric_logger.update(
                 decoder_query_tokens=float(allocator_outputs.get(
                     'decoder_query_tokens', query_counts.sum())),
@@ -398,7 +432,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
                 gt_bbox  = tgt['boxes']
                 gt_label = tgt['labels']
                 gt_info  = torch.cat((gt_bbox, gt_label.unsqueeze(-1)), 1)
-                _res_bbox  = outbbox
+                _res_bbox  = res['boxes']
                 _res_prob  = res['scores']
                 _res_label = res['labels']
                 res_info = torch.cat((_res_bbox, _res_prob.unsqueeze(-1), _res_label.unsqueeze(-1)), 1)
@@ -420,7 +454,7 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         torch.save(output_state_dict, savepath)
 
     metric_logger.synchronize_between_processes()
-    print("Averaged stats:", metric_logger)
+    print("Averaged stats:", metric_logger.format_meters(DISPLAY_KEYS))
     if coco_evaluator is not None:
         coco_evaluator.synchronize_between_processes()
     if panoptic_evaluator is not None:
@@ -434,13 +468,22 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
     if panoptic_evaluator is not None:
         panoptic_res = panoptic_evaluator.summarize()
     stats = {k: meter.global_avg for k, meter in metric_logger.meters.items() if meter.count > 0}
+    gathered = utils.all_gather((evaluated_query_counts, executed_tokens, legacy_tokens))
+    evaluated_query_counts = [count for counts, _, _ in gathered for count in counts]
+    executed_tokens = sum(item[1] for item in gathered)
+    legacy_tokens = sum(item[2] for item in gathered)
+    stats.update(evaluated_images=len(evaluated_query_counts),
+                 decoder_query_tokens=executed_tokens, legacy_query_tokens=legacy_tokens,
+                 query_token_reduction=1. - executed_tokens / max(legacy_tokens, 1))
     if evaluated_query_counts:
+        stats['mean_executed_queries'] = sum(evaluated_query_counts) / len(evaluated_query_counts)
         ordered_counts = sorted(evaluated_query_counts)
         stats['p50_query_count'] = ordered_counts[round((len(ordered_counts) - 1) * 0.50)]
         stats['p90_query_count'] = ordered_counts[round((len(ordered_counts) - 1) * 0.90)]
     if coco_evaluator is not None:
         if 'bbox' in postprocessors.keys():
             stats['coco_eval_bbox'] = coco_evaluator.coco_eval['bbox'].stats.tolist()
+            stats['bbox_metrics'] = coco_evaluator.named_metrics('bbox')
         if 'segm' in postprocessors.keys():
             stats['coco_eval_masks'] = coco_evaluator.coco_eval['segm'].stats.tolist()
     if panoptic_res is not None:

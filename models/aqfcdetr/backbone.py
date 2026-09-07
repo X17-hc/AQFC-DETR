@@ -130,9 +130,11 @@ class Backbone(BackboneBase):
                  ):
         # 1. 加载 ResNet 模型
         if name in ['resnet18', 'resnet34', 'resnet50', 'resnet101']:
+            # Preserve the historical ImageNet V1 weights, not the newer DEFAULT variant.
+            weights = torchvision.models.get_model_weights(name).IMAGENET1K_V1 if is_main_process() else None
             backbone = getattr(torchvision.models, name)(
                 replace_stride_with_dilation=[False, False, dilation],
-                pretrained=is_main_process(), norm_layer=batch_norm)
+                weights=weights, norm_layer=batch_norm)
         else:
             raise NotImplementedError("Why you can get here with name {}".format(name))
         

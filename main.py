@@ -1,4 +1,4 @@
-# Copyright (c) 2022 IDEA. All Rights Reserved.
+ # Copyright (c) 2022 IDEA. All Rights Reserved.
 # ------------------------------------------------------------------------
 import argparse
 import datetime
@@ -8,10 +8,9 @@ import random
 import time
 from pathlib import Path
 import os, sys
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+if sys.platform != 'win32':
+    os.environ.setdefault('PYTORCH_CUDA_ALLOC_CONF', 'expandable_segments:True')
 import numpy as np
-np.float = float
-np.int = int
 
 import torch
 from torch.utils.data import DataLoader, DistributedSampler
@@ -19,8 +18,9 @@ from torch.utils.data import DataLoader, DistributedSampler
 from util.get_param_dicts import get_param_dict
 from util.logger import setup_logger
 from util.slconfig import DictAction, SLConfig
-from util.utils import ModelEma, BestMetricHolder
-from util.checkpoint import load_native_resume, migration_report_path
+from util.utils import ModelEma
+from util.runtime import run_metadata, can_select_best
+from util.checkpoint import load_native_resume, migration_report_path, capture_rng_state
 from util.checkpoint_migration import load_legacy_pretrained
 from util.config_validation import validate_config
 import util.misc as utils
@@ -28,18 +28,41 @@ import util.misc as utils
 import datasets
 from datasets import build_dataset, get_coco_api_from_dataset
 from engine import evaluate, train_one_epoch, MosaicPScheduler
-# --- Hack start: Fix for AttributeError: module 'numpy' has no attribute 'NPY_OWNDATA' ---
-try:
-    # 尝试手动补上缺失的属性，值通常为 flag 的位掩码
-    np.NPY_OWNDATA = np.array([]).flags['OWNDATA']
-except Exception:
-    # 如果上述获取失败，给一个默认值（通常 C-API 中是 1 或 4，但在 Python 层主要是为了过检查）
-    np.NPY_OWNDATA = 1
-# --- Hack end ---
+
+# 默认项目内路径以 main.py 所在目录为基准，不依赖 PyCharm 的工作目录。
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+
+class ExplicitPretrainedAction(argparse.Action):
+    """记录用户是否显式传入预训练参数，区分它与 default 自动填入的值。"""
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, values)
+        namespace.pretrained_explicit = True
+
+
+def resolve_launch_defaults(args):
+    if getattr(args, 'eval_ema', False) and not (args.eval and args.resume):
+        raise ValueError('--eval-ema requires --eval and --resume with an EMA checkpoint')
+    # 续训恢复完整 checkpoint，不能再次加载默认旧权重覆盖恢复结果。
+    # 不能仅比较文件名：用户也可能显式传入与默认值完全相同的权重路径。
+    explicit = getattr(args, 'pretrained_explicit', False)
+    if getattr(args, 'no_pretrained', False):
+        if explicit:
+            raise ValueError('--pretrained and --no-pretrained cannot be used together')
+        args.pretrain_model_path = ''
+    elif args.resume:
+        if explicit and args.pretrain_model_path:
+            raise ValueError('Specify only one of --resume and --pretrained')
+        args.pretrain_model_path = ''
+    return args
+
 
 def get_args_parser():
     parser = argparse.ArgumentParser('Set transformer detector', add_help=False)
-    parser.add_argument('--config', '-c', dest='config_file', type=str, required=True)
+    # 本机 8GB 显存训练配置；不传 --config 时使用此文件，命令行可覆盖。
+    parser.add_argument('--config', '-c', dest='config_file', type=str,
+                        default=str(PROJECT_ROOT / 'configs/aitodv2/aqfc_r50_5scale_local8gb.py'))
     parser.add_argument('--options',
                         nargs='+',
                         action=DictAction,
@@ -52,13 +75,17 @@ def get_args_parser():
     # parser.add_argument('--dataset_file', default='aitod')
     # parser.add_argument('--dataset_file', default='coco')
 
-    parser.add_argument('--data-root', dest='coco_path', type=str, required=True)
+    # 直接读取已有数据集，不复制数据；换机器时可修改默认值或传 --data-root。
+    parser.add_argument('--data-root', dest='coco_path', type=str,
+                        default='D:/PythonProject/DQ-DETR/DQ-DETR/data/path/AITODv2')
     parser.add_argument('--coco_panoptic_path', type=str)
     parser.add_argument('--remove_difficult', action='store_true')
     parser.add_argument('--fix_size', action='store_true')
 
     # training parameters
-    parser.add_argument('--output-dir', dest='output_dir', default='',
+    # 默认训练日志和 checkpoint 保存位置；不同实验建议指定不同输出目录。
+    parser.add_argument('--output-dir', dest='output_dir',
+                        default=str(PROJECT_ROOT / 'outputs/aitodv2_pycharm'),
                         help='path where to save, empty for no saving')
     parser.add_argument('--note', default='',
                         help='add some notes to the experiment')
@@ -66,12 +93,22 @@ def get_args_parser():
                         help='device to use for training / testing')
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--resume', default='', help='resume from checkpoint')
-    parser.add_argument('--pretrained', dest='pretrain_model_path', help='load warm-start weights')
+    # 新训练默认加载旧最佳权重。--resume 会取消此默认值；显式同时指定则报错。
+    parser.add_argument('--pretrained', dest='pretrain_model_path', type=str,
+                        default=str(PROJECT_ROOT / 'weights/legacy/dqdetr_best305.pth'),
+                        action=ExplicitPretrainedAction,
+                        help='override the local default warm-start checkpoint')
+    # 禁用检测模型的默认 warm-start；不改变 backbone 原有的 ImageNet 初始化。
+    parser.add_argument('--no-pretrained', action='store_true', default=False,
+                        help='disable default warm-start weights')
     parser.add_argument('--finetune_ignore', type=str, nargs='+')
     parser.add_argument('--start_epoch', default=0, type=int, metavar='N',
                         help='start epoch')
     parser.add_argument('--eval', action='store_true')
-    parser.add_argument('--num_workers', default=10, type=int)
+    parser.add_argument('--eval-ema', action='store_true',
+                        help='Evaluate ema_model instead of model; requires --eval --resume')
+    # Windows/PyCharm 默认使用主进程读取数据，避免多进程启动和额外内存开销。
+    parser.add_argument('--num_workers', default=0, type=int)
     parser.add_argument('--test', action='store_true')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--find_unused_params', action='store_true')
@@ -86,10 +123,36 @@ def get_args_parser():
     parser.add_argument('--rank', default=0, type=int,
                         help='number of distributed processes')
     parser.add_argument("--local_rank", type=int, help='local rank for DistributedDataParallel')
-    parser.add_argument('--amp', action='store_true',
+    parser.add_argument('--amp', action=argparse.BooleanOptionalAction,
                         help="Train with mixed precision", default=True)
+    parser.add_argument('--max-train-steps', type=int, default=0,
+                        help='Limit steps per epoch for smoke tests; 0 means full epoch')
+    parser.add_argument('--max-eval-steps', type=int, default=0,
+                        help='Limit validation batches; 0 means full evaluation')
 
     return parser
+
+
+def build_data_loaders(args):
+    """Evaluation needs only the selected evaluation split, never train images."""
+    args.train_split = getattr(args, 'train_split', 'trainval')
+    args.eval_split = getattr(args, 'eval_split', 'test')
+    dataset_val = build_dataset(image_set=args.eval_split, args=args)
+    sampler_val = (DistributedSampler(dataset_val, shuffle=False) if args.distributed
+                   else torch.utils.data.SequentialSampler(dataset_val))
+    loader_val = DataLoader(dataset_val, 1, sampler=sampler_val, drop_last=False,
+                            collate_fn=utils.collate_fn, num_workers=args.num_workers)
+    if args.eval:
+        return None, dataset_val, None, loader_val, None
+    dataset_train = build_dataset(image_set=args.train_split, args=args)
+    sampler_train = (DistributedSampler(dataset_train) if args.distributed
+                     else torch.utils.data.RandomSampler(dataset_train))
+    batches = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
+    loader_train = DataLoader(dataset_train, batch_sampler=batches, collate_fn=utils.collate_fn,
+                              num_workers=args.num_workers, pin_memory=True, persistent_workers=False)
+    if len(loader_train) == 0:
+        raise ValueError('Training loader is empty; check dataset size and batch_size')
+    return dataset_train, dataset_val, loader_train, loader_val, sampler_train
 
 
 def build_model_main(args):
@@ -99,6 +162,11 @@ def build_model_main(args):
     return build_aqfcdetr(args)
 
 def main(args):
+    args = resolve_launch_defaults(args)
+    if not args.resume and not args.eval and any(Path(args.output_dir).glob('checkpoint*.pth')):
+        raise FileExistsError('Output directory already contains checkpoints; use a new --output-dir or --resume')
+    if min(args.max_train_steps, args.max_eval_steps) < 0:
+        raise ValueError('Step limits must be non-negative')
     # 定期清理显存
     gc.collect()
     if torch.cuda.is_available():
@@ -124,7 +192,6 @@ def main(args):
     validate_config(cfg_dict)
     args_vars = vars(args)
     for k, v in cfg_dict.items():
-        print(k, v)
         if k not in args_vars or args_vars[k] is None:
             setattr(args, k, v)
         else:
@@ -149,7 +216,8 @@ def main(args):
     logger.info('world size: {}'.format(args.world_size))
     logger.info('rank: {}'.format(args.rank))
     logger.info('local_rank: {}'.format(args.local_rank))
-    logger.info("args: " + str(args) + '\n')
+    logger.info(f'Model={args.modelname}; config={args.config_file}; device={args.device}; '
+                f'output={args.output_dir}. Full arguments are in config_args_all.json.')
 
     if args.frozen_weights is not None:
         assert args.masks, "Frozen training is meant for segmentation only"
@@ -167,55 +235,34 @@ def main(args):
     wo_class_error = False
     model.to(device)
 
-    # ema
-    if args.use_ema:
-        ema_m = ModelEma(model, args.ema_decay)
-    else:
-        ema_m = None
-
     model_without_ddp = model
     if args.distributed:
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.gpu],
                                                           find_unused_parameters=args.find_unused_parameters)
         model_without_ddp = model.module
+    # DDP broadcasts initial parameters: copy EMA only after that synchronization.
+    ema_m = (ModelEma(model_without_ddp, args.ema_decay)
+             if (args.use_ema and not args.eval) or args.eval_ema else None)
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
     logger.info('number of params:' + str(n_parameters))
-    logger.info(
-        "params:\n" + json.dumps({n: p.numel() for n, p in model.named_parameters() if p.requires_grad}, indent=2))
+    if args.rank == 0:
+        with (Path(args.output_dir) / 'parameter_counts.json').open('w') as handle:
+            json.dump({n: p.numel() for n, p in model.named_parameters() if p.requires_grad}, handle, indent=2)
 
     param_dicts = get_param_dict(args, model_without_ddp)
 
     optimizer = torch.optim.AdamW(param_dicts, lr=args.lr,
                                   weight_decay=args.weight_decay)
+    scaler = torch.amp.GradScaler('cuda', enabled=args.amp,
+                                init_scale=getattr(args, 'amp_init_scale', 128.))
 
-    # 适配aitod
-    # dataset_train = build_dataset(image_set='train', args=args)
-    # dataset_val = build_dataset(image_set='val', args=args)
-    # 适配aitodv2
-    dataset_train = build_dataset(image_set='trainval', args=args)
-    dataset_val = build_dataset(image_set='test', args=args)
-    # 适配VisDrone
-    # dataset_train = build_dataset(image_set='train', args=args)
-    # dataset_val = build_dataset(image_set='val', args=args)
-
-    if args.distributed:
-        sampler_train = DistributedSampler(dataset_train)
-        sampler_val = DistributedSampler(dataset_val, shuffle=False)
-    else:
-        sampler_train = torch.utils.data.RandomSampler(dataset_train)
-        sampler_val = torch.utils.data.SequentialSampler(dataset_val)
-
-    batch_sampler_train = torch.utils.data.BatchSampler(
-        sampler_train, args.batch_size, drop_last=True)
-
-    # 训练过程
-    data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
-                                   collate_fn=utils.collate_fn, num_workers=args.num_workers,
-                                   pin_memory=True, persistent_workers=True)
-    data_loader_val = DataLoader(dataset_val, 1, sampler=sampler_val,
-                                 drop_last=False, collate_fn=utils.collate_fn, num_workers=args.num_workers)
-
-    if args.onecyclelr:
+    dataset_train, dataset_val, data_loader_train, data_loader_val, sampler_train = build_data_loaders(args)
+    if not can_select_best(args):
+        logger.warning('Best-checkpoint selection disabled: test split or smoke/partial run. '
+                       'Use train/val splits and full validation for model selection.')
+    if args.eval:
+        lr_scheduler = None
+    elif args.onecyclelr:
         lr_scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=args.lr,
                                                            steps_per_epoch=len(data_loader_train), epochs=args.epochs,
                                                            pct_start=0.2)
@@ -236,14 +283,16 @@ def main(args):
         model_without_ddp.detr.load_state_dict(checkpoint['model'])
 
     output_dir = Path(args.output_dir)
-    if os.path.exists(os.path.join(args.output_dir, 'checkpoint.pth')):
-        args.resume = os.path.join(args.output_dir, 'checkpoint.pth')
+    best_metrics = {}
+    if args.resume and args.pretrain_model_path:
+        raise ValueError('Specify only one of --resume and --pretrained')
     if args.resume:
         args.start_epoch = load_native_resume(
             model_without_ddp, args.resume,
             optimizer=None if args.eval else optimizer,
             scheduler=None if args.eval else lr_scheduler,
-            ema=ema_m)
+            ema=ema_m, scaler=None if args.eval else scaler,
+            best_metrics=best_metrics)
 
     if (not args.resume) and args.pretrain_model_path:
         report = load_legacy_pretrained(
@@ -252,18 +301,21 @@ def main(args):
         logger.info(
             f"Warm-start coverage: {report['coverage_by_numel']:.2%}; "
             f"missing={len(report['missing_keys'])}, mismatched={len(report['shape_mismatched_keys'])}")
-        if args.use_ema:
+        if ema_m is not None:
             ema_m.module.load_state_dict(model_without_ddp.state_dict(), strict=True)
 
     if args.eval:
         os.environ['EVAL_FLAG'] = 'TRUE'
-        test_stats, coco_evaluator = evaluate(model, criterion, postprocessors,
+        evaluation_model = ema_m.module if args.eval_ema else model
+        logger.info('Evaluation weights: %s', 'ema_model' if args.eval_ema else 'model')
+        test_stats, coco_evaluator = evaluate(evaluation_model, criterion, postprocessors,
                                               data_loader_val, base_ds, device, args.output_dir,
                                               wo_class_error=wo_class_error, args=args)
         if args.output_dir:
             utils.save_on_master(coco_evaluator.coco_eval["bbox"].eval, output_dir / "eval.pth")
 
-        log_stats = {**{f'test_{k}': v for k, v in test_stats.items()}}
+        log_stats = {**{f'test_{k}': v for k, v in test_stats.items()},
+                     'evaluation_weights': 'ema_model' if args.eval_ema else 'model'}
         if args.output_dir and utils.is_main_process():
             with (output_dir / "log.txt").open("a") as f:
                 f.write(json.dumps(log_stats) + "\n")
@@ -277,7 +329,6 @@ def main(args):
         return
 
     start_time = time.time()
-    best_map_holder = BestMetricHolder(use_ema=args.use_ema)
 
     # 新增 MosaicPScheduler 构建
     mosaic_scheduler = None
@@ -296,13 +347,14 @@ def main(args):
 
     for epoch in range(args.start_epoch, args.epochs):
         epoch_start_time = time.time()
+        best_checkpoint_paths = []
         if args.distributed:
             sampler_train.set_epoch(epoch)
         train_stats = train_one_epoch(
             model, criterion, data_loader_train, optimizer, device, epoch,
             args.clip_max_norm, wo_class_error=wo_class_error, lr_scheduler=lr_scheduler, args=args,
             logger=(logger if args.save_log else None), ema_m=ema_m,
-            mosaic_scheduler=mosaic_scheduler,)
+            mosaic_scheduler=mosaic_scheduler, scaler=scaler)
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
 
@@ -311,21 +363,24 @@ def main(args):
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
             # extra checkpoint before LR drop and every 100 epochs
-            if (epoch + 1) % args.lr_drop == 0 or (epoch + 1) % args.save_checkpoint_interval == 0:
+            if not args.max_train_steps and ((epoch + 1) % args.lr_drop == 0 or
+                                             (epoch + 1) % args.save_checkpoint_interval == 0):
                 checkpoint_paths.append(output_dir / f'checkpoint{epoch:04}.pth')
-            for checkpoint_path in checkpoint_paths:
-                weights = {
+            weights = {
                     'model': model_without_ddp.state_dict(),
                     'optimizer': optimizer.state_dict(),
                     'lr_scheduler': lr_scheduler.state_dict(),
                     'epoch': epoch,
                     'args': args,
+                    'scaler': scaler.state_dict(),
+                    'format': 'aqfcdetr_v2',
+                    'run_metadata': run_metadata(args, train_stats['train_iterations'], len(data_loader_train)),
+                    'best_metrics': best_metrics,
                 }
-                if args.use_ema:
-                    weights.update({
+            if args.use_ema:
+                weights.update({
                         'ema_model': ema_m.module.state_dict(),
                     })
-                utils.save_on_master(weights, checkpoint_path)
 
         # eval
         if epoch in args.val_epoch:
@@ -334,7 +389,10 @@ def main(args):
                 wo_class_error=wo_class_error, args=args, logger=(logger if args.save_log else None)
             )
             map_regular = test_stats['coco_eval_bbox'][0]
-            _isbest = best_map_holder.update(map_regular, epoch, is_ema=False)
+            _isbest = can_select_best(args) and map_regular >= 0 and map_regular > best_metrics.get('regular_AP', -1.)
+            if _isbest and args.output_dir:
+                best_metrics.update(regular_AP=map_regular, regular_epoch=epoch)
+                best_checkpoint_paths.append(output_dir / 'checkpoint_best.pth')
             log_stats = {
                 **{f'train_{k}': v for k, v in train_stats.items()},
                 **{f'test_{k}': v for k, v in test_stats.items()},
@@ -348,9 +406,12 @@ def main(args):
                 )
                 log_stats.update({f'ema_test_{k}': v for k, v in ema_test_stats.items()})
                 map_ema = ema_test_stats['coco_eval_bbox'][0]
-                _isbest = best_map_holder.update(map_ema, epoch, is_ema=True)
+                _isbest = can_select_best(args) and map_ema >= 0 and map_ema > best_metrics.get('ema_AP', -1.)
+                if _isbest and args.output_dir:
+                    best_metrics.update(ema_AP=map_ema, ema_epoch=epoch)
+                    best_checkpoint_paths.append(output_dir / 'checkpoint_best_ema.pth')
 
-            log_stats.update(best_map_holder.summary())
+            log_stats.update(best_metrics=best_metrics)
 
             ep_paras = {
                 'epoch': epoch,
@@ -382,6 +443,18 @@ def main(args):
                         for name in filenames:
                             torch.save(coco_evaluator.coco_eval["bbox"].eval,
                                        output_dir / "eval" / name)
+        elif args.output_dir and utils.is_main_process():
+            log_stats = {f'train_{k}': v for k, v in train_stats.items()}
+            log_stats.update(epoch=epoch, n_parameters=n_parameters)
+            for log_name in ('log.txt', 'metrics.jsonl'):
+                with (output_dir / log_name).open('a') as f:
+                    f.write(json.dumps(log_stats) + '\n')
+        # Save after validation so resume retains the latest selection history.
+        if args.output_dir:
+            # Collect each rank's post-validation RNG stream for epoch-boundary resume.
+            weights['rng_states'] = utils.all_gather(capture_rng_state())
+            for checkpoint_path in checkpoint_paths + best_checkpoint_paths:
+                utils.save_on_master(weights, checkpoint_path)
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     print('Training time {}'.format(total_time_str))

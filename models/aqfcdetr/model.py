@@ -301,15 +301,13 @@ class SetCriterion(nn.Module):
         idx = self._get_src_permutation_idx(indices)
         target_classes_o = torch.cat([t["labels"][J] for t, (_, J) in zip(targets, indices)])
 
-        # Safety check: clamp target_classes_o to valid range
+        # Invalid dataset labels are an error, never silently relabel ground truth.
         num_classes_valid = self.num_classes
         if target_classes_o.numel() > 0:
             max_tgt = target_classes_o.max().item()
             min_tgt = target_classes_o.min().item()
             if max_tgt >= num_classes_valid or min_tgt < 0:
-                print(
-                    f"[Loss Warning] Invalid target class! Max: {max_tgt}, Min: {min_tgt}, num_classes: {num_classes_valid}. Clamping.")
-                target_classes_o = target_classes_o.clamp(min=0, max=num_classes_valid - 1)
+                raise ValueError(f'Invalid target label range [{min_tgt}, {max_tgt}] for {num_classes_valid} classes')
 
         target_classes = torch.full(src_logits.shape[:2], self.num_classes,
                                     dtype=torch.int64, device=src_logits.device)
@@ -441,7 +439,7 @@ class SetCriterion(nn.Module):
             dn_pos_idx = []
             for i in range(len(targets)):
                 if len(targets[i]['labels']) > 0:
-                    t = torch.arange(0, len(targets[i]['labels']) - 1).long().to(device)
+                    t = torch.arange(len(targets[i]['labels']), device=device).long()
                     t = t.unsqueeze(0).repeat(scalar, 1)
                     tgt_idx = t.flatten()
                     output_idx = (torch.tensor(range(scalar)) * single_pad).long().to(device).unsqueeze(1) + t

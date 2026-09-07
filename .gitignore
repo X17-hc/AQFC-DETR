@@ -5,6 +5,11 @@ __pycache__/
 
 # C extensions
 *.so
+*.pyd
+*.obj
+*.lib
+*.exp
+*.whl
 
 # Distribution / packaging
 .Python
@@ -122,3 +127,4 @@ work_dirs/
 *.pth
 *.py~
 *.sh~
+outputs/

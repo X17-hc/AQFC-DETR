@@ -1,11 +1,4 @@
-git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI&egg=pycocotools
+# Install torch/torchvision for your CUDA version first; see TRAINING_WINDOWS.md.
+-r requirements-runtime.txt
 git+https://github.com/cocodataset/panopticapi.git#egg=panopticapi
-submitit
-scipy
-termcolor
-addict
-yapf
-timm
-pytest
-Pillow
-ensemble-boxes
+./cocoapi-aitod/aitodpycocotools

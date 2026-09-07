@@ -201,7 +201,13 @@ class MetricLogger(object):
     def add_meter(self, name, meter):
         self.meters[name] = meter
 
-    def log_every(self, iterable, print_freq, header=None, logger=None):
+    def format_meters(self, keys=None):
+        if keys is None:
+            return str(self)
+        return self.delimiter.join(f'{key}: {self.meters[key]}' for key in keys
+                                   if key in self.meters and self.meters[key].count > 0)
+
+    def log_every(self, iterable, print_freq, header=None, logger=None, display_keys=None):
         if logger is None:
             print_func = print
         else:
@@ -246,13 +252,13 @@ class MetricLogger(object):
                 if torch.cuda.is_available():
                     print_func(log_msg.format(
                         i, len(iterable), eta=eta_string,
-                        meters=str(self),
+                        meters=self.format_meters(display_keys),
                         time=str(iter_time), data=str(data_time),
                         memory=torch.cuda.max_memory_allocated() / MB))
                 else:
                     print_func(log_msg.format(
                         i, len(iterable), eta=eta_string,
-                        meters=str(self),
+                        meters=self.format_meters(display_keys),
                         time=str(iter_time), data=str(data_time)))
             i += 1
             end = time.time()
@@ -266,14 +272,13 @@ def get_sha():
     cwd = os.path.dirname(os.path.abspath(__file__))
 
     def _run(command):
-        return subprocess.check_output(command, cwd=cwd).decode('ascii').strip()
+        return subprocess.check_output(command, cwd=cwd, stderr=subprocess.PIPE).decode('utf-8', errors='replace').strip()
     sha = 'N/A'
     diff = "clean"
     branch = 'N/A'
     try:
         sha = _run(['git', 'rev-parse', 'HEAD'])
-        subprocess.check_output(['git', 'diff'], cwd=cwd)
-        diff = _run(['git', 'diff-index', 'HEAD'])
+        diff = _run(['git', 'status', '--porcelain'])
         diff = "has uncommited changes" if diff else "clean"
         branch = _run(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
     except Exception:

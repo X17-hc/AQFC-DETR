@@ -1,0 +1,20 @@
+# Python 3.11; install torch/torchvision separately from the cu118 index.
+numpy==1.26.4
+Cython==0.29.36
+setuptools==80.9.0
+wheel
+scipy==1.16.1
+addict==2.4.0
+yapf==0.43.0
+timm==1.0.19
+Pillow==11.0.0
+matplotlib
+pycocotools==2.0.8
+submitit==1.5.3
+termcolor==3.1.0
+pytest==9.1.1
+ensemble-boxes==1.0.9
+ninja==1.13.0
+opencv-python-headless==4.11.0.86
+pyyaml
+tqdm

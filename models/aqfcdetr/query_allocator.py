@@ -5,6 +5,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def count_to_routing(count, max_objects=1500):
+    """Teacher and predicted counts must use identical routing-count units."""
+    return (count.float().clamp(min=0) * 1.5 + 50.0).clamp(max=max_objects)
+
+
 class Conv_GN(nn.Module):
     def __init__(self, in_channel, out_channel, kernel_size, stride=1,
                  padding=0, dilation=1, groups=1, relu=True, gn=True, bias=False):
@@ -127,15 +132,16 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
         density_feat = self.density_encoder(x)
 
         bd_feat = self.boundary_pool(density_feat).flatten(1)
-        raw_out = self.boundary_head(bd_feat)
+        # Nonlinear count/boundary operations need FP32 even under autocast.
+        raw_out = self.boundary_head(bd_feat).float()
 
         warmup_factor = self._get_warmup_factor()
 
         log_b1 = raw_out[:, 0].clamp(min=math.log(30.0), max=math.log(150.0))
 
         min_log_gap = 0.3
-        delta12 = F.softplus(raw_out[:, 1]) + min_log_gap
-        delta23 = F.softplus(raw_out[:, 2]) + min_log_gap
+        delta12 = F.softplus(raw_out[:, 1].clamp(max=20)) + min_log_gap
+        delta23 = F.softplus(raw_out[:, 2].clamp(max=20)) + min_log_gap
 
         log_b2 = log_b1 + delta12
         log_b2 = log_b2.clamp(max=math.log(500.0))
@@ -144,41 +150,43 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
 
         log_boundaries = torch.stack([log_b1, log_b2, log_b3], dim=1)
         raw_log_boundaries = log_boundaries
-        if self.use_ema and self.training:
-            log_boundaries = self._smooth_boundaries_for_longtail(log_boundaries, real_counts)
-
-        if self.use_ema and self.training:
-            log_boundaries_mean = log_boundaries.mean(dim=0)
-
-            if not self.ema_initialized:
-                self.ema_log_boundaries.copy_(log_boundaries_mean.detach())
-                self.ema_initialized.fill_(True)
-            else:
-                dynamic_decay = self._compute_dynamic_ema_decay(real_counts)
-                self.ema_log_boundaries.mul_(dynamic_decay).add_(
-                    log_boundaries_mean.detach(), alpha=1 - dynamic_decay
-                )
-
-            self._update_boundary_history(log_boundaries_mean.detach())
-            log_boundaries_for_use = self.ema_log_boundaries.unsqueeze(0).expand(bs, -1)
-        elif self.use_ema and bool(self.ema_initialized):
+        valid_boundaries = (torch.isfinite(raw_out).all(1) &
+                            torch.isfinite(log_boundaries).all(1) &
+                            (log_boundaries[:, 1:] > log_boundaries[:, :-1]).all(1))
+        default_boundaries = torch.log(torch.tensor([60., 150., 350.], device=device))
+        # Validate BEFORE EMA updates: a bad sample must never poison the buffer.
+        if self.use_ema and self.training and valid_boundaries.any():
+            with torch.no_grad():
+                mean = log_boundaries[valid_boundaries].mean(0)
+                if not self.ema_initialized or not torch.isfinite(self.ema_log_boundaries).all():
+                    self.ema_log_boundaries.copy_(mean)
+                    self.ema_initialized.fill_(True)
+                else:
+                    self.ema_log_boundaries.lerp_(mean, 1.0 - self.ema_decay)
+                self._update_boundary_history(mean)
+        if self.use_ema and bool(self.ema_initialized):
             log_boundaries_for_use = self.ema_log_boundaries.unsqueeze(0).expand(bs, -1)
         else:
             log_boundaries_for_use = log_boundaries
 
         ordered = (log_boundaries_for_use[:, 1:] > log_boundaries_for_use[:, :-1]).all(dim=1)
         finite_boundaries = torch.isfinite(log_boundaries_for_use).all(dim=1)
-        invalid_boundaries = ~(ordered & finite_boundaries)
+        invalid_boundaries = ~(ordered & finite_boundaries & valid_boundaries)
         if invalid_boundaries.any():
-            fallback = (self.ema_log_boundaries if self.use_ema
-                        else torch.log(torch.tensor([60., 150., 350.], device=device)))
+            fallback = default_boundaries
+            if self.use_ema and torch.isfinite(self.ema_log_boundaries).all() and (
+                    self.ema_log_boundaries[1:] > self.ema_log_boundaries[:-1]).all():
+                fallback = self.ema_log_boundaries
             log_boundaries_for_use = torch.where(
                 invalid_boundaries[:, None], fallback[None], log_boundaries_for_use)
 
         boundaries = torch.exp(log_boundaries_for_use)
 
-        raw_count = self.count_regressor(density_feat).squeeze(1)
-        pred_count = torch.exp(raw_count).clamp(min=1.0, max=self.max_objects)
+        raw_count = self.count_regressor(density_feat).squeeze(1).float()
+        # Clamp BEFORE exp; retain the raw finite flag so Inf cannot masquerade as 1500.
+        finite_raw_count = torch.isfinite(raw_count)
+        pred_count = raw_count.clamp(0., math.log(self.max_objects)).exp()
+        pred_route = count_to_routing(pred_count, self.max_objects)
 
         budget_feature = self.budget_pool(density_feat).flatten(1)
         budget_logits = self.budget_classifier(budget_feature)
@@ -187,12 +195,12 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
         teacher_ratio = self.teacher_ratio(epoch) if self.training else 0.0
         if real_counts is not None:
             real_counts = torch.as_tensor(real_counts, device=device, dtype=torch.float32)
-            gt_route = (real_counts * 1.5 + 50.0).clamp(max=self.max_objects)
-            routing_count = teacher_ratio * gt_route + (1.0 - teacher_ratio) * pred_count
+            gt_route = count_to_routing(real_counts, self.max_objects)
+            routing_count = teacher_ratio * gt_route + (1.0 - teacher_ratio) * pred_route
         else:
-            routing_count = pred_count
+            routing_count = pred_route
 
-        finite_count = torch.isfinite(routing_count)
+        finite_count = finite_raw_count & torch.isfinite(routing_count)
         routing_count = torch.where(
             finite_count, routing_count,
             torch.full_like(routing_count, float(self.fallback_queries)))
@@ -210,7 +218,8 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
                 finite_count, query_counts,
                 torch.full_like(query_counts, self.query_budget_levels[fallback_level_index]))
 
-        density_prior = torch.sigmoid(self.density_head(density_feat).clamp(-10, 10))
+        density_logits = self.density_head(density_feat).float()
+        density_prior = torch.sigmoid(density_logits.clamp(-10, 10))
         density_peaks = self._generate_density_peaks(density_prior, h, w)
 
         if self.training:
@@ -227,6 +236,7 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
             'budget_probabilities': budget_probabilities,
             'density_feature': density_feat,
             'density_prior': density_prior,
+            'density_logits': density_logits,
             'density_peaks': density_peaks,
             'query_counts': query_counts,
             'budget_indices': budget_indices,
@@ -357,11 +367,11 @@ class QueryBudgetLoss(nn.Module):
             real_counts = targets['real_counts'].to(device)
         else:
             real_counts = targets.to(device)
-        real_counts = real_counts.float().clamp(min=1.0)
+        real_counts = real_counts.float().clamp(min=0.0)
         bs = real_counts.shape[0]
-        log_b = outputs['log_boundaries']
-        log_object_count = torch.log(real_counts)
-        route_count = (real_counts * 1.5 + 50.0).clamp(max=1500.0)
+        log_b = outputs.get('raw_log_boundaries', outputs['log_boundaries']).float()
+        log_object_count = torch.log(real_counts.clamp(min=1.0))
+        route_count = count_to_routing(real_counts)
         log_route_count = torch.log(route_count)
         if self.enable_adaptive_targets:
             target_boundaries_log, target_coverage = self._compute_adaptive_targets(real_counts, device)
@@ -386,14 +396,14 @@ class QueryBudgetLoss(nn.Module):
         target_intervals = (
             (route_count[:, None] >= target_boundaries).long().sum(dim=1)
         ).clamp(max=outputs['budget_logits'].shape[1] - 1)
-        loss_interval = F.cross_entropy(outputs['budget_logits'], target_intervals)
-        loss_count = self.smooth_l1(outputs['raw_count'].reshape(-1), log_object_count)
+        loss_interval = F.cross_entropy(outputs['budget_logits'].float(), target_intervals)
+        loss_count = self.smooth_l1(outputs['raw_count'].float().reshape(-1), log_object_count)
         loss_density_map = outputs['density_prior'].sum() * 0.0
         detection_targets = targets.get('targets') if isinstance(targets, dict) else None
         if detection_targets is not None:
             density_target, density_valid_mask = self.build_density_targets(
                 detection_targets, outputs['density_prior'].shape[-2:], device,
-                return_valid_mask=True)
+                return_valid_mask=True, spatial_valid_mask=outputs.get('density_valid_mask'))
             loss_density_map = self.density_focal_loss(
                 outputs['density_prior'], density_target, density_valid_mask)
         warmup_factor = outputs.get('warmup_factor', 1.0)
@@ -424,23 +434,34 @@ class QueryBudgetLoss(nn.Module):
         return result
 
     @staticmethod
-    def build_density_targets(targets, spatial_size, device, return_valid_mask=False):
+    def build_density_targets(targets, spatial_size, device, return_valid_mask=False,
+                              spatial_valid_mask=None):
         """Build CenterNet-style Gaussian center maps from normalized cxcywh boxes."""
         height, width = int(spatial_size[0]), int(spatial_size[1])
         heatmaps = torch.zeros(len(targets), 1, height, width, device=device)
         valid_mask = torch.zeros_like(heatmaps, dtype=torch.bool)
+        if spatial_valid_mask is not None:
+            if tuple(spatial_valid_mask.shape) != tuple(heatmaps.shape):
+                raise ValueError('density_valid_mask must match the density map shape')
+            valid_mask = spatial_valid_mask.to(device=device, dtype=torch.bool).clone()
         sizes = [target.get('size') for target in targets]
         sized = [size for size in sizes if size is not None]
         max_height = max((float(size[0]) for size in sized), default=1.0)
         max_width = max((float(size[1]) for size in sized), default=1.0)
         for batch_index, target in enumerate(targets):
             size = target.get('size')
-            if size is None:
+            if spatial_valid_mask is not None:
+                valid_height = int(valid_mask[batch_index, 0].any(dim=1).sum())
+                valid_width = int(valid_mask[batch_index, 0].any(dim=0).sum())
+                if valid_height == 0 or valid_width == 0:
+                    raise ValueError('Density supervision requires non-empty encoder cells')
+            elif size is None:
                 valid_height, valid_width = height, width
             else:
                 valid_height = max(1, min(height, round(float(size[0]) / max_height * height)))
                 valid_width = max(1, min(width, round(float(size[1]) / max_width * width)))
-            valid_mask[batch_index, :, :valid_height, :valid_width] = True
+            if spatial_valid_mask is None:
+                valid_mask[batch_index, :, :valid_height, :valid_width] = True
             boxes = target.get('boxes')
             if boxes is None or boxes.numel() == 0:
                 continue
@@ -465,7 +486,9 @@ class QueryBudgetLoss(nn.Module):
 
     @staticmethod
     def density_focal_loss(prediction, target, valid_mask=None):
-        prediction = prediction.clamp(1e-6, 1.0 - 1e-6)
+        # Half/bfloat16 round 1-1e-6 to 1, causing log(0) and 0*Inf=NaN.
+        prediction = prediction.float().clamp(1e-6, 1.0 - 1e-6)
+        target = target.float()
         positive = target.eq(1.0).float()
         negative = target.lt(1.0).float()
         negative_weight = (1.0 - target).pow(4)

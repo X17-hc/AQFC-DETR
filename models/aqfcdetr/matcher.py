@@ -265,18 +265,21 @@ class HungarianMatcher(nn.Module):
         for batch_index, target in enumerate(targets):
             valid_indices = torch.nonzero(valid_masks[batch_index], as_tuple=False).flatten()
             target_ids = target["labels"]
-            target_boxes = target["boxes"]
+            target_boxes = target["boxes"].float()
             if valid_indices.numel() == 0 or target_ids.numel() == 0:
                 empty = torch.empty(0, dtype=torch.int64)
                 assignments.append((empty, empty.clone()))
                 continue
 
-            probability = outputs["pred_logits"][batch_index, valid_indices].sigmoid()
-            predicted_boxes = outputs["pred_boxes"][batch_index, valid_indices]
-            target_ids = target_ids.clamp(min=0, max=probability.shape[1] - 1)
+            logits = outputs["pred_logits"][batch_index, valid_indices].float()
+            probability = logits.sigmoid()
+            predicted_boxes = outputs["pred_boxes"][batch_index, valid_indices].float()
+            if ((target_ids < 0) | (target_ids >= probability.shape[1])).any():
+                raise ValueError('Target label is outside the configured class range')
             alpha, gamma = self.focal_alpha, 2.0
-            negative = (1 - alpha) * probability.pow(gamma) * (-(1 - probability + 1e-8).log())
-            positive = alpha * (1 - probability).pow(gamma) * (-(probability + 1e-8).log())
+            # Stable -log(sigmoid) forms: half-precision probabilities can round to 0/1.
+            negative = (1 - alpha) * probability.pow(gamma) * torch.nn.functional.softplus(logits)
+            positive = alpha * (1 - probability).pow(gamma) * torch.nn.functional.softplus(-logits)
             class_cost = positive[:, target_ids] - negative[:, target_ids]
             bbox_cost = torch.cdist(predicted_boxes, target_boxes, p=1)
             giou_cost = -generalized_box_iou(

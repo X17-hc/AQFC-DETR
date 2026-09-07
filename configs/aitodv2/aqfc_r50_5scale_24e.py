@@ -73,6 +73,13 @@ match_unstable_error = True
 
 # ── EMA（比原版更强的平均）──────────────────────────────────────────
 use_ema = True
+# Only a few boundary statistics: independent of the full-model EMA memory cost.
+allocator_use_boundary_ema = True
+amp_init_scale = 128.0
+# Preserve the existing dataset protocol, but never select checkpoints using test AP.
+# For development, override BOTH fields with train_split='train', eval_split='val'.
+train_split = 'trainval'
+eval_split = 'test'
 ema_decay = 0.9997  # 原版 0.9997 → 改为 0.9999，减少震荡
 ema_epoch = 0
 

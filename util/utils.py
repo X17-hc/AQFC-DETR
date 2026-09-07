@@ -374,7 +374,7 @@ class ModelEma(torch.nn.Module):
     def __init__(self, model, decay=0.9997, device=None):
         super(ModelEma, self).__init__()
         # make a copy of the model for accumulating moving average of weights
-        self.module = deepcopy(model)
+        self.module = deepcopy(model.module if hasattr(model, 'module') else model)
         self.module.eval()
 
         self.decay = decay
@@ -383,11 +383,21 @@ class ModelEma(torch.nn.Module):
             self.module.to(device=device)
 
     def _update(self, model, update_fn):
+        model = model.module if hasattr(model, 'module') else model
+        source = model.state_dict()
+        destination = self.module.state_dict()
+        if source.keys() != destination.keys():
+            raise ValueError('EMA model state keys do not match the training model')
+        parameter_names = set(dict(model.named_parameters()))
         with torch.no_grad():
-            for ema_v, model_v in zip(self.module.state_dict().values(), model.state_dict().values()):
-                if self.device is not None:
-                    model_v = model_v.to(device=self.device)
-                ema_v.copy_(update_fn(ema_v, model_v))
+            for name, ema_v in destination.items():
+                model_v = source[name].to(device=ema_v.device)
+                # Average weights only. Counters and already-smoothed allocator
+                # boundary buffers must be copied, not rounded/double-smoothed.
+                if name in parameter_names and (ema_v.is_floating_point() or ema_v.is_complex()):
+                    ema_v.copy_(update_fn(ema_v, model_v))
+                else:
+                    ema_v.copy_(model_v)
 
     def update(self, model):
         self._update(model, update_fn=lambda e, m: self.decay * e + (1. - self.decay) * m)
@@ -468,4 +478,3 @@ class BestMetricHolder():
 
     def __str__(self) -> str:
         return self.__repr__()
-            

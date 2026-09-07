@@ -79,6 +79,8 @@ class MosaicDetection:
             f"Mosaic 需要恰好 4 张图，收到 {len(imgs_and_targets)}"
         )
 
+        if any('masks' in target or 'keypoints' in target for _, target in imgs_and_targets):
+            raise ValueError('Mosaic supports detection boxes only, not masks/keypoints')
         anchor_img, anchor_tgt = imgs_and_targets[0]
         out_w, out_h = anchor_img.size          # PIL: (width, height)
 
@@ -134,8 +136,9 @@ class MosaicDetection:
             labels = tgt["labels"].clone()
 
             # 先缩放，再平移到贴图位置
-            boxes[:, [0, 2]] = boxes[:, [0, 2]] * scale + ox
-            boxes[:, [1, 3]] = boxes[:, [1, 3]] * scale + oy
+            # PIL uses rounded integer sizes: each axis has its own true scale.
+            boxes[:, [0, 2]] = boxes[:, [0, 2]] * (sw / iw) + ox
+            boxes[:, [1, 3]] = boxes[:, [1, 3]] * (sh / ih) + oy
 
             # ── 中心点过滤（核心）────────────────────────────────────
             # 极小目标任何面积裁剪都接近全损，改用中心判断：
@@ -172,10 +175,11 @@ class MosaicDetection:
             all_boxes.append(boxes)
             all_labels.append(labels)
 
-            if "area" in tgt and tgt["area"].shape[0] > 0:
-                all_areas.append(tgt["area"][keep][valid] * (scale ** 2))
+            all_areas.append((boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1]))
             if "iscrowd" in tgt and tgt["iscrowd"].shape[0] > 0:
                 all_iscrowd.append(tgt["iscrowd"][keep][valid])
+            else:
+                all_iscrowd.append(torch.zeros(len(boxes), dtype=torch.int64))
 
         # ── 拼合 target ───────────────────────────────────────────────
         out_tgt = {

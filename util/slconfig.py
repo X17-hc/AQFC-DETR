@@ -431,11 +431,15 @@ class DictAction(Action):
         return val
 
     def __call__(self, parser, namespace, values, option_string=None):
+        import ast
         options = {}
         for kv in values:
             key, val = kv.split('=', maxsplit=1)
-            val = [self._parse_int_float_bool(v) for v in val.split(',')]
-            if len(val) == 1:
-                val = val[0]
+            if val.strip().startswith(('[', '(', '{')):
+                val = ast.literal_eval(val)
+            else:
+                val = [self._parse_int_float_bool(v) for v in val.split(',')]
+                if len(val) == 1:
+                    val = val[0]
             options[key] = val
         setattr(namespace, self.dest, options)

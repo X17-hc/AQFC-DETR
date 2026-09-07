@@ -68,6 +68,7 @@ class DeformableTransformer(nn.Module):
                  allocator_fallback_queries=900,
                  use_ema=True,
                  ema_decay=0.9997,
+                 allocator_use_boundary_ema=True,
                  calibrator_gate_type='tanh',
                  calibrator_use_spatial=True,
                  calibrator_spatial_alphas=None,
@@ -134,7 +135,7 @@ class DeformableTransformer(nn.Module):
             query_budget_levels=self.query_budget_levels,
             max_objects=1500,
             fallback_queries=allocator_fallback_queries,
-            use_ema=use_ema,
+            use_ema=allocator_use_boundary_ema,
             ema_decay=ema_decay,
         )
 
@@ -244,6 +245,9 @@ class DeformableTransformer(nn.Module):
                 assert dec_layer_number[0] == num_queries * num_patterns
 
         self._reset_parameters()
+        # Parent Xavier initialization must not override AQBA's low-variance heads.
+        # This runs before any checkpoint loading, never after warm-start/resume.
+        self.query_allocator._init_weights()
 
         self.rm_self_attn_layers = rm_self_attn_layers
         if rm_self_attn_layers is not None:
@@ -304,12 +308,12 @@ class DeformableTransformer(nn.Module):
             flattened = flattened.masked_fill(padding_mask, 0.0)
         return flattened
 
-    def select_proposal_indices(self, class_logits, density_prior, padding_mask, topk):
+    def select_proposal_indices(self, class_logits, density_prior, padding_mask, topk, proposal_boxes=None):
         return select_proposal_indices(
             class_logits, density_prior, padding_mask, topk,
             mode=self.proposal_selection_mode,
             density_weight=self.proposal_density_weight,
-            mixed_density_ratio=self.mixed_density_ratio)
+            mixed_density_ratio=self.mixed_density_ratio, proposal_boxes=proposal_boxes)
 
     @staticmethod
     def _build_target_padding_mask(tgt, query_valid_mask):
@@ -348,7 +352,8 @@ class DeformableTransformer(nn.Module):
             group_density = density_prior.index_select(0, sample_indices)
             group_padding = padding_mask.index_select(0, sample_indices)
             proposal_indices = self.select_proposal_indices(
-                group_class, group_density, group_padding, count)
+                group_class, group_density, group_padding, count,
+                proposal_boxes=output_proposals.index_select(0, sample_indices))
 
             group_coords = coord_logits.index_select(0, sample_indices)
             group_output_memory = output_memory.index_select(0, sample_indices)
@@ -453,29 +458,9 @@ class DeformableTransformer(nn.Module):
 
         # ========== AQBA query-budget allocation ==========
         real_counts = None
-        if self.training:
-            if dn_targets is not None:
-                try:
-                    if isinstance(dn_targets, list) and len(dn_targets) > 0:
-                        counts = []
-                        for t in dn_targets:
-                            if isinstance(t, dict) and 'labels' in t:
-                                labels = t['labels']
-                                if isinstance(labels, torch.Tensor):
-                                    counts.append(len(labels))
-                                else:
-                                    counts.append(0)
-                            else:
-                                counts.append(0)
-
-                        if counts:
-                            real_counts = torch.tensor(counts, device=memory.device, dtype=torch.float32)
-                except Exception:
-                    real_counts = None
-
-            if real_counts is None:
-                bs = memory.shape[0]
-                real_counts = torch.full((bs,), 1.0, device=memory.device)
+        if self.training and dn_targets is not None:
+            real_counts = torch.tensor([len(target['labels']) for target in dn_targets],
+                                       device=memory.device, dtype=torch.float32)
 
         allocator_outputs = {}
         executed_query_count = self.num_queries
@@ -508,24 +493,25 @@ class DeformableTransformer(nn.Module):
                 executed_query_count = int(query_counts.max().item())
 
         except Exception as e:
-            print(f"[AQBA] allocation failed; using {self.num_queries} queries: {e}")
-            batch_size = memory.shape[0]
-            allocator_outputs = {
-                'boundaries': torch.tensor([[60., 150., 350.]], device=memory.device).expand(batch_size, -1),
-                'log_boundaries': torch.log(torch.tensor([[60., 150., 350.]], device=memory.device)).expand(batch_size, -1),
-                'predicted_count': torch.full((batch_size,), 100., device=memory.device),
-                'raw_count': torch.full((batch_size,), math.log(100.), device=memory.device),
-                'budget_logits': torch.zeros(batch_size, self.num_budget_levels, device=memory.device),
-                'query_counts': query_counts,
-                'invalid_fallback_count': torch.tensor(batch_size, device=memory.device),
-            }
-            executed_query_count = self.num_queries
+            # Numeric sample-level fallbacks live in AQBA. Programming/OOM errors
+            # must not silently turn a failed experiment into another architecture.
+            raise RuntimeError('AQBA allocation failed') from e
 
-        valid_token_counts = (~mask_flatten).sum(dim=1).long()
+        if self.two_stage_type == 'standard':
+            learned_wh = self.two_stage_wh_embedding.weight[0] if self.two_stage_learn_wh else None
+            proposal_valid = gen_encoder_output_proposals(
+                memory, mask_flatten, spatial_shapes, learned_wh, valid_mask_only=True)
+        else:
+            proposal_valid = ~mask_flatten
+        valid_token_counts = proposal_valid.sum(dim=1).long()
+        if (valid_token_counts == 0).any():
+            raise ValueError('Each image requires at least one valid encoder proposal')
         query_counts = torch.minimum(query_counts, valid_token_counts)
         executed_query_count = int(query_counts.max().item())
         allocator_outputs['query_counts'] = query_counts
         allocator_outputs['executed_query_counts'] = query_counts
+        # Supervise exactly the real encoder cells, including odd-sized inputs.
+        allocator_outputs['density_valid_mask'] = ~masks[0][:, None]
         query_valid_mask = (
             torch.arange(executed_query_count, device=memory.device).unsqueeze(0) < query_counts.unsqueeze(1))
 
@@ -536,7 +522,7 @@ class DeformableTransformer(nn.Module):
                 memory = self.feature_calibrator(
                     density_pyramid_features, memory, spatial_shapes)
             except Exception as e:
-                print(f"[DGFC] calibration failed; using encoder memory: {e}")
+                raise RuntimeError('DGFC calibration failed') from e
 
         density_prior_flat = None
         if 'density_prior' in allocator_outputs:
@@ -602,11 +588,13 @@ class DeformableTransformer(nn.Module):
             topk = min(executed_query_count, enc_outputs_class_unselected.shape[1])
             if density_prior_flat is None:
                 topk_proposals = torch.topk(
-                    enc_outputs_class_unselected.max(-1)[0].masked_fill(mask_flatten, float('-inf')),
+                    enc_outputs_class_unselected.max(-1)[0].masked_fill(
+                        mask_flatten | ~torch.isfinite(output_proposals).all(-1), float('-inf')),
                     topk, dim=1).indices
             else:
                 topk_proposals = self.select_proposal_indices(
-                    enc_outputs_class_unselected, density_prior_flat, mask_flatten, topk)
+                    enc_outputs_class_unselected, density_prior_flat, mask_flatten, topk,
+                    proposal_boxes=output_proposals)
 
             refpoint_embed_undetach = torch.gather(enc_outputs_coord_unselected, 1,
                                                    topk_proposals.unsqueeze(-1).repeat(1, 1, 4))
@@ -728,7 +716,7 @@ class TransformerEncoder(nn.Module):
         reference_points_list = []
         for lvl, (H_, W_) in enumerate(spatial_shapes):
             ref_y, ref_x = torch.meshgrid(torch.linspace(0.5, H_ - 0.5, H_, dtype=torch.float32, device=device),
-                                          torch.linspace(0.5, W_ - 0.5, W_, dtype=torch.float32, device=device))
+                                          torch.linspace(0.5, W_ - 0.5, W_, dtype=torch.float32, device=device), indexing='ij')
             ref_y = ref_y.reshape(-1)[None] / (valid_ratios[:, None, lvl, 1] * H_)
             ref_x = ref_x.reshape(-1)[None] / (valid_ratios[:, None, lvl, 0] * W_)
             ref = torch.stack((ref_x, ref_y), -1)
@@ -1092,7 +1080,9 @@ class DeformableTransformerDecoderLayer(nn.Module):
         if self.self_attn is not None:
             if self.decoder_sa_type == 'sa':
                 q = k = self.with_pos_embed(tgt, tgt_query_pos)
-                tgt2 = self.self_attn(q, k, tgt, attn_mask=self_attn_mask)[0]
+                tgt2 = self.self_attn(q, k, tgt, attn_mask=self_attn_mask,
+                                     key_padding_mask=tgt_key_padding_mask,
+                                     need_weights=False)[0]
                 tgt = tgt + self.dropout2(tgt2)
                 tgt = self.norm2(tgt)
             elif self.decoder_sa_type == 'ca_label':
@@ -1227,6 +1217,7 @@ def build_deformable_transformer(args):
         query_budget_levels=args.query_budget_levels,
         allocator_fallback_queries=args.allocator_fallback_queries,
         use_ema=args.use_ema,
+        allocator_use_boundary_ema=getattr(args, 'allocator_use_boundary_ema', True),
         ema_decay=args.ema_decay,
         calibrator_gate_type=args.calibrator_gate_type,
         calibrator_use_spatial=args.calibrator_use_spatial,

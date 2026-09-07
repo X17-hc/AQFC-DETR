@@ -12,7 +12,7 @@ image → backbone multi-level features → deformable encoder memory
       → class logits and refined boxes
 ```
 
-AQBA 使用最高分辨率 encoder level，但输出的密度图会插值至全部 feature levels。密度图既进入 DGFC 空间残差，也进入 proposal 排序，并由 GT 中心 Gaussian 热图直接监督，因此不是与检测主链路分离的旁路特征。
+AQBA 使用最高分辨率 encoder level。其密度特征经过金字塔适配进入 DGFC；密度头输出的热图插值至全部 feature levels，参与 proposal 排序，并由 GT 中心 Gaussian 热图直接监督。DGFC 使用的是密度特征，不是密度头输出的单通道热图。
 
 ## 2. AQBA
 
@@ -23,18 +23,18 @@ log b2 = log b1 + softplus(delta12) + 0.3
 log b3 = log b2 + softplus(delta23) + 0.3
 ```
 
-初始/引导边界为 60、150、350 个路由计数。训练路由采用确定性教师退火：`N_route = r*(1.5*N_gt+50)+(1-r)*N_pred`；epoch 0–5 的 r 为 1/1/1/.75/.5/.25，之后为 0。推理始终只用预测计数，不设 900 下限。非有限预测直接选择 900 档。
+初始/引导边界为 60、150、350 个路由计数。定义 `R(N)=min(1.5*max(N,0)+50,1500)`，训练路由为 `N_route = r*R(N_gt)+(1-r)*R(N_pred)`；epoch 0–5 的 r 为 1/1/1/.75/.5/.25，之后为 0。教师与预测计数采用相同单位。推理始终只用预测计数，不设 900 下限。非有限预测直接选择 900 档。
 
-密度目标在 level 0 网格生成，中心 Gaussian 半径为 `clamp(round(.5*max(wW,hH)),1,4)`，重叠目标逐像素取最大。损失包括 coverage、spacing、count、interval、boundary guide 与 density focal，各权重仅由配置控制。
+密度目标在 level 0 网格生成，中心 Gaussian 半径为 `clamp(round(.5*max(wW,hH)),1,4)`，重叠目标逐像素取最大。训练主链使用真实 encoder padding mask 确定有效网格，避免奇数尺寸比例取整造成一格偏差。损失包括 coverage、spacing、count、interval、boundary guide 与 density focal，各权重由配置控制，coverage 另受边界预热系数调度。
 
 ## 3. DGFC
 
 `DensityGuidedFeatureCalibrator` 的主门控为：
 
 ```text
-z = MLP(GAP(F)) + MLP(GMP(F))
-F_channel = F * (1 + tanh(clamp(s,0,.2) * z))
-F_out = F_channel * (1 + alpha_i * SpatialAttention(D_i))
+F_spatial = F * (1 + alpha_i * SpatialAttention(D_i))
+z = MLP(GAP(F_spatial)) + MLP(GMP(F_spatial))
+F_out = F_spatial * (1 + tanh(clamp(s,0,.2) * z))
 ```
 
 零响应严格对应单位乘数，既可增强也可抑制。level 0 的空间系数为 0，避免最高分辨率特征受密度旁路重复扰动；通道校准仍覆盖所有层。
@@ -54,4 +54,8 @@ F_out = F_channel * (1 + alpha_i * SpatialAttention(D_i))
 - `proposal_density_weight=0`：纯语义 Top-K；
 - `calibrator_use_spatial=False`：仅通道校准；
 - `grouped_decoder_inference=False`：batch-max Decoder；
-- `force_query_budget=900`：固定 900 查询基线。
+- `force_query_budget=900`：固定 900 查询对照，但不关闭 AQBA 辅助损失或 DGFC。
+
+现有 `fixed_900_queries.py`、`allocator_without_density_ranking.py` 和
+`density_ranking_fixed_900.py` 仅改变文件名所指的查询/排序行为，均继承 DGFC；
+不能将其结果标为“无 AQBA、无 DGFC”的纯 DETR 基线。完整模块开关消融尚未实现。

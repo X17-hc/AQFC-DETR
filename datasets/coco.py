@@ -1052,11 +1052,9 @@ class CocoDetection(torchvision.datasets.CocoDetection):
             dataset_train.mosaic.p = scheduler.get_mosaic_p(epoch)
         从而实现 Mosaic warmup：前期低概率，中期高概率，后期逐渐退出。
 
-    [修复3] filter_empty_gt 仅针对"完全无目标"的原始图触发
-        移到 Mosaic 之后：Mosaic 本身可以合法生成密集目标图，
-        不应该在 Mosaic 之后再过滤（Mosaic后的空目标再重采样
-        容易造成索引死锁）。改为只在 Mosaic 未触发且原始图为空时
-        才触发重采样。
+    [修复3] filter_empty_gt 仅过滤增强前的原始空图，最多重采样32次。
+        增强后合法出现的空图保留；不递归调用 __getitem__。
+        损坏图片直接报错，避免验证时静默替换 image_id。
     """
 
     def __init__(
@@ -1094,10 +1092,8 @@ class CocoDetection(torchvision.datasets.CocoDetection):
         """
         try:
             img, target = super(CocoDetection, self).__getitem__(idx)
-        except Exception:
-            print(f"[Warning] _get_raw_item: idx={idx} 加载失败，回退")
-            idx = (idx + 1) % len(self)
-            img, target = super(CocoDetection, self).__getitem__(idx)
+        except (OSError, ValueError) as exc:
+            raise OSError(f'Failed to load image_id={self.ids[idx]}, dataset index={idx}') from exc
 
         image_id = self.ids[idx]
         target   = {'image_id': image_id, 'annotations': target}
@@ -1112,6 +1108,14 @@ class CocoDetection(torchvision.datasets.CocoDetection):
 
         # ── 1. 加载锚图（PIL + prepare）────────────────────────────
         img, target = self._get_raw_item(idx)
+        if self.filter_empty_gt:
+            for _ in range(32):
+                if len(target['boxes']):
+                    break
+                img, target = self._get_raw_item(random.randrange(len(self)))
+            if len(target['boxes']) == 0:
+                raise ValueError('Could not find a non-empty raw image after 32 retries; '
+                                 'check annotations or disable filter_empty_gt')
 
         # ── 2. 互斥增强决策 ─────────────────────────────────────────
         # 用一次随机数统一决定本样本走哪条增强路径，避免叠加。
@@ -1125,8 +1129,9 @@ class CocoDetection(torchvision.datasets.CocoDetection):
         mosaic_p = self.mosaic.p if self.mosaic is not None else 0.0
         cp_p     = self.copy_paste_p if self.copy_paste is not None else 0.0
 
-        # 保证区间合法
-        total_aug_p = min(mosaic_p + cp_p, 1.0)
+        # Do not silently clip one augmentation's probability behind another.
+        if not (0 <= mosaic_p <= 1 and 0 <= cp_p <= 1 and mosaic_p + cp_p <= 1):
+            raise ValueError('mosaic_p and copy_paste_p must be probabilities with sum <= 1')
         dice = random.random()
 
         use_mosaic     = (dice < mosaic_p) and (self.mosaic is not None)
@@ -1141,14 +1146,7 @@ class CocoDetection(torchvision.datasets.CocoDetection):
             imgs_and_targets = [(img, target)] + others
             img, target     = self.mosaic(imgs_and_targets)
 
-            # Mosaic 后若无目标（极罕见），降级为不触发增强的重采样
-            if self.filter_empty_gt and len(target['boxes']) == 0:
-                return self.__getitem__(random.randint(0, len(self) - 1))
-
-        else:
-            # 非 Mosaic 路径：对空图的原始过滤
-            if self.filter_empty_gt and len(target['boxes']) == 0:
-                return self.__getitem__(random.randint(0, len(self) - 1))
+            # An empty result of augmentation is a valid background example.
 
         # ── 4. 标准 transforms（resize / flip / normalize）────────
         if self._transforms is not None:

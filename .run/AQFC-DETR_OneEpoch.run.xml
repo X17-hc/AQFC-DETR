@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <!-- 手动启动：完整训练1个epoch，随后评估全部测试图像，不使用短测批次数限制。 -->
+  <!-- 再次新建实验时请修改输出目录参数；保留已有checkpoint的防覆盖检查。 -->
+  <configuration default="false" name="AQFC-DETR完整1个epoch及评估" type="PythonConfigurationType" factoryName="Python">
+    <module name="AQFC-DETR" />
+    <option name="ENV_FILES" value="" />
+    <option name="INTERPRETER_OPTIONS" value="-u" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="PYTHONIOENCODING" value="utf-8" />
+    </envs>
+    <option name="SDK_HOME" value="D:/venv/AQFC-DETR/Scripts/python.exe" />
+    <option name="SDK_NAME" value="Python 3.11 (AQFC-DETR)" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="DEBUG_JUST_MY_CODE" value="true" />
+    <option name="RUN_TOOL" value="" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+    <option name="PARAMETERS" value="--config configs/aitodv2/aqfc_r50_5scale_local8gb.py --pretrained weights/legacy/dqdetr_best305.pth --output-dir outputs/pycharm_one_epoch --num_workers 0 --max-train-steps 0 --max-eval-steps 0 --options epochs=1 val_epoch=[0]" />
+    <option name="SHOW_COMMAND_LINE" value="true" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+</component>

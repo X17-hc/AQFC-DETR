@@ -35,6 +35,8 @@ def measure(model, images, warmup, iterations, device):
     synchronize(device)
     latencies = []
     counts = []
+    executed_tokens = []
+    padded_tokens = []
     if device.type == 'cuda':
         torch.cuda.reset_peak_memory_stats(device)
     for _ in range(iterations):
@@ -43,6 +45,9 @@ def measure(model, images, warmup, iterations, device):
         synchronize(device)
         latencies.append((time.perf_counter() - start) * 1000.0)
         counts.extend(outputs['executed_query_counts'].detach().cpu().tolist())
+        budget = outputs['allocator_outputs']
+        executed_tokens.append(float(budget['decoder_query_tokens']))
+        padded_tokens.append(float(budget['legacy_query_tokens']))
     peak = (torch.cuda.max_memory_allocated(device) / 2**20
             if device.type == 'cuda' else 0.0)
     ordered = sorted(latencies)
@@ -54,9 +59,9 @@ def measure(model, images, warmup, iterations, device):
         'images_per_second': len(images) * 1000.0 / statistics.fmean(latencies),
         'peak_memory_mb': peak,
         'mean_query_count': statistics.fmean(counts),
-        'decoder_query_tokens': sum(counts) / iterations,
+        'decoder_query_tokens': statistics.fmean(executed_tokens),
         'query_token_reduction_percent':
-            (1.0 - statistics.fmean(counts) / max(counts)) * 100.0,
+            (1.0 - sum(executed_tokens) / max(sum(padded_tokens), 1.0)) * 100.0,
     }
 
 
