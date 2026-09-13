@@ -104,6 +104,8 @@ def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=
     for counts in module_coverage.values():
         counts['coverage'] = counts['loaded_numel'] / max(counts['total_numel'], 1)
     report = {
+        'parameter_only_loaded_numel': sum(p.numel() for k, p in model.named_parameters() if k in compatible),
+        'parameter_only_total_numel': sum(p.numel() for p in model.parameters()),
         'source_checkpoint': str(checkpoint_path.resolve()),
         'source_format': 'legacy_dqdetr' if is_legacy_state_dict(source) else 'compatible_pretrained',
         'loaded_keys': list(compatible),
@@ -116,6 +118,8 @@ def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=
         'coverage_definition': 'state_dict tensor elements, including buffers; not functional equivalence',
         'coverage_by_module': module_coverage,
     }
+    report['parameter_only_coverage'] = (report['parameter_only_loaded_numel'] /
+                                       max(report['parameter_only_total_numel'], 1))
     if report_path is not None:
         report_path = Path(report_path)
         report_path.parent.mkdir(parents=True, exist_ok=True)

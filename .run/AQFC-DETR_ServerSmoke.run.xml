@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AQFC-DETR服务器更新版短训练测试" type="PythonConfigurationType" factoryName="Python">
+    <module name="AQFC-DETR" />
+    <option name="SDK_NAME" value="SSH (sftp://root@219.216.64.62:32880/opt/conda/envs/AQFC-DETR/bin/python)" />
+    <option name="SDK_HOME" value="/opt/conda/envs/AQFC-DETR/bin/python" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="WORKING_DIRECTORY" value="/workspace/AQFC-DETR" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+    <option name="INTERPRETER_OPTIONS" value="-u" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs><env name="PYTHONIOENCODING" value="utf-8" /><env name="CUDA_VISIBLE_DEVICES" value="" /></envs>
+    <option name="PARAMETERS" value="--config /workspace/AQFC-DETR/configs/server/aitodv2_update_smoke.py --data-root /workspace/DQDetr/data/path/AITODv2 --pretrained /workspace/AQFC-DETR/weights/legacy/dqdetr_best305.pth --output-dir /workspace/AQFC-DETR/outputs/server_update_smoke --unique-output-dir --device cuda --amp --seed 42 --num_workers 0 --max-train-steps 20 --max-eval-steps 2 --max-consecutive-skipped-steps 20 --export-predictions" />
+    <option name="SHOW_COMMAND_LINE" value="true" />
+    <option name="MODULE_MODE" value="false" />
+    <method v="2" />
+  </configuration>
+</component>

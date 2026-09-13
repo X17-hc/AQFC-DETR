@@ -14,6 +14,37 @@ LEGACY_FIELDS = {
 
 def validate_config(config):
     errors = []
+    from .experiment import UPDATE_DEFAULTS
+    known = set(UPDATE_DEFAULTS) | {'allocator_loss_weight', 'allocator_fallback_queries',
+        'allocator_teacher_epochs', 'allocator_schedule', 'allocator_use_boundary_ema',
+        'calibrator_gate_type', 'calibrator_use_spatial', 'calibrator_spatial_alphas'}
+    for key in config:
+        if key.startswith(('allocator_', 'calibrator_', 'density_target_', 'spatial_')) and key not in known:
+            errors.append(f'Unknown update configuration field: {key}')
+    for key in ('allocator_enabled', 'calibrator_enabled'):
+        if type(config.get(key, True)) is not bool:
+            errors.append(f'{key} must be boolean')
+    for key, choices in {
+        'allocator_encoder_type': ('standard', 'light_dw'),
+        'density_target_backend': ('reference', 'vectorized'),
+        'eval_backend': ('legacy', 'faster_aitod'),
+        'run_purpose': ('engineering_check', 'research', 'benchmark'),
+    }.items():
+        if config.get(key, UPDATE_DEFAULTS[key]) not in choices:
+            errors.append(f'{key} must be one of {choices}')
+    chunk = config.get('density_target_chunk_size', 512)
+    if type(chunk) is not int or chunk < 1:
+        errors.append('density_target_chunk_size must be a positive integer')
+    ratio = config.get('spatial_semantic_ratio', .75)
+    if not isinstance(ratio, (int, float)) or not 0 <= ratio <= 1:
+        errors.append('spatial_semantic_ratio must be in [0,1]')
+    grid = config.get('spatial_grid_size', [8, 8])
+    if not isinstance(grid, (list, tuple)) or len(grid) != 2 or any(type(x) is not int or x < 1 for x in grid):
+        errors.append('spatial_grid_size must contain two positive integers')
+    if not config.get('allocator_enabled', True):
+        if (config.get('force_query_budget') is None or config.get('calibrator_enabled', True)
+                or config.get('proposal_selection_mode') != 'semantic'):
+            errors.append('Disabled AQBA requires fixed budget, semantic selection and disabled DGFC')
     for old, new in LEGACY_FIELDS.items():
         if old in config:
             errors.append(f"Legacy field '{old}' is not supported; use '{new}'")
@@ -57,7 +88,7 @@ def validate_config(config):
         errors.append('mosaic_p and copy_paste_p must be probabilities with sum <= 1')
     if config.get('masks', False) and (mosaic_p or copy_paste_p):
         errors.append('Mosaic/Copy-Paste support detection boxes only; disable them for masks')
-    if config.get('proposal_selection_mode') not in {'semantic', 'fused', 'mixed'}:
+    if config.get('proposal_selection_mode') not in {'semantic', 'fused', 'mixed', 'spatial'}:
         errors.append("proposal_selection_mode must be 'semantic', 'fused', or 'mixed'")
     ratio = float(config.get('mixed_density_ratio', 0.25))
     if not 0.0 <= ratio <= 1.0:
@@ -78,6 +109,13 @@ def validate_config(config):
         errors.append('eval_split must be val, test or eval_debug')
     if config.get('train_split', 'trainval') == 'trainval' and config.get('eval_split') in ('val', 'eval_debug'):
         errors.append('trainval includes validation data; select train_split=train for validation selection')
+    if config.get('dataset_file') == 'visdrone':
+        if config.get('train_split') != 'train' or config.get('eval_split') not in ('val', 'eval_debug'):
+            errors.append('VisDrone requires train/val splits; test-dev is not silently used as validation')
+        if config.get('num_classes', 0) < 11:
+            errors.append('VisDrone head must accommodate original category IDs 1..10')
+        if config.get('eval_backend', 'legacy') != 'legacy':
+            errors.append('VisDrone does not support the AI-TOD-specific fast evaluation backend')
     if 'allocator_use_boundary_ema' in config and type(config['allocator_use_boundary_ema']) is not bool:
         errors.append('allocator_use_boundary_ema must be boolean')
     if errors:

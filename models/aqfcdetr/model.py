@@ -539,9 +539,11 @@ class SetCriterion(nn.Module):
 
 
 class PostProcess(nn.Module):
-    def __init__(self, nms_iou_threshold=-1) -> None:
+    def __init__(self, nms_iou_threshold=-1, valid_category_ids=None) -> None:
         super().__init__()
         self.nms_iou_threshold = nms_iou_threshold
+        self.valid_category_ids = (None if valid_category_ids is None
+                                   else tuple(valid_category_ids))
 
     @torch.no_grad()
     def forward(self, outputs, target_sizes, target_num=None, not_to_xyxy=False, test=False):
@@ -558,10 +560,17 @@ class PostProcess(nn.Module):
             valid = valid_masks[batch_index]
             logits = out_logits[batch_index, valid]
             boxes = all_boxes[batch_index, valid]
+            if self.valid_category_ids is not None:
+                class_ids = torch.as_tensor(self.valid_category_ids, device=logits.device)
+                if class_ids.numel() == 0 or class_ids.min() < 0 or class_ids.max() >= logits.shape[-1]:
+                    raise ValueError('PostProcess category IDs do not fit the detection head')
+                logits = logits[:, class_ids]
             topk = min(int(executed_counts[batch_index].item()), logits.numel())
             scores, indexes = torch.topk(logits.sigmoid().flatten(), topk)
-            box_indexes = indexes // out_logits.shape[-1]
-            labels = indexes % out_logits.shape[-1]
+            box_indexes = indexes // logits.shape[-1]
+            labels = indexes % logits.shape[-1]
+            if self.valid_category_ids is not None:
+                labels = class_ids[labels]
             boxes = boxes[box_indexes]
             if test:
                 assert not not_to_xyxy
@@ -683,7 +692,8 @@ def build_aqfcdetr(args):
     criterion = SetCriterion(num_classes, matcher=matcher, weight_dict=weight_dict,
                              focal_alpha=args.focal_alpha, losses=losses)
     criterion.to(device)
-    postprocessors = {'bbox': PostProcess(nms_iou_threshold=args.nms_iou_threshold)}
+    postprocessors = {'bbox': PostProcess(nms_iou_threshold=args.nms_iou_threshold,
+        valid_category_ids=range(1, 11) if getattr(args, 'dataset_file', '') == 'visdrone' else None)}
     if args.masks:
         postprocessors['segm'] = PostProcessSegm()
         if args.dataset_file == "coco_panoptic":

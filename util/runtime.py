@@ -2,6 +2,28 @@
 import itertools
 
 
+def validate_eval_query_floor(floor, evaluation, levels, forced=None):
+    if type(floor) is not int or floor < 0:
+        raise ValueError('Query floor must be a nonnegative integer')
+    if floor and (not evaluation or floor not in levels or forced is not None):
+        raise ValueError('Query floor requires evaluation, a configured budget level, and no forced budget')
+
+
+def apply_eval_query_floor(counts, floor=0, training=False):
+    if not floor:
+        return counts
+    if training:
+        raise ValueError('Query floor must never be used during training')
+    return counts.clamp(min=floor)
+
+
+def update_skipped_streak(streak, applied, limit=0):
+    streak = 0 if applied else streak + 1
+    if limit and streak >= limit:
+        raise FloatingPointError(f'No optimizer update for {streak} consecutive iterations; stopping without retry')
+    return streak
+
+
 def optimizer_step_statistics(local_iterations, local_updates, synchronized_meter):
     """Keep rank-local progress separate from all-rank metric totals."""
     return dict(train_iterations=local_iterations, optimizer_steps=local_updates,

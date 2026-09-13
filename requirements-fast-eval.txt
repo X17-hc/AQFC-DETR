@@ -1,0 +1,3 @@
+# Optional candidate only: NOT installed/validated on Windows Python 3.11.
+# PyPI 1.0.2 provides cp39 manylinux wheel and source distribution, no Windows wheel.
+faster-coco-eval-aitod==1.0.2

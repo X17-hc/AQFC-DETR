@@ -35,7 +35,8 @@ def get_extensions():
 
 
 
-    if torch.cuda.is_available() and CUDA_HOME is not None:
+    # Build on a CPU-only login session without touching another user's GPU.
+    if (torch.cuda.is_available() or os.environ.get('FORCE_CUDA') == '1') and CUDA_HOME is not None:
         extension = CUDAExtension
         sources += source_cuda
         define_macros += [("WITH_CUDA", None)]

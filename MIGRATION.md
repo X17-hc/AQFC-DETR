@@ -1,5 +1,13 @@
 # 迁移说明
 
+## 核心优化变体（2026-09-07）
+
+标准分支保留旧state_dict结构和默认选择。`light_dw`使用独立`light_density_encoder`键，原密集卷积不转换成DW/PW。
+新checkpoint记录`variant_signature`，训练resume核对结构、候选、密度目标、损失与数据协议；不一致时使用warm-start。
+无签名历史checkpoint只允许原标准路径按既有规则恢复，新变体必须`--pretrained`。
+迁移报告新增parameter-only覆盖率，与既有含buffer覆盖率分开。
+`--unique-output-dir`仅用于新实验，与`--resume`冲突。完整操作见`CORE_UPDATE_GUIDE.md`。
+
 ## 名称映射
 
 | 历史名称 | AQFC-DETR 名称 |

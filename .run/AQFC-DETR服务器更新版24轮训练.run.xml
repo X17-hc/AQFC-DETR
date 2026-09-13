@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AQFC-DETR服务器更新版24轮训练" type="PythonConfigurationType" factoryName="Python">
+    <module name="AQFC-DETR" />
+    <option name="ENV_FILES" value="" />
+    <option name="INTERPRETER_OPTIONS" value="-u" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="PYTHONIOENCODING" value="utf-8" />
+      <env name="CUDA_VISIBLE_DEVICES" value="2" />
+    </envs>
+    <option name="SDK_HOME" value="/opt/conda/envs/AQFC-DETR/bin/python" />
+    <option name="SDK_NAME" value="SSH (sftp://root@219.216.64.62:32880/opt/conda/envs/AQFC-DETR/bin/python)" />
+    <option name="WORKING_DIRECTORY" value="/workspace/AQFC-DETR" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="DEBUG_JUST_MY_CODE" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="RUN_TOOL" value="" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+    <option name="PARAMETERS" value="--config /workspace/AQFC-DETR/configs/server/aitodv2_update_24e.py --data-root /workspace/DQDetr/data/path/AITODv2 --pretrained /workspace/AQFC-DETR/weights/legacy/dqdetr_best305.pth --output-dir /workspace/AQFC-DETR/outputs/server_update24 --unique-output-dir --device cuda --amp --seed 42 --num_workers 0 --max-train-steps 0 --max-eval-steps 0 --max-consecutive-skipped-steps 20" />
+    <option name="SHOW_COMMAND_LINE" value="false" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <option name="REDIRECT_INPUT" value="false" />
+    <option name="INPUT_FILE" value="" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1187,8 +1187,9 @@ def convert_coco_poly_to_mask(segmentations, height, width):
 
 
 class ConvertCocoPolysToMask(object):
-    def __init__(self, return_masks=False):
+    def __init__(self, return_masks=False, valid_category_ids=None):
         self.return_masks = return_masks
+        self.valid_category_ids = None if valid_category_ids is None else set(valid_category_ids)
 
     def __call__(self, image, target):
         w, h     = image.size
@@ -1196,6 +1197,11 @@ class ConvertCocoPolysToMask(object):
         image_id = torch.tensor([image_id])
         anno     = target["annotations"]
         anno     = [obj for obj in anno if 'iscrowd' not in obj or obj['iscrowd'] == 0]
+        if self.valid_category_ids is not None:
+            anno = [obj for obj in anno if not obj.get('ignore', 0)]
+            unknown = {obj['category_id'] for obj in anno} - self.valid_category_ids
+            if unknown:
+                raise ValueError(f'Unknown non-ignored VisDrone categories: {sorted(unknown)}')
 
         boxes = [obj["bbox"] for obj in anno]
         boxes = torch.as_tensor(boxes, dtype=torch.float32).reshape(-1, 4)
@@ -1428,7 +1434,11 @@ def build(image_set, args):
         }
 
     aux_target_hacks_list = get_aux_target_hacks_list(image_set, args)
-    img_folder, ann_file  = PATHS[image_set]
+    if args.dataset_file == 'visdrone':
+        from util.dataset_paths import visdrone_paths
+        img_folder, ann_file = visdrone_paths(root, image_set)
+    else:
+        img_folder, ann_file = PATHS[image_set]
 
     if os.environ.get('DATA_COPY_SHILONG') == 'INFO':
         preparing_dataset(dict(img_folder=img_folder, ann_file=ann_file), image_set, args)
@@ -1493,6 +1503,12 @@ def build(image_set, args):
         copy_paste_p=copy_paste_p,
     )
 
+    if args.dataset_file == 'visdrone':
+        if set(dataset.coco.getCatIds()) != set(range(1, 11)):
+            raise ValueError('VisDrone annotations must preserve category IDs 1..10')
+        # Preserve evaluation annotations; remove ignored regions only in targets.
+        dataset.prepare = ConvertCocoPolysToMask(return_masks=args.masks,
+                                                valid_category_ids=range(1, 11))
     return dataset
 
 

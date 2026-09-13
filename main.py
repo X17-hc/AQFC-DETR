@@ -20,6 +20,7 @@ from util.logger import setup_logger
 from util.slconfig import DictAction, SLConfig
 from util.utils import ModelEma
 from util.runtime import run_metadata, can_select_best
+from util.experiment import unique_output, write_manifest, variant_signature
 from util.checkpoint import load_native_resume, migration_report_path, capture_rng_state
 from util.checkpoint_migration import load_legacy_pretrained
 from util.config_validation import validate_config
@@ -89,6 +90,20 @@ def get_args_parser():
                         help='path where to save, empty for no saving')
     parser.add_argument('--note', default='',
                         help='add some notes to the experiment')
+    parser.add_argument('--unique-output-dir', action='store_true',
+                        help='Create a timestamped child for a new experiment; never resume')
+    parser.add_argument('--export-predictions', action='store_true',
+                        help='Export unthresholded COCO predictions and per-image metadata')
+    parser.add_argument('--eval-image-ids', default='',
+                        help='Evaluation-only JSON list of unique image IDs; empty uses the full split')
+    parser.add_argument('--eval-query-floor', type=int, default=0,
+                        help='Evaluation-only minimum query budget; zero disables; preserves higher budgets')
+    parser.add_argument('--max-consecutive-skipped-steps', type=int, default=0,
+                        help='Opt-in stop after this many consecutive optimizer skips; zero disables')
+    parser.add_argument('--export-diagnostics', action='store_true',
+                        help='With prediction export, save density/proposal arrays for at most 32 images per rank')
+    parser.add_argument('--profile-trace', default='',
+                        help='Opt-in bounded training Chrome trace, relative to output directory')
     parser.add_argument('--device', default='cuda',
                         help='device to use for training / testing')
     parser.add_argument('--seed', default=42, type=int)
@@ -138,6 +153,11 @@ def build_data_loaders(args):
     args.train_split = getattr(args, 'train_split', 'trainval')
     args.eval_split = getattr(args, 'eval_split', 'test')
     dataset_val = build_dataset(image_set=args.eval_split, args=args)
+    if getattr(args, 'eval_image_ids', ''):
+        if not args.eval:
+            raise ValueError('--eval-image-ids is evaluation-only')
+        from util.factor_diagnostics import restrict_eval_dataset
+        restrict_eval_dataset(dataset_val, args.eval_image_ids)
     sampler_val = (DistributedSampler(dataset_val, shuffle=False) if args.distributed
                    else torch.utils.data.SequentialSampler(dataset_val))
     loader_val = DataLoader(dataset_val, 1, sampler=sampler_val, drop_last=False,
@@ -163,10 +183,17 @@ def build_model_main(args):
 
 def main(args):
     args = resolve_launch_defaults(args)
+    if getattr(args, 'unique_output_dir', False) and getattr(args, 'world_size', 1) > 1:
+        raise ValueError('Unique output directories currently require a single-process launch')
+    unique_output(args)
     if not args.resume and not args.eval and any(Path(args.output_dir).glob('checkpoint*.pth')):
         raise FileExistsError('Output directory already contains checkpoints; use a new --output-dir or --resume')
     if min(args.max_train_steps, args.max_eval_steps) < 0:
         raise ValueError('Step limits must be non-negative')
+    if args.profile_trace and not 1 <= args.max_train_steps <= 100:
+        raise ValueError('Profiling requires --max-train-steps in [1,100]')
+    if args.export_diagnostics and not args.export_predictions:
+        raise ValueError('--export-diagnostics requires --export-predictions')
     # 定期清理显存
     gc.collect()
     if torch.cuda.is_available():
@@ -197,6 +224,14 @@ def main(args):
         else:
             print("ex:", k, v)
             raise ValueError("Key {} can used by args only".format(k))
+
+    from util.runtime import validate_eval_query_floor
+    validate_eval_query_floor(args.eval_query_floor, args.eval, args.query_budget_levels,
+                              getattr(args, 'force_query_budget', None))
+    if args.max_consecutive_skipped_steps < 0:
+        raise ValueError('--max-consecutive-skipped-steps must be nonnegative')
+    if getattr(args, 'run_purpose', 'engineering_check') == 'research' and args.pretrain_model_path:
+        raise ValueError('Research configurations require --no-pretrained; audit new initialization separately')
 
     # update some new args temporally
     if not getattr(args, 'use_ema', None):
@@ -232,6 +267,7 @@ def main(args):
 
     # build model
     model, criterion, postprocessors = build_model_main(args)
+    model.transformer.eval_query_floor = args.eval_query_floor
     wo_class_error = False
     model.to(device)
 
@@ -292,7 +328,7 @@ def main(args):
             optimizer=None if args.eval else optimizer,
             scheduler=None if args.eval else lr_scheduler,
             ema=ema_m, scaler=None if args.eval else scaler,
-            best_metrics=best_metrics)
+            best_metrics=best_metrics, expected_args=args)
 
     if (not args.resume) and args.pretrain_model_path:
         report = load_legacy_pretrained(
@@ -304,6 +340,8 @@ def main(args):
         if ema_m is not None:
             ema_m.module.load_state_dict(model_without_ddp.state_dict(), strict=True)
 
+    if args.rank == 0:
+        write_manifest(args, PROJECT_ROOT)
     if args.eval:
         os.environ['EVAL_FLAG'] = 'TRUE'
         evaluation_model = ema_m.module if args.eval_ema else model
@@ -350,11 +388,14 @@ def main(args):
         best_checkpoint_paths = []
         if args.distributed:
             sampler_train.set_epoch(epoch)
-        train_stats = train_one_epoch(
-            model, criterion, data_loader_train, optimizer, device, epoch,
-            args.clip_max_norm, wo_class_error=wo_class_error, lr_scheduler=lr_scheduler, args=args,
-            logger=(logger if args.save_log else None), ema_m=ema_m,
-            mosaic_scheduler=mosaic_scheduler, scaler=scaler)
+        from util.profiling import training_profile
+        trace = str(output_dir / f'epoch_{epoch}_{Path(args.profile_trace).name}') if args.profile_trace else ''
+        with training_profile(trace, model, criterion):
+            train_stats = train_one_epoch(
+                model, criterion, data_loader_train, optimizer, device, epoch,
+                args.clip_max_norm, wo_class_error=wo_class_error, lr_scheduler=lr_scheduler, args=args,
+                logger=(logger if args.save_log else None), ema_m=ema_m,
+                mosaic_scheduler=mosaic_scheduler, scaler=scaler)
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
 
@@ -374,9 +415,13 @@ def main(args):
                     'args': args,
                     'scaler': scaler.state_dict(),
                     'format': 'aqfcdetr_v2',
+                    'variant_signature': variant_signature(args),
                     'run_metadata': run_metadata(args, train_stats['train_iterations'], len(data_loader_train)),
                     'best_metrics': best_metrics,
                 }
+            if args.rank == 0:
+                write_manifest(args, PROJECT_ROOT, update={
+                    'last_epoch': epoch, **weights['run_metadata']})
             if args.use_ema:
                 weights.update({
                         'ema_model': ema_m.module.state_dict(),

@@ -1,0 +1,4 @@
+# Optional only; never replace the protected CUDA runtime.
+supervision==0.30.1
+numpy==1.26.4
+opencv-python-headless==4.11.0.86

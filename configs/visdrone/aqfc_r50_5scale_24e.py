@@ -3,6 +3,11 @@ _base_ = ['../coco_transformer.py']
 # num_classes = 9  # （AI-TOD-V2为8类+1背景）
 num_classes = 12  # （VisDrone为11类+1背景）
 dataset_file = 'visdrone'
+# Preserve raw IDs 1..10; PostProcess excludes unused output channels.
+train_split = 'train'
+eval_split = 'val'
+copy_paste_p = 0.0
+mosaic_p = 0.0
 lr = 0.0001  # 基础学习率
 param_dict_type = 'default'  # 参数分组策略，'default'表示默认分组
 lr_backbone = 1e-05  # Backbone网络的学习率，通常设置得比整体学习率小，用于微调预训练模型

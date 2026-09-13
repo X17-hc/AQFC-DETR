@@ -2,6 +2,8 @@
 import math
 import os
 import sys
+import time
+from pathlib import Path
 from typing import Iterable
 
 from util.utils import slprint, to_device
@@ -15,6 +17,7 @@ from datasets.panoptic_eval import PanopticEvaluator
 
 from models.aqfcdetr.query_allocator import QueryBudgetLoss
 from util.runtime import LimitedLoader, optimizer_step_statistics
+from util.profiling import region, ProfileLoader
 
 print_freq = 100
 # None restores the original full MetricLogger output (including DN, auxiliary
@@ -122,7 +125,9 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         boundary_guide_weight=args.boundary_guide_loss_weight,
         density_weight=args.density_map_loss_weight,
         enable_adaptive_targets=True,
-        enable_loss_clipping=True
+        enable_loss_clipping=True,
+        density_target_backend=getattr(args, 'density_target_backend', 'reference'),
+        density_target_chunk_size=getattr(args, 'density_target_chunk_size', 512)
     ).to(device)
     budget_criterion.train()
 
@@ -149,21 +154,20 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
     _cnt = 0
     local_optimizer_steps = 0
+    consecutive_skips = 0
     run_loader = LimitedLoader(data_loader, getattr(args, 'max_train_steps', 0))
+    if getattr(args, 'profile_trace', ''):
+        run_loader = ProfileLoader(run_loader)
     frequency = min(print_freq, 5) if getattr(args, 'max_train_steps', 0) else print_freq
     first_nonfinite_reported = False
     for samples, targets in metric_logger.log_every(run_loader, frequency, header, logger=logger,
                                                    display_keys=DISPLAY_KEYS):
 
-        samples = samples.to(device)
-
-        real_counts = torch.tensor(
-            [len(t['labels']) for t in targets],
-            device=device,
-            dtype=torch.float32
-        )
-
-        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+        with region('H2D'):
+            samples = samples.to(device)
+            real_counts = torch.tensor(
+                [len(t['labels']) for t in targets], device=device, dtype=torch.float32)
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
 
         current_allocator_weight = allocator_weight_scheduler.get_weight(
             epoch, _cnt, len(data_loader))
@@ -177,10 +181,11 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
             losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
 
             allocator_outputs = outputs.get('allocator_outputs')
-            if allocator_outputs:
-                budget_loss_out = budget_criterion(
-                    allocator_outputs,
-                    {'real_counts': real_counts, 'targets': targets})
+            if allocator_outputs and getattr(args, 'allocator_enabled', True):
+                with region('DensityAndBudgetLoss'):
+                    budget_loss_out = budget_criterion(
+                        allocator_outputs,
+                        {'real_counts': real_counts, 'targets': targets})
                 weighted_allocator_loss = (
                     budget_loss_out['loss_allocator_total'] *
                     current_allocator_weight * args.allocator_loss_weight)
@@ -223,7 +228,8 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         if args.amp:
             optimizer.zero_grad()
             previous_scale = scaler.get_scale()
-            scaler.scale(losses).backward()
+            with region('Backward'):
+                scaler.scale(losses).backward()
             scaler.unscale_(optimizer)
             grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm if max_norm > 0 else float('inf'))
             if not torch.isfinite(grad_norm) and not first_nonfinite_reported:
@@ -231,20 +237,26 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                        if p.grad is not None and not torch.isfinite(p.grad).all()]
                 print(f'[AMP] non-finite gradients at step {_cnt}; first parameters: {bad[:8]}')
                 first_nonfinite_reported = True
-            scaler.step(optimizer)
+            with region('Optimizer'):
+                scaler.step(optimizer)
             scaler.update()
             step_applied = scaler.get_scale() >= previous_scale
         else:
             optimizer.zero_grad()
-            losses.backward()
+            with region('Backward'):
+                losses.backward()
             grad_norm = torch.nn.utils.clip_grad_norm_(
                 model.parameters(), max_norm if max_norm > 0 else float('inf'), error_if_nonfinite=True)
-            optimizer.step()
+            with region('Optimizer'):
+                optimizer.step()
             step_applied = True
 
         if args.onecyclelr and step_applied:
             lr_scheduler.step()
         local_optimizer_steps += int(step_applied)
+        from util.runtime import update_skipped_streak
+        consecutive_skips = update_skipped_streak(consecutive_skips, step_applied,
+            getattr(args, 'max_consecutive_skipped_steps', 0))
         if args.use_ema and step_applied:
             if epoch >= args.ema_epoch:
                 ema_m.update(model)
@@ -252,10 +264,14 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
         metric_logger.update(allocator_weight=current_allocator_weight)
         metric_logger.update(optimizer_step_applied=float(step_applied))
+        spatial_reports = allocator_outputs.get('spatial_selection_statistics', [])
+        if spatial_reports:
+            metric_logger.update(spatial_fallback_ratio=sum(r['fallback'] for r in spatial_reports)/len(spatial_reports),
+                                 spatial_grid_coverage=sum(r['grid_coverage'] for r in spatial_reports)/len(spatial_reports))
         metric_logger.update(grad_scale=scaler.get_scale() if args.amp else 1.)
         if torch.isfinite(grad_norm):
             metric_logger.update(grad_norm=float(grad_norm))
-        if allocator_outputs:
+        if allocator_outputs and 'predicted_count' in allocator_outputs:
             executed = outputs['executed_query_counts'].float()
             predicted = allocator_outputs['predicted_count'].float()
             metric_logger.update(
@@ -350,7 +366,14 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         useCats = True
     if not useCats:
         print("useCats: {} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!".format(useCats))
-    coco_evaluator = CocoEvaluator(base_ds, iou_types, useCats=useCats)
+    if getattr(args, 'dataset_file', '') == 'visdrone':
+        from datasets.visdrone_eval import VisDroneCocoEvaluator
+        coco_evaluator = VisDroneCocoEvaluator(base_ds, iou_types, useCats=useCats)
+    elif getattr(args, 'eval_backend', 'legacy') == 'faster_aitod':
+        from datasets.checked_fast_eval import CheckedFastEvaluator
+        coco_evaluator = CheckedFastEvaluator(base_ds, iou_types, useCats=useCats)
+    else:
+        coco_evaluator = CocoEvaluator(base_ds, iou_types, useCats=useCats)
 
     panoptic_evaluator = None
     if 'panoptic' in postprocessors.keys():
@@ -365,6 +388,14 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
     executed_tokens = 0
     legacy_tokens = 0
     output_state_dict = {}
+    export_records, export_images = [], []
+    export_enabled = getattr(args, 'export_predictions', False)
+    if export_enabled:
+        from util.prediction_export import prediction_records, save_predictions
+    diagnostics_directory = None
+    if getattr(args, 'export_diagnostics', False):
+        diagnostics_directory = Path(output_dir) / f'diagnostics_rank{utils.get_rank()}_{time.time_ns()}'
+        diagnostics_directory.mkdir(parents=True, exist_ok=False)
     run_loader = LimitedLoader(data_loader, getattr(args, 'max_eval_steps', 0))
     for samples, targets in metric_logger.log_every(run_loader, min(print_freq, 10), header, logger=logger,
                                                    display_keys=DISPLAY_KEYS):
@@ -414,6 +445,32 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
             target_sizes = torch.stack([t["size"] for t in targets], dim=0)
             results = postprocessors['segm'](results, outputs, orig_target_sizes, target_sizes)
         res = {target['image_id'].item(): output for target, output in zip(targets, results)}
+        if export_enabled:
+            for sample_index, (target, result) in enumerate(zip(targets, results)):
+                image_id = int(target['image_id'])
+                export_records.extend(prediction_records(image_id, result, base_ds.dataset['categories']))
+                artifact = None
+                if diagnostics_directory is not None and len(export_images) < 32:
+                    import numpy as np
+                    artifact = diagnostics_directory / f'{image_id}.npz'
+                    prior = outputs.get('allocator_outputs', {}).get('density_prior')
+                    valid = outputs['query_valid_mask'][sample_index]
+                    proposals = outputs['interm_outputs']['pred_boxes'][sample_index][valid]
+                    arrays = dict(proposals_cxcywh=proposals.detach().float().cpu().numpy(),
+                                  original_size=target['orig_size'].cpu().numpy())
+                    if prior is not None:
+                        arrays.update(density=prior[sample_index,0].detach().float().cpu().numpy(),
+                                      valid_mask=outputs['allocator_outputs']['density_valid_mask'][sample_index,0].cpu().numpy())
+                    np.savez_compressed(artifact, **arrays)
+                compact = {}
+                if getattr(args, 'export_diagnostics', False):
+                    from util.factor_diagnostics import image_diagnostics
+                    compact = image_diagnostics(outputs, target, sample_index)
+                export_images.append(dict(image_id=image_id, height=int(target['orig_size'][0]),
+                    width=int(target['orig_size'][1]), executed_query_count=int(result.get('executed_query_count', 0)),
+                    diagnostics=str(artifact) if artifact is not None else None,
+                    latency_ms=None, latency_note='not measured: normal evaluation does not synchronize per image',
+                    **compact))
 
         if coco_evaluator is not None:
             coco_evaluator.update(res)
@@ -455,6 +512,24 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
 
     metric_logger.synchronize_between_processes()
     print("Averaged stats:", metric_logger.format_meters(DISPLAY_KEYS))
+    if export_enabled:
+        batches = utils.all_gather((export_records, export_images))
+        if utils.is_main_process():
+            # DistributedSampler may repeat tail images: preserve one complete record set per ID.
+            merged_records, merged_images, seen = [], [], set()
+            for records, images in batches:
+                # Linear grouping avoids scanning all detections once per image.
+                records_by_image = {}
+                for record in records:
+                    records_by_image.setdefault(record['image_id'], []).append(record)
+                for row in images:
+                    if row['image_id'] not in seen:
+                        seen.add(row['image_id'])
+                        merged_images.append(row)
+                        merged_records.extend(records_by_image.get(row['image_id'], []))
+            stamp = time.time_ns()
+            save_predictions(Path(output_dir) / f'predictions_{stamp}', merged_records,
+                             merged_images, base_ds.dataset['categories'], vars(args))
     if coco_evaluator is not None:
         coco_evaluator.synchronize_between_processes()
     if panoptic_evaluator is not None:
@@ -463,6 +538,9 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
     if coco_evaluator is not None:
         coco_evaluator.accumulate()
         coco_evaluator.summarize()
+        if getattr(args, 'export_diagnostics', False) and utils.is_main_process():
+            from util.factor_diagnostics import export_class_metrics
+            export_class_metrics(coco_evaluator.coco_eval['bbox'], Path(output_dir) / 'class_metrics.json')
 
     panoptic_res = None
     if panoptic_evaluator is not None:

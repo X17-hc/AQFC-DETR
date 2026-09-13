@@ -43,7 +43,7 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
 
     def __init__(self, feature_dim=256, query_budget_levels=None,
                  max_objects=1500, fallback_queries=900, use_ema=True,
-                 ema_decay=0.9997, boundary_warmup_steps=5000):
+                 ema_decay=0.9997, boundary_warmup_steps=5000, encoder_type='standard'):
         super().__init__()
         self.query_budget_levels = list(query_budget_levels or [300, 500, 900, 1500])
         if len(self.query_budget_levels) != 4:
@@ -57,9 +57,23 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
         self.ema_decay = ema_decay
 
         # Highest-resolution encoder feature -> density-aware representation.
-        self.density_conv1 = nn.Conv2d(feature_dim, 512, kernel_size=1)
-        self.density_encoder = make_density_layers(
-            [512, 512, 512, 256, 256, 256], in_channels=512, d_rate=2)
+        self.encoder_type = encoder_type
+        if encoder_type == 'standard':
+            self.density_conv1 = nn.Conv2d(feature_dim, 512, kernel_size=1)
+            self.density_encoder = make_density_layers(
+                [512, 512, 512, 256, 256, 256], in_channels=512, d_rate=2)
+        elif encoder_type == 'light_dw':
+            # Separate keys prevent accidental loading of old dense convolutions.
+            blocks = [nn.Conv2d(feature_dim, 256, 1, bias=False)]
+            for dilation in (1, 2, 3, 1, 2, 1):
+                blocks.append(nn.Sequential(
+                    nn.Conv2d(256, 256, 3, padding=dilation, dilation=dilation,
+                              groups=256, bias=False),
+                    nn.Conv2d(256, 256, 1, bias=False),
+                    nn.GroupNorm(32, 256), nn.ReLU(inplace=True)))
+            self.light_density_encoder = nn.Sequential(*blocks)
+        else:
+            raise ValueError(f'Unknown allocator encoder: {encoder_type}')
 
         # Ordered routing-count boundaries.
         self.boundary_pool = nn.AdaptiveAvgPool2d(1)
@@ -102,7 +116,9 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
         self._init_weights()
 
     def _init_weights(self):
-        for m in self.density_encoder.modules():
+        encoder = (self.density_encoder if self.encoder_type == 'standard'
+                   else self.light_density_encoder)
+        for m in encoder.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
 
@@ -128,8 +144,10 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
         bs, c, h, w = feature_map.shape
         device = feature_map.device
 
-        x = self.density_conv1(feature_map)
-        density_feat = self.density_encoder(x)
+        if self.encoder_type == 'standard':
+            density_feat = self.density_encoder(self.density_conv1(feature_map))
+        else:
+            density_feat = self.light_density_encoder(feature_map)
 
         bd_feat = self.boundary_pool(density_feat).flatten(1)
         # Nonlinear count/boundary operations need FP32 even under autocast.
@@ -336,7 +354,8 @@ class QueryBudgetLoss(nn.Module):
                  boundary_guide_weight=1.2,
                  density_weight=0.25,
                  enable_adaptive_targets=True,
-                 enable_loss_clipping=True):
+                 enable_loss_clipping=True, density_target_backend='reference',
+                 density_target_chunk_size=512):
         super().__init__()
         self.coverage_weight = coverage_weight
         self.spacing_weight = spacing_weight
@@ -347,6 +366,8 @@ class QueryBudgetLoss(nn.Module):
         self.enable_adaptive_targets = enable_adaptive_targets
         self.enable_loss_clipping = enable_loss_clipping
         self.smooth_l1 = nn.SmoothL1Loss()
+        self.density_target_backend = density_target_backend
+        self.density_target_chunk_size = density_target_chunk_size
 
         self.register_buffer('default_target_coverage',
                              torch.tensor([0.40, 0.70, 0.90]))
@@ -403,7 +424,8 @@ class QueryBudgetLoss(nn.Module):
         if detection_targets is not None:
             density_target, density_valid_mask = self.build_density_targets(
                 detection_targets, outputs['density_prior'].shape[-2:], device,
-                return_valid_mask=True, spatial_valid_mask=outputs.get('density_valid_mask'))
+                return_valid_mask=True, spatial_valid_mask=outputs.get('density_valid_mask'),
+                backend=self.density_target_backend, chunk_size=self.density_target_chunk_size)
             loss_density_map = self.density_focal_loss(
                 outputs['density_prior'], density_target, density_valid_mask)
         warmup_factor = outputs.get('warmup_factor', 1.0)
@@ -435,9 +457,11 @@ class QueryBudgetLoss(nn.Module):
 
     @staticmethod
     def build_density_targets(targets, spatial_size, device, return_valid_mask=False,
-                              spatial_valid_mask=None):
+                              spatial_valid_mask=None, backend='reference', chunk_size=512):
         """Build CenterNet-style Gaussian center maps from normalized cxcywh boxes."""
         height, width = int(spatial_size[0]), int(spatial_size[1])
+        if backend not in ('reference', 'vectorized'):
+            raise ValueError(f'Unknown density target backend: {backend}')
         heatmaps = torch.zeros(len(targets), 1, height, width, device=device)
         valid_mask = torch.zeros_like(heatmaps, dtype=torch.bool)
         if spatial_valid_mask is not None:
@@ -466,6 +490,11 @@ class QueryBudgetLoss(nn.Module):
             if boxes is None or boxes.numel() == 0:
                 continue
             boxes = boxes.to(device)
+            if backend == 'vectorized':
+                from util.density_targets import draw_gaussians
+                draw_gaussians(heatmaps[batch_index, 0], boxes,
+                               valid_height, valid_width, chunk_size)
+                continue
             for cx, cy, box_w, box_h in boxes:
                 center_x = int(torch.clamp(cx * valid_width, 0, valid_width - 1).item())
                 center_y = int(torch.clamp(cy * valid_height, 0, valid_height - 1).item())

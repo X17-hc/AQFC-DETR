@@ -1,5 +1,8 @@
 # AQFC-DETR
 
+2026-09-07 核心优化更新：新增轻量AQBA、空间候选、密度目标优化、离线分析/切片工具和五个手动PyCharm配置。
+**现有默认模型不变，完整训练未自动启动。** 使用方法与兼容限制见 [更新指南](CORE_UPDATE_GUIDE.md)，验收结果见 [更新审查报告](CORE_UPDATE_REVIEW.md)。
+
 AQFC-DETR（Adaptive Query and Feature Calibration DETR）面向密集微小目标检测，在 two-stage Deformable DETR 主线上加入三个协同机制：
 
 1. **AQBA**（Adaptive Query Budget Allocator）按图像预测 300/500/900/1500 查询预算；

@@ -26,9 +26,15 @@ def restore_rng_state(state):
 
 
 def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, ema=None, scaler=None,
-                       best_metrics=None):
+                       best_metrics=None, expected_args=None):
     checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
     state = extract_state_dict(checkpoint)
+    if expected_args is not None and optimizer is not None:
+        from .experiment import variant_signature, original_variant
+        saved = checkpoint.get('variant_signature')
+        if ((saved is not None and saved != variant_signature(expected_args)) or
+                (saved is None and not original_variant(expected_args))):
+            raise ValueError('Training variant signature differs or is unknown; use --pretrained')
     if is_legacy_state_dict(state):
         raise ValueError('Legacy checkpoints are warm-start weights; use --pretrained instead of --resume')
     metadata = checkpoint.get('run_metadata', {})

@@ -5,7 +5,9 @@ import torch
 
 def select_proposal_indices(class_logits, density_prior, padding_mask, topk,
                             mode='fused', density_weight=0.25,
-                            mixed_density_ratio=0.25, proposal_boxes=None):
+                            mixed_density_ratio=0.25, proposal_boxes=None,
+                            spatial_shapes=None, spatial_semantic_ratio=.75,
+                            spatial_grid_size=(8, 8), diagnostics=None):
     """Select valid encoder-token indices with semantic/density ranking."""
     semantic_logits = class_logits.float().max(dim=-1).values
     density_logits = torch.logit(density_prior.float().clamp(1e-4, 1.0 - 1e-4))
@@ -13,6 +15,12 @@ def select_proposal_indices(class_logits, density_prior, padding_mask, topk,
     invalid = padding_mask.bool()
     if proposal_boxes is not None:
         invalid = invalid | ~torch.isfinite(proposal_boxes).all(-1)
+    if mode == 'spatial':
+        from .spatial_selection import spatial_indices
+        return spatial_indices(semantic_logits, density_prior, padding_mask.bool(), invalid,
+                               min(int(topk), class_logits.shape[1]), spatial_shapes,
+                               density_weight, spatial_semantic_ratio, spatial_grid_size,
+                               diagnostics)
     semantic_logits = semantic_logits.masked_fill(invalid, float('-inf'))
     density_logits = density_logits.masked_fill(invalid, float('-inf'))
     joint_scores = joint_scores.masked_fill(invalid, float('-inf'))

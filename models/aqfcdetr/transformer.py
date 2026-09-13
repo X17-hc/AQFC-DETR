@@ -77,6 +77,9 @@ class DeformableTransformer(nn.Module):
                  mixed_density_ratio=0.25,
                  grouped_decoder_inference=True,
                  force_query_budget=None,
+                 allocator_encoder_type='standard', allocator_enabled=True,
+                 calibrator_enabled=True, spatial_semantic_ratio=.75,
+                 spatial_grid_size=(8, 8),
                  ):
         super().__init__()
         self.num_feature_levels = num_feature_levels
@@ -97,6 +100,11 @@ class DeformableTransformer(nn.Module):
         self.grouped_decoder_inference = bool(grouped_decoder_inference)
         self.force_query_budget = force_query_budget
         self.current_epoch = 0
+        self.allocator_enabled = allocator_enabled
+        self.calibrator_enabled = calibrator_enabled
+        self.spatial_semantic_ratio = spatial_semantic_ratio
+        self.spatial_grid_size = spatial_grid_size
+        self.spatial_diagnostics = []
         assert query_dim == 4
 
         if num_feature_levels > 1:
@@ -137,7 +145,8 @@ class DeformableTransformer(nn.Module):
             fallback_queries=allocator_fallback_queries,
             use_ema=allocator_use_boundary_ema,
             ema_decay=ema_decay,
-        )
+            encoder_type=allocator_encoder_type,
+        ) if allocator_enabled else None
 
         self.feature_calibrator = DensityGuidedFeatureCalibrator(
             gate_channels=256,
@@ -148,6 +157,9 @@ class DeformableTransformer(nn.Module):
             level_spatial_alphas=calibrator_spatial_alphas,
         )
         self.density_pyramid = DensityPyramidAdapter(is_5_scale=True)
+        if not calibrator_enabled:
+            self.feature_calibrator = None
+            self.density_pyramid = None
 
         self.encoder = TransformerEncoder(
             encoder_layer, num_encoder_layers,
@@ -247,7 +259,8 @@ class DeformableTransformer(nn.Module):
         self._reset_parameters()
         # Parent Xavier initialization must not override AQBA's low-variance heads.
         # This runs before any checkpoint loading, never after warm-start/resume.
-        self.query_allocator._init_weights()
+        if self.query_allocator is not None:
+            self.query_allocator._init_weights()
 
         self.rm_self_attn_layers = rm_self_attn_layers
         if rm_self_attn_layers is not None:
@@ -308,12 +321,17 @@ class DeformableTransformer(nn.Module):
             flattened = flattened.masked_fill(padding_mask, 0.0)
         return flattened
 
-    def select_proposal_indices(self, class_logits, density_prior, padding_mask, topk, proposal_boxes=None):
-        return select_proposal_indices(
-            class_logits, density_prior, padding_mask, topk,
-            mode=self.proposal_selection_mode,
-            density_weight=self.proposal_density_weight,
-            mixed_density_ratio=self.mixed_density_ratio, proposal_boxes=proposal_boxes)
+    def select_proposal_indices(self, class_logits, density_prior, padding_mask, topk, proposal_boxes=None,
+                               spatial_shapes=None):
+        from util.profiling import region
+        with region('CandidateSelection'):
+            return select_proposal_indices(
+                class_logits, density_prior, padding_mask, topk,
+                mode=self.proposal_selection_mode,
+                density_weight=self.proposal_density_weight,
+                mixed_density_ratio=self.mixed_density_ratio, proposal_boxes=proposal_boxes,
+                spatial_shapes=spatial_shapes, spatial_semantic_ratio=self.spatial_semantic_ratio,
+                spatial_grid_size=self.spatial_grid_size, diagnostics=self.spatial_diagnostics)
 
     @staticmethod
     def _build_target_padding_mask(tgt, query_valid_mask):
@@ -353,7 +371,8 @@ class DeformableTransformer(nn.Module):
             group_padding = padding_mask.index_select(0, sample_indices)
             proposal_indices = self.select_proposal_indices(
                 group_class, group_density, group_padding, count,
-                proposal_boxes=output_proposals.index_select(0, sample_indices))
+                proposal_boxes=output_proposals.index_select(0, sample_indices),
+                spatial_shapes=spatial_shapes)
 
             group_coords = coord_logits.index_select(0, sample_indices)
             group_output_memory = output_memory.index_select(0, sample_indices)
@@ -463,6 +482,7 @@ class DeformableTransformer(nn.Module):
                                        device=memory.device, dtype=torch.float32)
 
         allocator_outputs = {}
+        self.spatial_diagnostics = []
         executed_query_count = self.num_queries
         query_counts = torch.full(
             (memory.shape[0],), self.num_queries, device=memory.device, dtype=torch.long)
@@ -470,7 +490,9 @@ class DeformableTransformer(nn.Module):
         try:
             allocator_outputs = self.query_allocator(
                 memory, spatial_shapes=spatial_shapes, real_counts=real_counts,
-                epoch=self.current_epoch)
+                epoch=self.current_epoch) if self.query_allocator is not None else {}
+            if self.query_allocator is None:
+                query_counts.fill_(int(self.force_query_budget))
 
             if allocator_outputs and isinstance(allocator_outputs, dict):
                 if 'boundaries' in allocator_outputs and 'log_boundaries' in allocator_outputs:
@@ -485,6 +507,7 @@ class DeformableTransformer(nn.Module):
                             valid_mask, allocator_outputs['query_counts'],
                             torch.full_like(allocator_outputs['query_counts'], self.num_queries))
 
+                allocator_outputs['raw_query_counts'] = allocator_outputs['query_counts'].detach().clone()
                 query_counts = allocator_outputs['query_counts'].long()
                 if self.force_query_budget is not None:
                     query_counts = torch.full_like(query_counts, int(self.force_query_budget))
@@ -506,6 +529,11 @@ class DeformableTransformer(nn.Module):
         valid_token_counts = proposal_valid.sum(dim=1).long()
         if (valid_token_counts == 0).any():
             raise ValueError('Each image requires at least one valid encoder proposal')
+        from util.runtime import apply_eval_query_floor
+        query_counts = apply_eval_query_floor(query_counts, getattr(self, 'eval_query_floor', 0),
+                                             self.training)
+        allocator_outputs['requested_query_counts'] = query_counts.detach().clone()
+        allocator_outputs['valid_token_counts'] = valid_token_counts.detach()
         query_counts = torch.minimum(query_counts, valid_token_counts)
         executed_query_count = int(query_counts.max().item())
         allocator_outputs['query_counts'] = query_counts
@@ -516,7 +544,7 @@ class DeformableTransformer(nn.Module):
             torch.arange(executed_query_count, device=memory.device).unsqueeze(0) < query_counts.unsqueeze(1))
 
         # ========== DGFC feature calibration ==========
-        if allocator_outputs and 'density_feature' in allocator_outputs:
+        if self.calibrator_enabled and 'density_feature' in allocator_outputs:
             try:
                 density_pyramid_features = self.density_pyramid(allocator_outputs['density_feature'])
                 memory = self.feature_calibrator(
@@ -582,6 +610,7 @@ class DeformableTransformer(nn.Module):
                 allocator_outputs['query_token_reduction'] = (
                     1.0 - decoder_tokens.float() / legacy_tokens.clamp(min=1).float())
                 allocator_outputs['executed_query_counts'] = query_counts
+                allocator_outputs['spatial_selection_statistics'] = list(self.spatial_diagnostics)
                 return (hs, references, hs_enc, ref_enc, init_box_proposal, dn_meta,
                         allocator_outputs, query_counts, query_valid_mask)
 
@@ -594,7 +623,7 @@ class DeformableTransformer(nn.Module):
             else:
                 topk_proposals = self.select_proposal_indices(
                     enc_outputs_class_unselected, density_prior_flat, mask_flatten, topk,
-                    proposal_boxes=output_proposals)
+                    proposal_boxes=output_proposals, spatial_shapes=spatial_shapes)
 
             refpoint_embed_undetach = torch.gather(enc_outputs_coord_unselected, 1,
                                                    topk_proposals.unsqueeze(-1).repeat(1, 1, 4))
@@ -653,6 +682,7 @@ class DeformableTransformer(nn.Module):
         allocator_outputs['decoder_query_tokens'] = batch_max_tokens
         allocator_outputs['legacy_query_tokens'] = batch_max_tokens
         allocator_outputs['query_token_reduction'] = batch_max_tokens.float() * 0.0
+        allocator_outputs['spatial_selection_statistics'] = list(self.spatial_diagnostics)
 
         # ========== Postprocess ==========
         if self.two_stage_type == 'standard':
@@ -1227,4 +1257,9 @@ def build_deformable_transformer(args):
         mixed_density_ratio=args.mixed_density_ratio,
         grouped_decoder_inference=args.grouped_decoder_inference,
         force_query_budget=getattr(args, 'force_query_budget', None),
+        allocator_encoder_type=getattr(args, 'allocator_encoder_type', 'standard'),
+        allocator_enabled=getattr(args, 'allocator_enabled', True),
+        calibrator_enabled=getattr(args, 'calibrator_enabled', True),
+        spatial_semantic_ratio=getattr(args, 'spatial_semantic_ratio', .75),
+        spatial_grid_size=getattr(args, 'spatial_grid_size', (8, 8)),
     )
