@@ -71,8 +71,18 @@ def migrate_state_dict(state_dict):
     return OrderedDict((migrate_key(key), value) for key, value in state_dict.items())
 
 
-def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=False):
+def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=False,
+                           expected_sha256=''):
     checkpoint_path = Path(checkpoint_path)
+    # Partial architecture migration and source-file identity are separate checks.
+    # Legacy files lack native epoch/signature metadata but can still be pinned.
+    source_sha256 = None
+    if expected_sha256:
+        from .experiment import sha256
+        source_sha256 = sha256(checkpoint_path)
+        if source_sha256 != expected_sha256:
+            raise ValueError('Pretrained SHA-256 differs from the configured checkpoint; '
+                             'use the configuration matching this initialization source')
     checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
     source = extract_state_dict(checkpoint, prefer_ema=prefer_ema)
     migrated = migrate_state_dict(source)
@@ -107,6 +117,7 @@ def load_legacy_pretrained(model, checkpoint_path, report_path=None, prefer_ema=
         'parameter_only_loaded_numel': sum(p.numel() for k, p in model.named_parameters() if k in compatible),
         'parameter_only_total_numel': sum(p.numel() for p in model.parameters()),
         'source_checkpoint': str(checkpoint_path.resolve()),
+        'source_sha256': source_sha256,
         'source_format': 'legacy_dqdetr' if is_legacy_state_dict(source) else 'compatible_pretrained',
         'loaded_keys': list(compatible),
         'missing_keys': list(load_result.missing_keys),

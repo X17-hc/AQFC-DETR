@@ -13,7 +13,8 @@ LEGACY_FIELDS = {
 
 
 def validate_config(config):
-    errors = []
+    from .incremental import validate_incremental
+    errors = validate_incremental(config)
     from .experiment import UPDATE_DEFAULTS
     known = set(UPDATE_DEFAULTS) | {'allocator_loss_weight', 'allocator_fallback_queries',
         'allocator_teacher_epochs', 'allocator_schedule', 'allocator_use_boundary_ema',

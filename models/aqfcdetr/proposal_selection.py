@@ -7,8 +7,33 @@ def select_proposal_indices(class_logits, density_prior, padding_mask, topk,
                             mode='fused', density_weight=0.25,
                             mixed_density_ratio=0.25, proposal_boxes=None,
                             spatial_shapes=None, spatial_semantic_ratio=.75,
-                            spatial_grid_size=(8, 8), diagnostics=None):
+                            spatial_grid_size=(8, 8), diagnostics=None, query_counts=None):
     """Select valid encoder-token indices with semantic/density ranking."""
+    if query_counts is not None:
+        # Quotas depend on K: selecting Kmax then truncating is not equivalent
+        # to selecting Ki. Select each real budget BEFORE tensor-only padding.
+        # The caller has already clipped counts to valid encoder proposals.
+        if (query_counts.ndim != 1 or len(query_counts) != class_logits.shape[0]
+                or query_counts.dtype not in (torch.int32, torch.int64)):
+            raise ValueError('query_counts must be one integer budget per image')
+        counts = query_counts.detach().cpu().tolist()
+        if not counts or min(counts) < 1 or max(counts) != int(topk):
+            raise ValueError('topk must equal the maximum positive query count')
+        if any(count != int(topk) for count in counts):
+            rows = []
+            for b, count in enumerate(counts):
+                selected = select_proposal_indices(
+                    class_logits[b:b + 1], density_prior[b:b + 1],
+                    padding_mask[b:b + 1], count, mode=mode,
+                    density_weight=density_weight, mixed_density_ratio=mixed_density_ratio,
+                    proposal_boxes=None if proposal_boxes is None else proposal_boxes[b:b + 1],
+                    spatial_shapes=spatial_shapes, spatial_semantic_ratio=spatial_semantic_ratio,
+                    spatial_grid_size=spatial_grid_size, diagnostics=diagnostics)[0]
+                # Repeated tail entries are exclusively padding. Existing masks
+                # exclude them from attention keys, matching, losses and export.
+                rows.append(torch.cat([selected, selected[:1].expand(int(topk) - count)]))
+            return torch.stack(rows)
+        # Equal-budget batches retain the original batched selection path.
     semantic_logits = class_logits.float().max(dim=-1).values
     density_logits = torch.logit(density_prior.float().clamp(1e-4, 1.0 - 1e-4))
     joint_scores = semantic_logits + density_weight * density_logits

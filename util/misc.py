@@ -164,11 +164,23 @@ def reduce_dict(input_dict, average=True):
 
 
 class MetricLogger(object):
-    def __init__(self, delimiter="\t"):
+    def __init__(self, delimiter="\t", batched_transfer=False):
         self.meters = defaultdict(SmoothedValue)
         self.delimiter = delimiter
+        self.batched_transfer = batched_transfer
 
     def update(self, **kwargs):
+        if self.batched_transfer:
+            groups = defaultdict(list)
+            for key, value in kwargs.items():
+                if isinstance(value, torch.Tensor):
+                    if value.numel() != 1:
+                        raise ValueError(f'Metric {key} must be scalar')
+                    groups[value.device].append((key, value.detach().reshape(())))
+            for values in groups.values():
+                # One transfer per device/update; no cross-iteration graph retention.
+                host = torch.stack([v.double() for _, v in values]).cpu().tolist()
+                kwargs.update({k: v for (k, _), v in zip(values, host)})
         for k, v in kwargs.items():
             if isinstance(v, torch.Tensor):
                 v = v.item()
@@ -325,13 +337,17 @@ class NestedTensor(object):
             res.append(torch.Tensor([maxH, maxW]))
         return res
 
-    def to(self, device):
+    def pin_memory(self):
+        return NestedTensor(self.tensors.pin_memory(),
+                            self.mask.pin_memory() if self.mask is not None else None)
+
+    def to(self, device, non_blocking=False):
         # type: (Device) -> NestedTensor # noqa
-        cast_tensor = self.tensors.to(device)
+        cast_tensor = self.tensors.to(device, non_blocking=non_blocking)
         mask = self.mask
         if mask is not None:
             assert mask is not None
-            cast_mask = mask.to(device)
+            cast_mask = mask.to(device, non_blocking=non_blocking)
         else:
             cast_mask = None
         return NestedTensor(cast_tensor, cast_mask)

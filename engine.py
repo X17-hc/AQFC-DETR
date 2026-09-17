@@ -3,6 +3,7 @@ import math
 import os
 import sys
 import time
+import datetime
 from pathlib import Path
 from typing import Iterable
 
@@ -19,7 +20,9 @@ from models.aqfcdetr.query_allocator import QueryBudgetLoss
 from util.runtime import LimitedLoader, optimizer_step_statistics
 from util.profiling import region, ProfileLoader
 
-print_freq = 100
+print_freq = 1000
+# Evaluation uses batches (not images); keep first/last progress and final metrics.
+eval_print_freq = 2000
 # None restores the original full MetricLogger output (including DN, auxiliary
 # layers and unscaled losses). This changes presentation only, not loss weights.
 DISPLAY_KEYS = None
@@ -97,6 +100,10 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                     logger=None, ema_m=None,
                     mosaic_scheduler=None, scaler=None):
 
+    from util.incremental import training_phase, quality_progress
+    phase_epoch, phase_total = training_phase(args, epoch)
+    phase_started = time.perf_counter()
+
     if scaler is None:
         scaler = torch.amp.GradScaler('cuda', enabled=args.amp,
                                     init_scale=getattr(args, 'amp_init_scale', 128.))
@@ -112,7 +119,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         if hasattr(dataset, 'dataset'):
             dataset = dataset.dataset
         if hasattr(dataset, 'mosaic') and dataset.mosaic is not None:
-            new_p = mosaic_scheduler.get_p(epoch)
+            new_p = mosaic_scheduler.get_p(phase_epoch)
             dataset.mosaic.p = new_p
             if args.rank == 0:
                 print(f"[MosaicScheduler] Epoch {epoch}: mosaic.p = {new_p:.3f}")
@@ -135,15 +142,15 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         warmup_epochs=args.allocator_schedule['warmup_epochs'],
         peak_weight=args.allocator_schedule['peak_weight'],
         final_weight=args.allocator_schedule['final_weight'],
-        total_epochs=args.epochs if hasattr(args, 'epochs') else 24
+        total_epochs=phase_total
     )
 
     model.train()
     model_without_ddp = model.module if hasattr(model, 'module') else model
     if hasattr(model_without_ddp, 'set_epoch'):
-        model_without_ddp.set_epoch(epoch)
+        model_without_ddp.set_epoch(phase_epoch)
     criterion.train()
-    metric_logger = utils.MetricLogger(delimiter="  ")
+    metric_logger = utils.MetricLogger(delimiter="  ", batched_transfer=getattr(args,'batched_metric_transfer',False))
     metric_logger.add_meter('lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
     metric_logger.add_meter('allocator_weight', utils.SmoothedValue(window_size=1, fmt='{value:.3f}'))
     if mosaic_scheduler is not None:
@@ -164,13 +171,14 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                                                    display_keys=DISPLAY_KEYS):
 
         with region('H2D'):
-            samples = samples.to(device)
+            samples = samples.to(device, non_blocking=getattr(args,'non_blocking_transfer',False))
             real_counts = torch.tensor(
                 [len(t['labels']) for t in targets], device=device, dtype=torch.float32)
-            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+            targets = [{k: v.to(device, non_blocking=getattr(args,'non_blocking_transfer',False)) for k, v in t.items()} for t in targets]
 
         current_allocator_weight = allocator_weight_scheduler.get_weight(
-            epoch, _cnt, len(data_loader))
+            phase_epoch, _cnt, len(data_loader))
+        criterion.quality_lambda = quality_progress(args, criterion.quality_successful_updates, len(data_loader))
 
         with torch.amp.autocast('cuda', enabled=args.amp):
             # AQBA needs GT counts for teacher routing even when DN is disabled.
@@ -254,6 +262,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         if args.onecyclelr and step_applied:
             lr_scheduler.step()
         local_optimizer_steps += int(step_applied)
+        criterion.quality_successful_updates += int(step_applied)
         from util.runtime import update_skipped_streak
         consecutive_skips = update_skipped_streak(consecutive_skips, step_applied,
             getattr(args, 'max_consecutive_skipped_steps', 0))
@@ -263,6 +272,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
         metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
         metric_logger.update(allocator_weight=current_allocator_weight)
+        metric_logger.update(quality_lambda=criterion.quality_lambda, training_phase_epoch=phase_epoch)
         metric_logger.update(optimizer_step_applied=float(step_applied))
         spatial_reports = allocator_outputs.get('spatial_selection_statistics', [])
         if spatial_reports:
@@ -276,19 +286,15 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
             predicted = allocator_outputs['predicted_count'].float()
             metric_logger.update(
                 teacher_ratio=float(allocator_outputs['teacher_ratio']),
-                mean_gt_count=real_counts.mean().item(),
-                mean_predicted_count=predicted.mean().item(),
-                count_mae=(predicted - real_counts).abs().mean().item(),
-                mean_executed_queries=executed.mean().item(),
-                invalid_allocator_fallback_count=float(
-                    allocator_outputs.get('invalid_fallback_count', 0)),
-                invalid_boundary_fallback_count=float(
-                    allocator_outputs.get('invalid_boundary_fallback_count', 0)),
-                query_token_reduction=float(
-                    allocator_outputs.get('query_token_reduction', 0.0)))
-            for level in args.query_budget_levels:
-                metric_logger.update(**{
-                    f'query_level_{level}_ratio': (executed == level).float().mean().item()})
+                mean_gt_count=real_counts.mean(),
+                mean_predicted_count=predicted.mean(),
+                count_mae=(predicted - real_counts).abs().mean(),
+                mean_executed_queries=executed.mean(),
+                invalid_allocator_fallback_count=allocator_outputs.get('invalid_fallback_count', 0),
+                invalid_boundary_fallback_count=allocator_outputs.get('invalid_boundary_fallback_count', 0),
+                query_token_reduction=allocator_outputs.get('query_token_reduction', 0.0),
+                **{f'query_level_{level}_ratio': (executed == level).float().mean()
+                   for level in args.query_budget_levels})
         if mosaic_scheduler is not None:
             cur_dataset = data_loader.dataset
             if hasattr(cur_dataset, 'dataset'):
@@ -315,6 +321,11 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         raise RuntimeError('No optimizer update succeeded; inspect AMP/gradient diagnostics')
     if getattr(criterion, 'loss_weight_decay', False):
         resstat.update({f'weight_{k}': v for k, v in criterion.weight_dict.items()})
+    if device.type == 'cuda':
+        torch.cuda.synchronize(device)
+    resstat['training_seconds'] = time.perf_counter()-phase_started
+    print(f"[Training completed] epoch={epoch} phase_epoch={phase_epoch} elapsed={resstat['training_seconds']:.2f}s "
+          f"({datetime.timedelta(seconds=int(resstat['training_seconds']))})")
     return resstat
 
 
@@ -345,6 +356,7 @@ class AllocatorWeightScheduler:
 @torch.no_grad()
 def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, output_dir,
              wo_class_error=False, args=None, logger=None):
+    phase_started = time.perf_counter()
     try:
         need_tgt_for_training = args.use_dn
     except:
@@ -397,10 +409,10 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         diagnostics_directory = Path(output_dir) / f'diagnostics_rank{utils.get_rank()}_{time.time_ns()}'
         diagnostics_directory.mkdir(parents=True, exist_ok=False)
     run_loader = LimitedLoader(data_loader, getattr(args, 'max_eval_steps', 0))
-    for samples, targets in metric_logger.log_every(run_loader, min(print_freq, 10), header, logger=logger,
+    for samples, targets in metric_logger.log_every(run_loader, eval_print_freq, header, logger=logger,
                                                    display_keys=DISPLAY_KEYS):
 
-        samples = samples.to(device)
+        samples = samples.to(device, non_blocking=getattr(args,'non_blocking_transfer',False))
         targets = [{k: to_device(v, device) for k, v in t.items()} for t in targets]
 
         with torch.amp.autocast('cuda', enabled=args.amp):
@@ -569,4 +581,9 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         stats['PQ_th']  = panoptic_res["Things"]
         stats['PQ_st']  = panoptic_res["Stuff"]
 
+    if device.type == 'cuda':
+        torch.cuda.synchronize(device)
+    stats['evaluation_seconds'] = time.perf_counter()-phase_started
+    print(f"[Evaluation completed] elapsed={stats['evaluation_seconds']:.2f}s "
+          f"({datetime.timedelta(seconds=int(stats['evaluation_seconds']))})")
     return stats, coco_evaluator

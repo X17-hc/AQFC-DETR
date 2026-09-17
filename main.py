@@ -232,6 +232,8 @@ def main(args):
         raise ValueError('--max-consecutive-skipped-steps must be nonnegative')
     if getattr(args, 'run_purpose', 'engineering_check') == 'research' and args.pretrain_model_path:
         raise ValueError('Research configurations require --no-pretrained; audit new initialization separately')
+    if getattr(args,'strict_warmstart',False) and not args.resume and not args.pretrain_model_path:
+        raise ValueError('This paired experiment requires the frozen --pretrained checkpoint')
 
     # update some new args temporally
     if not getattr(args, 'use_ema', None):
@@ -331,9 +333,13 @@ def main(args):
             best_metrics=best_metrics, expected_args=args)
 
     if (not args.resume) and args.pretrain_model_path:
+        if getattr(args,'strict_warmstart',False):
+            from util.incremental_checkpoint import validate_warmstart
+            validate_warmstart(model_without_ddp,args)
         report = load_legacy_pretrained(
             model_without_ddp, args.pretrain_model_path,
-            report_path=migration_report_path(args.output_dir))
+            report_path=migration_report_path(args.output_dir),
+            expected_sha256=getattr(args, 'expected_pretrained_sha256', ''))
         logger.info(
             f"Warm-start coverage: {report['coverage_by_numel']:.2%}; "
             f"missing={len(report['missing_keys'])}, mismatched={len(report['shape_mismatched_keys'])}")
@@ -342,6 +348,7 @@ def main(args):
 
     if args.rank == 0:
         write_manifest(args, PROJECT_ROOT)
+    criterion.quality_successful_updates = getattr(args,'quality_successful_updates',0)
     if args.eval:
         os.environ['EVAL_FLAG'] = 'TRUE'
         evaluation_model = ema_m.module if args.eval_ema else model
@@ -378,7 +385,7 @@ def main(args):
             peak_p=getattr(args, 'mosaic_p', 0.3),
             warmup_end=getattr(args, 'mosaic_warmup_end', 2),
             decay_start=getattr(args, 'mosaic_decay_start', 8),  # 原14，为了配合SBA的超参数实验，改成了8
-            total_epochs=args.epochs,
+            total_epochs=getattr(args,'training_phase_total_epochs',None) or args.epochs,
         )
         if args.rank == 0:
             print(f"[MosaicPScheduler] {mosaic_scheduler}")
@@ -416,6 +423,7 @@ def main(args):
                     'scaler': scaler.state_dict(),
                     'format': 'aqfcdetr_v2',
                     'variant_signature': variant_signature(args),
+                    'criterion_progress': {'successful_updates': criterion.quality_successful_updates},
                     'run_metadata': run_metadata(args, train_stats['train_iterations'], len(data_loader_train)),
                     'best_metrics': best_metrics,
                 }

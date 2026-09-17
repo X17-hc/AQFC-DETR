@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="667f0891-f535-4416-9ca3-812347888191" name="更改" comment="update_v1">
+      <change beforePath="$PROJECT_DIR$/engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/engine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/aqfcdetr/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/aqfcdetr/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/aqfcdetr/transformer.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/aqfcdetr/transformer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/box_ops.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/box_ops.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/checkpoint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/config_validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/config_validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/util/misc.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3Ix1jo3vPoOv416aWsRRDWW4GEa" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.AQFC-DETR更新版完整1个epoch及评估.executor&quot;: &quot;Run&quot;,
+    &quot;Python.AQFC-DETR更新版短训练测试.executor&quot;: &quot;Run&quot;,
+    &quot;Python.AQFC-DETR服务器更新版24轮训练.executor&quot;: &quot;Run&quot;,
+    &quot;Python.AQFC-DETR服务器更新版仅评估 .executor&quot;: &quot;Run&quot;,
+    &quot;Python.AQFC-DETR短训练测试.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.highlight.mappings&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.highlight.symlinks&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.show.date&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.show.permissions&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.show.size&quot;: &quot;false&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/PythonProject/AQFC-DETR&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Python.AQFC-DETR服务器更新版仅评估 ">
+    <configuration name="AQFC-DETR服务器更新版仅评估 " type="PythonConfigurationType" factoryName="Python">
+      <module name="AQFC-DETR" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="-u" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="PYTHONIOENCODING" value="utf-8" />
+        <env name="CUDA_VISIBLE_DEVICES" value="3" />
+      </envs>
+      <option name="SDK_HOME" value="/opt/conda/envs/AQFC-DETR/bin/python" />
+      <option name="SDK_NAME" value="SSH (sftp://root@219.216.64.62:32880/opt/conda/envs/AQFC-DETR/bin/python)" />
+      <option name="WORKING_DIRECTORY" value="/workspace/AQFC-DETR" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="--config /workspace/AQFC-DETR/configs/server/aitodv2_update_24e.py --data-root /workspace/DQDetr/data/path/AITODv2 --pretrained /workspace/AQFC-DETR/outputs/server_update24/20260910_145301_404548/checkpoint0000.pth --output-dir /workspace/AQFC-DETR/outputs/server_update24/20260910_145301_404548 --unique-output-dir --device cuda --amp --seed 42 --num_workers 0 --max-train-steps 0 --max-eval-steps 0 --max-consecutive-skipped-steps 20 --eval" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.AQFC-DETR修复后20步训练及评估" />
+      <item itemvalue="Python.AQFC-DETR修复后微调起点完整评估" />
+      <item itemvalue="Python.AQFC-DETR历史问题回归与合成验证" />
+      <item itemvalue="Python.AQFC-DETR增量优化性能测量" />
+      <item itemvalue="Python.AQFC-DETR工程提速对照3轮及评估" />
+      <item itemvalue="Python.AQFC-DETR质量对齐3轮及评估" />
+      <item itemvalue="Python.AQFC-DETR基线完整1个epoch及评估" />
+      <item itemvalue="Python.AQFC-DETR完整1个epoch及评估" />
+      <item itemvalue="Python.AQFC-DETR更新版完整1个epoch及评估" />
+      <item itemvalue="Python.AQFC-DETR更新版短训练测试" />
+      <item itemvalue="Python.AQFC-DETR服务器VisDrone训练（COCO代理验证）" />
+      <item itemvalue="Python.AQFC-DETR服务器更新版24轮训练" />
+      <item itemvalue="Python.AQFC-DETR服务器更新版仅评估 " />
+      <item itemvalue="Python.AQFC-DETR服务器更新版短训练测试" />
+      <item itemvalue="Python.AQFC-DETR服务器标准版24轮训练" />
+      <item itemvalue="Python.AQFC-DETR短训练测试" />
+      <item itemvalue="Python.AQFC-DETR空间候选完整1个epoch及评估" />
+      <item itemvalue="Python.AQFC-DETR训练" />
+      <item itemvalue="Python.AQFC-DETR轻量AQBA完整1个epoch及评估" />
+    </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-50341a9f1f9c-c2ffad84badb-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.26222.68" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="667f0891-f535-4416-9ca3-812347888191" name="更改" comment="" />
+      <created>1788691542903</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1788691542903</updated>
+      <workItem from="1788691544243" duration="7486000" />
+      <workItem from="1788781458127" duration="2588000" />
+      <workItem from="1788785682908" duration="2289000" />
+      <workItem from="1788801372107" duration="5509000" />
+      <workItem from="1789042686686" duration="26439000" />
+      <workItem from="1789287459471" duration="2609000" />
+    </task>
+    <task id="LOCAL-00001" summary="update_v1">
+      <option name="closed" value="true" />
+      <created>1789290645152</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1789290645152</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update_v1" />
+    <option name="LAST_COMMIT_MESSAGE" value="update_v1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/AQFC_DETR$AQFC_DETR_.coverage" NAME="AQFC-DETR服务器更新版仅评估  覆盖结果" MODIFIED="1789087153932" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/workspace/AQFC-DETR" />
+    <SUITE FILE_PATH="coverage/AQFC_DETR$AQFC_DETR24.coverage" NAME="AQFC-DETR服务器更新版24轮训练 覆盖结果" MODIFIED="1789084554803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/workspace/AQFC-DETR" />
+  </component>
+</project>

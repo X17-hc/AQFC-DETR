@@ -29,12 +29,30 @@ def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, e
                        best_metrics=None, expected_args=None):
     checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
     state = extract_state_dict(checkpoint)
+    expected_values = (expected_args if isinstance(expected_args,dict) else
+                       vars(expected_args) if expected_args is not None else {})
     if expected_args is not None and optimizer is not None:
         from .experiment import variant_signature, original_variant
         saved = checkpoint.get('variant_signature')
+        from .incremental import DEFAULTS
+        # Historical epoch-boundary resumes remain possible on the original clocks/loss.
+        # Never reinterpret a missing signature as authorization for a new loss/phase.
+        incremental = {k: expected_values.get(k,v) for k,v in DEFAULTS.items()}
+        original_clock = (incremental['classification_loss_type']=='focal' and
+                          incremental['training_phase_epoch_offset']==0 and
+                          incremental['training_phase_total_epochs'] is None)
+        if saved is not None and 'correctness_revision' not in saved and original_clock:
+            saved = {**saved, **{k:v for k,v in variant_signature(expected_args).items()
+                                 if k in DEFAULTS or k=='correctness_revision'}}
+            warnings.warn('Historical checkpoint predates correctness_revision; corrected inference applies', RuntimeWarning)
         if ((saved is not None and saved != variant_signature(expected_args)) or
                 (saved is None and not original_variant(expected_args))):
             raise ValueError('Training variant signature differs or is unknown; use --pretrained')
+        if expected_values.get('classification_loss_type','focal')=='quality_blend' and 'criterion_progress' not in checkpoint:
+            raise KeyError('Quality-blend resume requires criterion_progress')
+        progress=checkpoint.get('criterion_progress',{}).get('successful_updates',0)
+        if type(progress) is not int or progress < 0:
+            raise ValueError('criterion_progress.successful_updates must be a non-negative integer')
     if is_legacy_state_dict(state):
         raise ValueError('Legacy checkpoints are warm-start weights; use --pretrained instead of --resume')
     metadata = checkpoint.get('run_metadata', {})
@@ -70,6 +88,12 @@ def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, e
     model.load_state_dict(state, strict=True)
     if optimizer is not None:
         optimizer.load_state_dict(checkpoint['optimizer'])
+        if expected_args is not None:
+            count=checkpoint.get('criterion_progress',{}).get('successful_updates',0)
+            if isinstance(expected_args,dict):
+                expected_args['quality_successful_updates']=count
+            else:
+                expected_args.quality_successful_updates=count
     if scheduler is not None:
         scheduler.load_state_dict(checkpoint['lr_scheduler'])
     if ema is not None:

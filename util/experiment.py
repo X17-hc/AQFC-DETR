@@ -3,6 +3,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import uuid
 from datetime import datetime
 from pathlib import Path
 
@@ -23,6 +24,10 @@ def variant_signature(args):
     result = {k: values.get(k, v) for k, v in UPDATE_DEFAULTS.items()
               if k not in ('run_purpose', 'eval_backend')}
     result.update({k: values.get(k) for k in keys})
+    from .incremental import DEFAULTS
+    result.update({k: values.get(k,v) for k,v in DEFAULTS.items()
+                   if k not in ('strict_warmstart','expected_pretrained_epoch','expected_pretrained_sha256')})
+    result['correctness_revision'] = 'incremental_v2_per_image_selection'
     if values.get('dataset_file') == 'visdrone':
         result['dataset_contract'] = 'visdrone_raw_ids_1_10_coco_bbox_proxy'
     result.update({k: v for k, v in values.items()
@@ -34,7 +39,9 @@ def variant_signature(args):
 
 def original_variant(args):
     sig = variant_signature(args)
-    return (sig['allocator_encoder_type'] == 'standard' and sig['allocator_enabled']
+    return (sig['classification_loss_type']=='focal' and sig['training_phase_epoch_offset']==0
+            and sig['training_phase_total_epochs'] is None
+            and sig['allocator_encoder_type'] == 'standard' and sig['allocator_enabled']
             and sig['calibrator_enabled'] and sig['density_target_backend'] == 'reference'
             and sig['proposal_selection_mode'] != 'spatial')
 
@@ -55,7 +62,8 @@ def unique_output(args):
     root = Path(args.output_dir)
     root.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-    path = root / stamp
+    # Windows wall-clock resolution can give repeated microsecond timestamps.
+    path = root / f'{stamp}_{uuid.uuid4().hex[:12]}'
     path.mkdir(exist_ok=False)
     args.output_dir = str(path.resolve())
 
@@ -101,6 +109,8 @@ def write_manifest(args, project_root, update=None):
                         if report_path.exists() else None,
                     environment=dict(python=sys.version, torch=torch.__version__,
                         cuda=torch.version.cuda, gpu=torch.cuda.get_device_name()
-                        if torch.cuda.is_available() else None), epoch_complete=False)
+                    if torch.cuda.is_available() else None), epoch_complete=False)
+        from .incremental import DEFAULTS
+        data['config'] = {**DEFAULTS, **data['config']}
         data['git_dirty'] = bool(data['git_status']) if data['git_status'] is not None else None
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=str), encoding='utf-8')

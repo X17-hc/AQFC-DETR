@@ -1,0 +1,22 @@
+"""R: fixed epoch10 initialization, correctness repairs, original focal path."""
+_base_ = ['../server/aitodv2_update_24e.py']
+epochs = 3
+val_epoch = [2]
+save_checkpoint_interval = 1
+lr = 1e-5
+lr_backbone = 1e-6
+onecyclelr = False
+multi_step_lr = False
+lr_drop = 100
+use_ema = False
+training_phase_epoch_offset = 11
+training_phase_total_epochs = 24
+aligned_box_loss = False
+batched_metric_transfer = False
+non_blocking_transfer = False
+classification_loss_type = 'focal'
+quality_blend_max = .25
+quality_blend_warmup_epochs = 1
+strict_warmstart = True
+expected_pretrained_epoch = 10
+expected_pretrained_sha256 = '898f7542b4c7b96317e857d9df5708ed1de63a8644f9edfaed3f080b2e7e272a'

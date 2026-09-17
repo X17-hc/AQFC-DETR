@@ -3,6 +3,34 @@ import math
 import torch
 
 
+def _quota_additions_reference(ordered, remaining, cells, quotas):
+    """Frozen pre-optimization selection, used only by differential tests/benchmark."""
+    parts = [ordered[remaining[ordered] & (cells[ordered] == cell)][:quota]
+             for cell, quota in enumerate(quotas) if quota]
+    return torch.cat(parts) if parts else ordered[:0]
+
+
+def _quota_additions(ordered, remaining, cells, quotas):
+    """Same per-cell prefix as the reference, without G full boolean scans.
+
+    A stable cell sort preserves the original joint-score/token-id order within
+    each cell. Invalid/previously reserved tokens enter an extra zero-quota cell.
+    Only the final selection has dynamic shape; no per-cell nonzero or .item().
+    """
+    cell_count = len(quotas)
+    keys = cells[ordered].masked_fill(~remaining[ordered], cell_count)
+    permutation = torch.argsort(keys, stable=True)
+    grouped_keys = keys[permutation]
+    positions = torch.arange(ordered.numel(), device=ordered.device)
+    starts = torch.cat([torch.ones(1, device=ordered.device, dtype=torch.bool),
+                        grouped_keys[1:] != grouped_keys[:-1]])
+    offsets = positions.masked_fill(~starts, 0).cummax(0).values
+    ranks = positions - offsets
+    limits = torch.tensor([*quotas, 0], device=ordered.device, dtype=torch.long)
+    take = ranks < limits[grouped_keys]
+    return ordered[permutation[take]]
+
+
 def capped_quotas(weights, capacities, total):
     """Largest remainder with redistribution after capacity saturation."""
     quotas = [0] * len(weights)
@@ -83,10 +111,8 @@ def spatial_indices(semantic, density, padding, invalid, topk, shapes,
             quotas = capped_quotas(weight_values, capacities, count - reserve)
             ordered = torch.argsort(joint.masked_fill(~remaining, -torch.inf),
                                     descending=True, stable=True)
-            additions = [ordered[remaining[ordered] & (cells[ordered] == cell)][:quota]
-                         for cell, quota in enumerate(quotas) if quota]
-            if additions:
-                chosen = torch.cat([chosen] + additions)
+            additions = _quota_additions(ordered, remaining, cells, quotas)
+            chosen = torch.cat([chosen, additions])
             if len(chosen) < count:
                 remaining[chosen] = False
                 extra = ordered[remaining[ordered]][:count - len(chosen)]

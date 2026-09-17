@@ -322,7 +322,7 @@ class DeformableTransformer(nn.Module):
         return flattened
 
     def select_proposal_indices(self, class_logits, density_prior, padding_mask, topk, proposal_boxes=None,
-                               spatial_shapes=None):
+                               spatial_shapes=None, query_counts=None):
         from util.profiling import region
         with region('CandidateSelection'):
             return select_proposal_indices(
@@ -331,7 +331,8 @@ class DeformableTransformer(nn.Module):
                 density_weight=self.proposal_density_weight,
                 mixed_density_ratio=self.mixed_density_ratio, proposal_boxes=proposal_boxes,
                 spatial_shapes=spatial_shapes, spatial_semantic_ratio=self.spatial_semantic_ratio,
-                spatial_grid_size=self.spatial_grid_size, diagnostics=self.spatial_diagnostics)
+                spatial_grid_size=self.spatial_grid_size, diagnostics=self.spatial_diagnostics,
+                query_counts=query_counts)
 
     @staticmethod
     def _build_target_padding_mask(tgt, query_valid_mask):
@@ -394,6 +395,10 @@ class DeformableTransformer(nn.Module):
 
             hidden_states, references = self.decoder(
                 tgt=targets.transpose(0, 1),
+                # Keep the same masked-attention numerical path as batch-max decoding.
+                # None and all-False are semantically identical but can select different
+                # AMP kernels on A6000; groups contain no invalid matching queries.
+                tgt_key_padding_mask=torch.zeros(targets.shape[:2], dtype=torch.bool, device=targets.device),
                 memory=memory.index_select(0, sample_indices).transpose(0, 1),
                 memory_key_padding_mask=padding_mask.index_select(0, sample_indices),
                 pos=position.index_select(0, sample_indices).transpose(0, 1),
@@ -408,12 +413,14 @@ class DeformableTransformer(nn.Module):
 
         decoder_layers = len(grouped_results[0][1])
         reference_layers = len(grouped_results[0][2])
-        hidden_states = [output_memory.new_zeros(batch_size, max_queries, hidden_size)
-                         for _ in range(decoder_layers)]
-        references = [output_proposals.new_full((batch_size, max_queries, 4), 0.5)
-                      for _ in range(reference_layers)]
+        # Autocast may return FP32 decoder states from FP16 encoder memory.
+        # Allocate from each actual decoder output, never downcast on scatter.
+        hidden_states = [grouped_results[0][1][i].new_zeros(batch_size, max_queries, hidden_size)
+                         for i in range(decoder_layers)]
+        references = [grouped_results[0][2][i].new_full((batch_size, max_queries, 4), 0.5)
+                      for i in range(reference_layers)]
         encoder_targets = output_memory.new_zeros(batch_size, max_queries, hidden_size)
-        encoder_references = output_proposals.new_full((batch_size, max_queries, 4), 0.5)
+        encoder_references = grouped_results[0][4].new_full((batch_size, max_queries, 4), 0.5)
         initial_boxes = output_proposals.new_zeros(batch_size, max_queries, 4)
 
         for (sample_indices, group_hidden, group_references,
@@ -623,7 +630,8 @@ class DeformableTransformer(nn.Module):
             else:
                 topk_proposals = self.select_proposal_indices(
                     enc_outputs_class_unselected, density_prior_flat, mask_flatten, topk,
-                    proposal_boxes=output_proposals, spatial_shapes=spatial_shapes)
+                    proposal_boxes=output_proposals, spatial_shapes=spatial_shapes,
+                    query_counts=query_counts)
 
             refpoint_embed_undetach = torch.gather(enc_outputs_coord_unselected, 1,
                                                    topk_proposals.unsqueeze(-1).repeat(1, 1, 4))

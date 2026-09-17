@@ -117,7 +117,11 @@ def test_all_experiment_configs_and_pycharm_xml():
         if 'research' in path.parts:
             assert config['train_split'] == 'train' and config['eval_split'] == 'val'
     for name in ('UpdateSmoke', 'BaselineEpoch', 'LightEpoch', 'SpatialEpoch', 'UpdateEpoch'):
-        config = ET.parse(ROOT / '.run' / f'AQFC-DETR_{name}.run.xml').getroot().find('configuration')
+        # Superseded local experiments remain reproducible in the archive,
+        # without cluttering PyCharm's active run configuration directory.
+        filename = f'AQFC-DETR_{name}.run.xml'
+        assert not (ROOT / '.run' / filename).exists()
+        config = ET.parse(ROOT / 'legacy_artifacts/run_configs_20260913' / filename).getroot().find('configuration')
         options = {x.attrib['name']: x.attrib.get('value') for x in config.findall('option')}
         # JetBrains may serialize the same Windows interpreter using a project macro.
         # Normalize as Windows syntax even when the tests run on the Linux server.

@@ -1,0 +1,47 @@
+[
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "f12e8253e0f2ac34653a1f88032b1b06a40ea07d4b28f5f33dd47472b63fdcb3",
+    "file": "AQFC-DETR_BaselineEpoch.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "125e9d0934911a2e0917f021607279788d74570c0ba8685ee53dc816275e2f08",
+    "file": "AQFC-DETR_LightEpoch.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "9a41b7b13b4c05365d08ecc34f614b4fcc780685b5e570223bbe1c5cf5157a56",
+    "file": "AQFC-DETR_OneEpoch.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "e11af5e38ec5c26fff9ae0ca40e28245836f45a851ddcafc50a363d6d90f4ddd",
+    "file": "AQFC-DETR_ServerSmoke.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "f62287ccda1bf23910ab59f88f3434b578d48b286904f77166a5711f14e24c71",
+    "file": "AQFC-DETR_Smoke.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "11295ec878a0addd0ae15e709b4ea228a0e49b51df4484513d607bab9920e6c1",
+    "file": "AQFC-DETR_SpatialEpoch.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "16ebeded8adba44f981f90ffe4ebf47fca1ed4740d003fe1b6a91ac0265ef843",
+    "file": "AQFC-DETR_Train.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "d75e2944a606f126767be46f6c921e462e37439ae1ed30b58e47b3761fccde95",
+    "file": "AQFC-DETR_UpdateEpoch.run.xml"
+  },
+  {
+    "reason": "Superseded local/old smoke experiment entry; source config remains",
+    "sha256": "ce945a85a37711fc1d106e53dc5a9a4a856520396a22b7252fd2b100220be4fa",
+    "file": "AQFC-DETR_UpdateSmoke.run.xml"
+  }
+]

@@ -287,17 +287,22 @@ class AQFCDETR(nn.Module):
 
 
 class SetCriterion(nn.Module):
-    def __init__(self, num_classes, matcher, weight_dict, focal_alpha, losses):
+    def __init__(self, num_classes, matcher, weight_dict, focal_alpha, losses,
+                 aligned_box_loss=False, classification_loss_type='focal'):
         super().__init__()
         self.num_classes = num_classes
         self.matcher = matcher
         self.weight_dict = weight_dict
         self.losses = losses
         self.focal_alpha = focal_alpha
+        self.aligned_box_loss = aligned_box_loss
+        self.classification_loss_type = classification_loss_type
+        self.quality_lambda = 0.0
+        self.quality_successful_updates = 0
 
-    def loss_labels(self, outputs, targets, indices, num_boxes, log=True):
+    def loss_labels(self, outputs, targets, indices, num_boxes, log=True, quality_eligible=True):
         assert 'pred_logits' in outputs
-        src_logits = outputs['pred_logits']
+        src_logits = outputs['pred_logits'].float()
         idx = self._get_src_permutation_idx(indices)
         target_classes_o = torch.cat([t["labels"][J] for t, (_, J) in zip(targets, indices)])
 
@@ -323,6 +328,16 @@ class SetCriterion(nn.Module):
         focal = focal * ((1 - p_t) ** 2)
         alpha_t = self.focal_alpha * target_classes_onehot + (1 - self.focal_alpha) * (1 - target_classes_onehot)
         focal = alpha_t * focal
+        if quality_eligible and self.classification_loss_type == 'quality_blend' and self.quality_lambda > 0:
+            with torch.no_grad():
+                pred = box_ops.box_cxcywh_to_xyxy(outputs['pred_boxes'][idx].float())
+                truth = box_ops.box_cxcywh_to_xyxy(torch.cat([t['boxes'][j] for t, (_,j) in zip(targets,indices)]).float())
+                quality = box_ops.aligned_box_iou(pred, truth)[0].clamp(0,1).square()
+                soft_target = torch.zeros_like(src_logits)
+                soft_target[idx[0], idx[1], target_classes_o] = quality
+                weights = target_classes_onehot + .75 * probability.detach().square() * (1-target_classes_onehot)
+            quality_loss = F.binary_cross_entropy_with_logits(src_logits, soft_target, weight=weights, reduction='none')
+            focal = (1-self.quality_lambda)*focal + self.quality_lambda*quality_loss
         valid_mask = outputs.get('query_valid_mask')
         if valid_mask is not None:
             focal = focal * valid_mask.unsqueeze(-1).to(focal.dtype)
@@ -356,16 +371,18 @@ class SetCriterion(nn.Module):
         losses = {}
         losses['loss_bbox'] = loss_bbox.sum() / num_boxes
 
-        loss_giou = 1 - torch.diag(box_ops.generalized_box_iou(
-            box_ops.box_cxcywh_to_xyxy(src_boxes),
-            box_ops.box_cxcywh_to_xyxy(target_boxes)))
+        pred_xyxy = box_ops.box_cxcywh_to_xyxy(src_boxes)
+        target_xyxy = box_ops.box_cxcywh_to_xyxy(target_boxes)
+        giou = (box_ops.aligned_generalized_box_iou(pred_xyxy, target_xyxy) if self.aligned_box_loss
+                else box_ops.generalized_box_iou(pred_xyxy, target_xyxy).diag())
+        loss_giou = 1 - giou
         losses['loss_giou'] = loss_giou.sum() / num_boxes
 
         # [NWD Loss]
-        # constant=0.02 适合归一化坐标(0-1)。如果输入是绝对坐标，需要调大。
-        # DETR 的 output['pred_boxes'] 是归一化的，所以 0.02 是合理的。
+        # Preserve the deployed normalization constant 0.03 (not 0.02).
         if hasattr(box_ops, 'box_nwd'):
-            nwd_metric = torch.diag(box_ops.box_nwd(src_boxes, target_boxes, constant=0.03))
+            nwd_metric = (box_ops.aligned_box_nwd(src_boxes, target_boxes, constant=.03) if self.aligned_box_loss
+                          else box_ops.box_nwd(src_boxes, target_boxes, constant=.03).diag())
             loss_nwd = 1 - nwd_metric
             losses['loss_nwd'] = loss_nwd.sum() / num_boxes
 
@@ -452,7 +469,7 @@ class SetCriterion(nn.Module):
             l_dict = {}
             for loss in self.losses:
                 kwargs = {}
-                if 'labels' in loss: kwargs = {'log': False}
+                if 'labels' in loss: kwargs = {'log': False, 'quality_eligible': False}
                 l_dict.update(
                     self.get_loss(loss, output_known_lbs_bboxes, targets, dn_pos_idx, num_boxes * scalar, **kwargs))
             l_dict = {k + f'_dn': v for k, v in l_dict.items()}
@@ -485,7 +502,7 @@ class SetCriterion(nn.Module):
                     l_dict = {}
                     for loss in self.losses:
                         kwargs = {}
-                        if 'labels' in loss: kwargs = {'log': False}
+                        if 'labels' in loss: kwargs = {'log': False, 'quality_eligible': False}
                         l_dict.update(
                             self.get_loss(loss, aux_outputs_known, targets, dn_pos_idx, num_boxes * scalar, **kwargs))
                     l_dict = {k + f'_dn_{idx}': v for k, v in l_dict.items()}
@@ -506,7 +523,7 @@ class SetCriterion(nn.Module):
             for loss in self.losses:
                 if loss == 'masks': continue
                 kwargs = {}
-                if loss == 'labels': kwargs = {'log': False}
+                if loss == 'labels': kwargs = {'log': False, 'quality_eligible': False}
                 l_dict = self.get_loss(loss, interm_outputs, targets, indices, num_boxes, **kwargs)
                 l_dict = {k + f'_interm': v for k, v in l_dict.items()}
                 losses.update(l_dict)
@@ -519,7 +536,7 @@ class SetCriterion(nn.Module):
                 for loss in self.losses:
                     if loss == 'masks': continue
                     kwargs = {}
-                    if loss == 'labels': kwargs = {'log': False}
+                    if loss == 'labels': kwargs = {'log': False, 'quality_eligible': False}
                     l_dict = self.get_loss(loss, enc_outputs, targets, indices, num_boxes, **kwargs)
                     l_dict = {k + f'_enc_{i}': v for k, v in l_dict.items()}
                     losses.update(l_dict)
@@ -690,10 +707,13 @@ def build_aqfcdetr(args):
     if args.masks: losses += ["masks"]
 
     criterion = SetCriterion(num_classes, matcher=matcher, weight_dict=weight_dict,
-                             focal_alpha=args.focal_alpha, losses=losses)
+                             focal_alpha=args.focal_alpha, losses=losses,
+                             aligned_box_loss=getattr(args,'aligned_box_loss',False),
+                             classification_loss_type=getattr(args,'classification_loss_type','focal'))
     criterion.to(device)
     postprocessors = {'bbox': PostProcess(nms_iou_threshold=args.nms_iou_threshold,
-        valid_category_ids=range(1, 11) if getattr(args, 'dataset_file', '') == 'visdrone' else None)}
+        valid_category_ids=(range(1, 11) if getattr(args, 'dataset_file', '') == 'visdrone'
+                            else range(8) if getattr(args,'dataset_file','') in ('aitod','aitodv2') else None))}
     if args.masks:
         postprocessors['segm'] = PostProcessSegm()
         if args.dataset_file == "coco_panoptic":

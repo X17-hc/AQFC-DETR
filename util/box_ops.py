@@ -25,7 +25,8 @@ def box_iou(boxes1, boxes2):
     wh = (rb - lt).clamp(min=0)
     inter = wh[:, :, 0] * wh[:, :, 1]
     union = area1[:, None] + area2 - inter
-    iou = inter / union
+    # Only zero-area unions are protected; ordinary boxes retain the exact formula.
+    iou = inter / union.clamp(min=torch.finfo(union.dtype).tiny)
     return iou, union
 
 
@@ -37,7 +38,38 @@ def generalized_box_iou(boxes1, boxes2):
     rb = torch.max(boxes1[:, None, 2:], boxes2[:, 2:])
     wh = (rb - lt).clamp(min=0)
     area = wh[:, :, 0] * wh[:, :, 1]
-    return iou - (area - union) / area
+    return iou - (area - union) / area.clamp(min=torch.finfo(area.dtype).tiny)
+
+
+def aligned_box_iou(boxes1, boxes2):
+    """IoU for corresponding xyxy pairs, never allocate an NxN tensor."""
+    if boxes1.shape != boxes2.shape or boxes1.ndim != 2 or boxes1.shape[-1] != 4:
+        raise ValueError('Aligned boxes must have identical [N,4] shapes')
+    inter_wh = (torch.minimum(boxes1[:,2:], boxes2[:,2:]) -
+                torch.maximum(boxes1[:,:2], boxes2[:,:2])).clamp(min=0)
+    inter = inter_wh[:,0] * inter_wh[:,1]
+    union = box_area(boxes1) + box_area(boxes2) - inter
+    return inter / union.clamp(min=torch.finfo(union.dtype).tiny), union
+
+
+def aligned_generalized_box_iou(boxes1, boxes2):
+    assert (boxes1[:,2:] >= boxes1[:,:2]).all()
+    assert (boxes2[:,2:] >= boxes2[:,:2]).all()
+    iou, union = aligned_box_iou(boxes1, boxes2)
+    wh = (torch.maximum(boxes1[:,2:], boxes2[:,2:]) -
+          torch.minimum(boxes1[:,:2], boxes2[:,:2])).clamp(min=0)
+    area = wh[:,0] * wh[:,1]
+    return iou - (area-union) / area.clamp(min=torch.finfo(area.dtype).tiny)
+
+
+def aligned_box_nwd(boxes1, boxes2, constant=12.):
+    if boxes1.shape != boxes2.shape or boxes1.ndim != 2 or boxes1.shape[-1] != 4:
+        raise ValueError('Aligned boxes must have identical [N,4] shapes')
+    # Preserve the legacy arithmetic, including sqrt clamp and normalization.
+    x1,y1,w1,h1=boxes1.unbind(-1)
+    x2,y2,w2,h2=boxes2.unbind(-1)
+    distance=((x1-x2)**2+(y1-y2)**2+(w1/2-w2/2)**2+(h1/2-h2/2)**2).clamp(min=1e-7).sqrt()
+    return torch.exp(-distance/constant)
 
 
 def box_nwd(boxes1, boxes2, constant=12.0):

@@ -2,9 +2,27 @@
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 import json
+import time
 import torch
 
 _enabled = False
+
+
+def range_summary(events):
+    """Keep CPU dispatch and GPU annotations separate; never add nested ranges."""
+    rows = []
+    for event in events:
+        if not event.key.startswith('AQFC/'):
+            continue
+        device_type = str(event.device_type).split('.')[-1]
+        rows.append(dict(name=event.key, device_type=device_type,
+            cpu_total_us=event.cpu_time_total, device_total_us=event.device_time_total,
+            self_cpu_us=event.self_cpu_time_total,
+            self_device_us=event.self_device_time_total, count=event.count,
+            timing_semantics=('CPU inclusive dispatch/wait; device time is attributed work'
+                              if device_type == 'CPU' else
+                              'Device annotation span; may include idle gaps, not kernel sum')))
+    return rows
 
 
 def region(name):
@@ -27,7 +45,8 @@ class ProfileLoader:
 
 
 @contextmanager
-def training_profile(trace, model, criterion):
+def training_profile(trace, model, criterion, *, accounting=None, warmup_steps=None,
+                     measured_steps=None):
     global _enabled
     if not trace:
         yield
@@ -62,12 +81,22 @@ def training_profile(trace, model, criterion):
             activities.append(torch.profiler.ProfilerActivity.CUDA)
         with torch.profiler.profile(activities=activities, record_shapes=True, profile_memory=True) as profiler:
             yield
+            # Capture before profiler.__exit__ (Kineto postprocessing can be slow).
+            postprocess_start = time.perf_counter()
+        export_start = time.perf_counter()
         profiler.export_chrome_trace(str(path))
-        rows = [dict(name=e.key, cpu_total_us=e.cpu_time_total,
-                     device_total_us=e.device_time_total, count=e.count)
-                for e in profiler.key_averages() if e.key.startswith('AQFC/')]
+        export_end = time.perf_counter()
+        rows = range_summary(profiler.key_averages())
+        timing = dict(profiler_finalize_seconds=export_start-postprocess_start,
+                      trace_export_seconds=export_end-export_start,
+                      summary_aggregation_seconds=time.perf_counter()-export_end)
+        if accounting is not None:
+            accounting.update(timing)
         path.with_suffix('.summary.json').write_text(json.dumps(dict(
-            ranges=rows, warning='Nested instrumented ranges overlap; not additive or unprofiled throughput'),
+            schema_version=2, ranges=rows, postprocessing=timing,
+            scope='entire profiled context, INCLUDING warmup; not measured steps only',
+            warmup_steps=warmup_steps, measured_steps=measured_steps,
+            warning='CPU/GPU annotation spans and nested ranges must not be summed; not unprofiled throughput'),
             indent=2), encoding='utf-8')
     finally:
         _enabled = False

@@ -1,0 +1,587 @@
+"""Training and evaluation loops for AQFC-DETR."""
+import math
+import os
+import sys
+import time
+import datetime
+from pathlib import Path
+from typing import Iterable
+
+from util.utils import slprint, to_device
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import util.misc as utils
+from datasets.coco_eval import CocoEvaluator
+from datasets.panoptic_eval import PanopticEvaluator
+
+from models.aqfcdetr.query_allocator import QueryBudgetLoss
+from util.runtime import LimitedLoader, optimizer_step_statistics
+from util.profiling import region, ProfileLoader
+
+print_freq = 1000
+# None restores the original full MetricLogger output (including DN, auxiliary
+# layers and unscaled losses). This changes presentation only, not loss weights.
+DISPLAY_KEYS = None
+
+
+# Mosaic probability scheduler (epoch-aware warmup and decay).
+
+class MosaicPScheduler:
+    """
+    Mosaic 触发概率的 epoch 级调度器。
+
+    解决的问题：
+        从已收敛的高精度 checkpoint 出发，在训练初期立刻以高概率
+        触发 Mosaic，会把模型"打散"，需要很多 epoch 才能恢复。
+        用 warmup + decay 策略可以让 Mosaic 在合适的时机发挥作用。
+
+    三阶段调度：
+        Warmup  (epoch 0 ~ warmup_end)      : 0 → peak_p，线性增长
+        Plateau (epoch warmup_end ~ decay_start): peak_p，稳定
+        Decay   (epoch decay_start ~ total) : peak_p → 0，余弦退出
+
+    余弦退出的意义：
+        训练末期用纯净样本让 EMA 收敛到更稳的极值，
+        测试时 FP 会降低（与训练分布更接近）。
+
+    使用示例（在 main.py 中）：
+        mosaic_scheduler = MosaicPScheduler(
+            peak_p=0.3,
+            warmup_end=2,       # 前2个epoch warmup
+            decay_start=14,     # 第14个epoch开始退出
+            total_epochs=18,
+        )
+        # 在每个 epoch 开始时调用：
+        dataset_train.mosaic.p = mosaic_scheduler.get_p(epoch)
+    """
+
+    def __init__(
+        self,
+        peak_p: float = 0.3,
+        warmup_end: int = 2,
+        decay_start: int = 8,
+        total_epochs: int = 12,
+    ):
+        assert 0 < warmup_end < decay_start < total_epochs
+        self.peak_p       = peak_p
+        self.warmup_end   = warmup_end
+        self.decay_start  = decay_start
+        self.total_epochs = total_epochs
+
+    def get_p(self, epoch: int) -> float:
+        """返回当前 epoch 对应的 Mosaic 触发概率。"""
+        if epoch < self.warmup_end:
+            # 线性 warmup：0 → peak_p
+            return self.peak_p * epoch / self.warmup_end
+        elif epoch < self.decay_start:
+            # 稳定阶段
+            return self.peak_p
+        else:
+            # 余弦退出：peak_p → 0
+            progress = (epoch - self.decay_start) / (self.total_epochs - self.decay_start)
+            return self.peak_p * 0.5 * (1 + math.cos(math.pi * progress))
+
+    def __repr__(self):
+        return (
+            f"MosaicPScheduler(peak_p={self.peak_p}, "
+            f"warmup={self.warmup_end}, decay_start={self.decay_start}, "
+            f"total={self.total_epochs})"
+        )
+
+
+def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
+                    data_loader: Iterable, optimizer: torch.optim.Optimizer,
+                    device: torch.device, epoch: int, max_norm: float = 0,
+                    wo_class_error=False, lr_scheduler=None, args=None,
+                    logger=None, ema_m=None,
+                    mosaic_scheduler=None, scaler=None):
+
+    from util.incremental import training_phase, quality_progress
+    phase_epoch, phase_total = training_phase(args, epoch)
+    phase_started = time.perf_counter()
+
+    if scaler is None:
+        scaler = torch.amp.GradScaler('cuda', enabled=args.amp,
+                                    init_scale=getattr(args, 'amp_init_scale', 128.))
+
+    try:
+        need_tgt_for_training = args.use_dn
+    except:
+        need_tgt_for_training = False
+
+    if mosaic_scheduler is not None:
+        dataset = data_loader.dataset
+        # 兼容 DistributedSampler 包装
+        if hasattr(dataset, 'dataset'):
+            dataset = dataset.dataset
+        if hasattr(dataset, 'mosaic') and dataset.mosaic is not None:
+            new_p = mosaic_scheduler.get_p(phase_epoch)
+            dataset.mosaic.p = new_p
+            if args.rank == 0:
+                print(f"[MosaicScheduler] Epoch {epoch}: mosaic.p = {new_p:.3f}")
+
+    budget_criterion = QueryBudgetLoss(
+        coverage_weight=args.coverage_loss_weight,
+        spacing_weight=args.spacing_loss_weight,
+        count_weight=args.count_loss_weight,
+        interval_weight=args.interval_loss_weight,
+        boundary_guide_weight=args.boundary_guide_loss_weight,
+        density_weight=args.density_map_loss_weight,
+        enable_adaptive_targets=True,
+        enable_loss_clipping=True,
+        density_target_backend=getattr(args, 'density_target_backend', 'reference'),
+        density_target_chunk_size=getattr(args, 'density_target_chunk_size', 512)
+    ).to(device)
+    budget_criterion.train()
+
+    allocator_weight_scheduler = AllocatorWeightScheduler(
+        warmup_epochs=args.allocator_schedule['warmup_epochs'],
+        peak_weight=args.allocator_schedule['peak_weight'],
+        final_weight=args.allocator_schedule['final_weight'],
+        total_epochs=phase_total
+    )
+
+    model.train()
+    model_without_ddp = model.module if hasattr(model, 'module') else model
+    if hasattr(model_without_ddp, 'set_epoch'):
+        model_without_ddp.set_epoch(phase_epoch)
+    criterion.train()
+    metric_logger = utils.MetricLogger(delimiter="  ", batched_transfer=getattr(args,'batched_metric_transfer',False))
+    metric_logger.add_meter('lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
+    metric_logger.add_meter('allocator_weight', utils.SmoothedValue(window_size=1, fmt='{value:.3f}'))
+    if mosaic_scheduler is not None:
+        metric_logger.add_meter('mosaic_p', utils.SmoothedValue(window_size=1, fmt='{value:.3f}'))
+    if not wo_class_error:
+        metric_logger.add_meter('class_error', utils.SmoothedValue(window_size=1, fmt='{value:.2f}'))
+    header = 'Epoch: [{}]'.format(epoch)
+
+    _cnt = 0
+    local_optimizer_steps = 0
+    consecutive_skips = 0
+    run_loader = LimitedLoader(data_loader, getattr(args, 'max_train_steps', 0))
+    if getattr(args, 'profile_trace', ''):
+        run_loader = ProfileLoader(run_loader)
+    frequency = min(print_freq, 5) if getattr(args, 'max_train_steps', 0) else print_freq
+    first_nonfinite_reported = False
+    for samples, targets in metric_logger.log_every(run_loader, frequency, header, logger=logger,
+                                                   display_keys=DISPLAY_KEYS):
+
+        with region('H2D'):
+            samples = samples.to(device, non_blocking=getattr(args,'non_blocking_transfer',False))
+            real_counts = torch.tensor(
+                [len(t['labels']) for t in targets], device=device, dtype=torch.float32)
+            targets = [{k: v.to(device, non_blocking=getattr(args,'non_blocking_transfer',False)) for k, v in t.items()} for t in targets]
+
+        current_allocator_weight = allocator_weight_scheduler.get_weight(
+            phase_epoch, _cnt, len(data_loader))
+        criterion.quality_lambda = quality_progress(args, criterion.quality_successful_updates, len(data_loader))
+
+        with torch.amp.autocast('cuda', enabled=args.amp):
+            # AQBA needs GT counts for teacher routing even when DN is disabled.
+            outputs = model(samples, targets)
+
+            loss_dict = criterion(outputs, targets)
+            weight_dict = criterion.weight_dict
+            losses = sum(loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict)
+
+            allocator_outputs = outputs.get('allocator_outputs')
+            if allocator_outputs and getattr(args, 'allocator_enabled', True):
+                with region('DensityAndBudgetLoss'):
+                    budget_loss_out = budget_criterion(
+                        allocator_outputs,
+                        {'real_counts': real_counts, 'targets': targets})
+                weighted_allocator_loss = (
+                    budget_loss_out['loss_allocator_total'] *
+                    current_allocator_weight * args.allocator_loss_weight)
+                losses = losses + weighted_allocator_loss
+                loss_dict['loss_allocator_total'] = weighted_allocator_loss
+                for key in ('loss_budget_coverage', 'loss_budget_interval', 'loss_count',
+                            'loss_budget_spacing', 'loss_boundary_guide', 'loss_density_map'):
+                    loss_dict[key] = budget_loss_out[key]
+                if _cnt % 1000 == 0 and args.rank == 0:
+                    query_counts = outputs['executed_query_counts'].float()
+                    message = (
+                        f"[AQBA] epoch={epoch} iter={_cnt} "
+                        f"teacher={allocator_outputs['teacher_ratio']:.2f} "
+                        f"weight={current_allocator_weight:.2f} "
+                        f"queries={query_counts.mean().item():.1f} "
+                        f"count_mae={(allocator_outputs['predicted_count'] - real_counts).abs().mean().item():.2f} "
+                        f"loss={weighted_allocator_loss.item():.4f}")
+                    print(message)
+                    if logger:
+                        logger.info(message)
+
+        loss_dict_reduced = utils.reduce_dict(loss_dict)
+        loss_dict_reduced_unscaled = {f'{k}_unscaled': v for k, v in loss_dict_reduced.items()}
+
+        weight_dict['loss_allocator_total'] = 1.0
+
+        loss_dict_reduced_scaled = {
+            k: v * weight_dict[k]
+            for k, v in loss_dict_reduced.items()
+            if k in weight_dict
+        }
+        losses_reduced_scaled = sum(loss_dict_reduced_scaled.values())
+        loss_value = losses_reduced_scaled.item()
+
+        if not math.isfinite(loss_value):
+            print("Loss is {}, stopping training".format(loss_value))
+            print(loss_dict_reduced)
+            raise FloatingPointError(f'Non-finite training loss at epoch={epoch}, iteration={_cnt}')
+
+        if args.amp:
+            optimizer.zero_grad()
+            previous_scale = scaler.get_scale()
+            with region('Backward'):
+                scaler.scale(losses).backward()
+            scaler.unscale_(optimizer)
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm if max_norm > 0 else float('inf'))
+            if not torch.isfinite(grad_norm) and not first_nonfinite_reported:
+                bad = [name for name, p in model.named_parameters()
+                       if p.grad is not None and not torch.isfinite(p.grad).all()]
+                print(f'[AMP] non-finite gradients at step {_cnt}; first parameters: {bad[:8]}')
+                first_nonfinite_reported = True
+            with region('Optimizer'):
+                scaler.step(optimizer)
+            scaler.update()
+            step_applied = scaler.get_scale() >= previous_scale
+        else:
+            optimizer.zero_grad()
+            with region('Backward'):
+                losses.backward()
+            grad_norm = torch.nn.utils.clip_grad_norm_(
+                model.parameters(), max_norm if max_norm > 0 else float('inf'), error_if_nonfinite=True)
+            with region('Optimizer'):
+                optimizer.step()
+            step_applied = True
+
+        if args.onecyclelr and step_applied:
+            lr_scheduler.step()
+        local_optimizer_steps += int(step_applied)
+        criterion.quality_successful_updates += int(step_applied)
+        from util.runtime import update_skipped_streak
+        consecutive_skips = update_skipped_streak(consecutive_skips, step_applied,
+            getattr(args, 'max_consecutive_skipped_steps', 0))
+        if args.use_ema and step_applied:
+            if epoch >= args.ema_epoch:
+                ema_m.update(model)
+
+        metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
+        metric_logger.update(allocator_weight=current_allocator_weight)
+        metric_logger.update(quality_lambda=criterion.quality_lambda, training_phase_epoch=phase_epoch)
+        metric_logger.update(optimizer_step_applied=float(step_applied))
+        spatial_reports = allocator_outputs.get('spatial_selection_statistics', [])
+        if spatial_reports:
+            metric_logger.update(spatial_fallback_ratio=sum(r['fallback'] for r in spatial_reports)/len(spatial_reports),
+                                 spatial_grid_coverage=sum(r['grid_coverage'] for r in spatial_reports)/len(spatial_reports))
+        metric_logger.update(grad_scale=scaler.get_scale() if args.amp else 1.)
+        if torch.isfinite(grad_norm):
+            metric_logger.update(grad_norm=float(grad_norm))
+        if allocator_outputs and 'predicted_count' in allocator_outputs:
+            executed = outputs['executed_query_counts'].float()
+            predicted = allocator_outputs['predicted_count'].float()
+            metric_logger.update(
+                teacher_ratio=float(allocator_outputs['teacher_ratio']),
+                mean_gt_count=real_counts.mean(),
+                mean_predicted_count=predicted.mean(),
+                count_mae=(predicted - real_counts).abs().mean(),
+                mean_executed_queries=executed.mean(),
+                invalid_allocator_fallback_count=allocator_outputs.get('invalid_fallback_count', 0),
+                invalid_boundary_fallback_count=allocator_outputs.get('invalid_boundary_fallback_count', 0),
+                query_token_reduction=allocator_outputs.get('query_token_reduction', 0.0),
+                **{f'query_level_{level}_ratio': (executed == level).float().mean()
+                   for level in args.query_budget_levels})
+        if mosaic_scheduler is not None:
+            cur_dataset = data_loader.dataset
+            if hasattr(cur_dataset, 'dataset'):
+                cur_dataset = cur_dataset.dataset
+            if hasattr(cur_dataset, 'mosaic') and cur_dataset.mosaic is not None:
+                metric_logger.update(mosaic_p=cur_dataset.mosaic.p)
+        if 'class_error' in loss_dict_reduced:
+            metric_logger.update(class_error=loss_dict_reduced['class_error'])
+        metric_logger.update(lr=optimizer.param_groups[0]["lr"])
+
+        _cnt += 1
+
+    if getattr(criterion, 'loss_weight_decay', False):
+        criterion.loss_weight_decay(epoch=epoch)
+    if getattr(criterion, 'tuning_matching', False):
+        criterion.tuning_matching(epoch)
+
+    metric_logger.synchronize_between_processes()
+    print("Averaged stats:", metric_logger.format_meters(DISPLAY_KEYS))
+    resstat = {k: meter.global_avg for k, meter in metric_logger.meters.items() if meter.count > 0}
+    resstat.update(optimizer_step_statistics(
+        _cnt, local_optimizer_steps, metric_logger.meters['optimizer_step_applied']))
+    if resstat['optimizer_steps'] == 0:
+        raise RuntimeError('No optimizer update succeeded; inspect AMP/gradient diagnostics')
+    if getattr(criterion, 'loss_weight_decay', False):
+        resstat.update({f'weight_{k}': v for k, v in criterion.weight_dict.items()})
+    if device.type == 'cuda':
+        torch.cuda.synchronize(device)
+    resstat['training_seconds'] = time.perf_counter()-phase_started
+    print(f"[Training completed] epoch={epoch} phase_epoch={phase_epoch} elapsed={resstat['training_seconds']:.2f}s "
+          f"({datetime.timedelta(seconds=int(resstat['training_seconds']))})")
+    return resstat
+
+
+# ======================================================================
+# AQBA auxiliary-loss scheduler
+# ======================================================================
+
+class AllocatorWeightScheduler:
+    """Warm up and gradually decay the AQBA auxiliary-loss weight."""
+    def __init__(self, warmup_epochs=3, peak_weight=1.0, final_weight=0.7, total_epochs=24):
+        self.warmup_epochs = warmup_epochs
+        self.peak_weight   = peak_weight
+        self.final_weight  = final_weight
+        self.total_epochs  = total_epochs
+
+    def get_weight(self, epoch: int, iteration: int, steps_per_epoch: int = 1) -> float:
+        if epoch < self.warmup_epochs:
+            return self.peak_weight * (epoch + iteration / max(steps_per_epoch, 1)) / self.warmup_epochs
+        elif epoch < int(self.total_epochs * 0.75):
+            return self.peak_weight
+        else:
+            decay_progress = (epoch - int(self.total_epochs * 0.75)) / (
+                self.total_epochs - int(self.total_epochs * 0.75)
+            )
+            return self.peak_weight - (self.peak_weight - self.final_weight) * decay_progress
+
+
+@torch.no_grad()
+def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, output_dir,
+             wo_class_error=False, args=None, logger=None):
+    phase_started = time.perf_counter()
+    try:
+        need_tgt_for_training = args.use_dn
+    except:
+        need_tgt_for_training = False
+
+    model.eval()
+    criterion.eval()
+
+    metric_logger = utils.MetricLogger(delimiter="  ")
+    if not wo_class_error:
+        metric_logger.add_meter('class_error', utils.SmoothedValue(window_size=1, fmt='{value:.2f}'))
+    header = 'Test:'
+
+    iou_types = tuple(k for k in ('segm', 'bbox') if k in postprocessors.keys())
+    useCats = True
+    try:
+        useCats = args.useCats
+    except:
+        useCats = True
+    if not useCats:
+        print("useCats: {} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!".format(useCats))
+    if getattr(args, 'dataset_file', '') == 'visdrone':
+        from datasets.visdrone_eval import VisDroneCocoEvaluator
+        coco_evaluator = VisDroneCocoEvaluator(base_ds, iou_types, useCats=useCats)
+    elif getattr(args, 'eval_backend', 'legacy') == 'faster_aitod':
+        from datasets.checked_fast_eval import CheckedFastEvaluator
+        coco_evaluator = CheckedFastEvaluator(base_ds, iou_types, useCats=useCats)
+    else:
+        coco_evaluator = CocoEvaluator(base_ds, iou_types, useCats=useCats)
+
+    panoptic_evaluator = None
+    if 'panoptic' in postprocessors.keys():
+        panoptic_evaluator = PanopticEvaluator(
+            data_loader.dataset.ann_file,
+            data_loader.dataset.ann_folder,
+            output_dir=os.path.join(output_dir, "panoptic_eval"),
+        )
+
+    _cnt = 0
+    evaluated_query_counts = []
+    executed_tokens = 0
+    legacy_tokens = 0
+    output_state_dict = {}
+    export_records, export_images = [], []
+    export_enabled = getattr(args, 'export_predictions', False)
+    if export_enabled:
+        from util.prediction_export import prediction_records, save_predictions
+    diagnostics_directory = None
+    if getattr(args, 'export_diagnostics', False):
+        diagnostics_directory = Path(output_dir) / f'diagnostics_rank{utils.get_rank()}_{time.time_ns()}'
+        diagnostics_directory.mkdir(parents=True, exist_ok=False)
+    run_loader = LimitedLoader(data_loader, getattr(args, 'max_eval_steps', 0))
+    for samples, targets in metric_logger.log_every(run_loader, min(print_freq, 10), header, logger=logger,
+                                                   display_keys=DISPLAY_KEYS):
+
+        samples = samples.to(device, non_blocking=getattr(args,'non_blocking_transfer',False))
+        targets = [{k: to_device(v, device) for k, v in t.items()} for t in targets]
+
+        with torch.amp.autocast('cuda', enabled=args.amp):
+            if need_tgt_for_training:
+                outputs = model(samples, targets)
+            else:
+                outputs = model(samples)
+            loss_dict = criterion(outputs, targets)
+        weight_dict = criterion.weight_dict
+
+        loss_dict_reduced = utils.reduce_dict(loss_dict)
+        loss_dict_reduced_scaled = {
+            k: v * weight_dict[k]
+            for k, v in loss_dict_reduced.items() if k in weight_dict
+        }
+        loss_dict_reduced_unscaled = {f'{k}_unscaled': v for k, v in loss_dict_reduced.items()}
+
+        metric_logger.update(
+            loss=sum(loss_dict_reduced_scaled.values()),
+            **loss_dict_reduced_scaled,
+            **loss_dict_reduced_unscaled
+        )
+        if 'class_error' in loss_dict_reduced:
+            metric_logger.update(class_error=loss_dict_reduced['class_error'])
+
+        orig_target_sizes = torch.stack([t["orig_size"] for t in targets], dim=0)
+        results = postprocessors['bbox'](outputs, orig_target_sizes)
+        if 'executed_query_counts' in outputs:
+            query_counts = outputs['executed_query_counts'].float()
+            evaluated_query_counts.extend(query_counts.cpu().tolist())
+            metric_logger.update(mean_executed_queries=query_counts.mean().item())
+            allocator_outputs = outputs.get('allocator_outputs', {})
+            executed_tokens += int(allocator_outputs.get('decoder_query_tokens', query_counts.sum()))
+            legacy_tokens += int(query_counts.max()) * len(query_counts)
+            metric_logger.update(
+                decoder_query_tokens=float(allocator_outputs.get(
+                    'decoder_query_tokens', query_counts.sum())),
+                query_token_reduction=float(allocator_outputs.get(
+                    'query_token_reduction', 0.0)))
+
+        if 'segm' in postprocessors.keys():
+            target_sizes = torch.stack([t["size"] for t in targets], dim=0)
+            results = postprocessors['segm'](results, outputs, orig_target_sizes, target_sizes)
+        res = {target['image_id'].item(): output for target, output in zip(targets, results)}
+        if export_enabled:
+            for sample_index, (target, result) in enumerate(zip(targets, results)):
+                image_id = int(target['image_id'])
+                export_records.extend(prediction_records(image_id, result, base_ds.dataset['categories']))
+                artifact = None
+                if diagnostics_directory is not None and len(export_images) < 32:
+                    import numpy as np
+                    artifact = diagnostics_directory / f'{image_id}.npz'
+                    prior = outputs.get('allocator_outputs', {}).get('density_prior')
+                    valid = outputs['query_valid_mask'][sample_index]
+                    proposals = outputs['interm_outputs']['pred_boxes'][sample_index][valid]
+                    arrays = dict(proposals_cxcywh=proposals.detach().float().cpu().numpy(),
+                                  original_size=target['orig_size'].cpu().numpy())
+                    if prior is not None:
+                        arrays.update(density=prior[sample_index,0].detach().float().cpu().numpy(),
+                                      valid_mask=outputs['allocator_outputs']['density_valid_mask'][sample_index,0].cpu().numpy())
+                    np.savez_compressed(artifact, **arrays)
+                compact = {}
+                if getattr(args, 'export_diagnostics', False):
+                    from util.factor_diagnostics import image_diagnostics
+                    compact = image_diagnostics(outputs, target, sample_index)
+                export_images.append(dict(image_id=image_id, height=int(target['orig_size'][0]),
+                    width=int(target['orig_size'][1]), executed_query_count=int(result.get('executed_query_count', 0)),
+                    diagnostics=str(artifact) if artifact is not None else None,
+                    latency_ms=None, latency_note='not measured: normal evaluation does not synchronize per image',
+                    **compact))
+
+        if coco_evaluator is not None:
+            coco_evaluator.update(res)
+
+        if panoptic_evaluator is not None:
+            res_pano = postprocessors["panoptic"](outputs, target_sizes, orig_target_sizes)
+            for i, target in enumerate(targets):
+                image_id = target["image_id"].item()
+                file_name = f"{image_id:012d}.png"
+                res_pano[i]["image_id"] = image_id
+                res_pano[i]["file_name"] = file_name
+            panoptic_evaluator.update(res_pano)
+
+        if args.save_results:
+            for i, (tgt, res, outbbox) in enumerate(zip(targets, results, outputs['pred_boxes'])):
+                gt_bbox  = tgt['boxes']
+                gt_label = tgt['labels']
+                gt_info  = torch.cat((gt_bbox, gt_label.unsqueeze(-1)), 1)
+                _res_bbox  = res['boxes']
+                _res_prob  = res['scores']
+                _res_label = res['labels']
+                res_info = torch.cat((_res_bbox, _res_prob.unsqueeze(-1), _res_label.unsqueeze(-1)), 1)
+                if 'gt_info'  not in output_state_dict: output_state_dict['gt_info']  = []
+                if 'res_info' not in output_state_dict: output_state_dict['res_info'] = []
+                output_state_dict['gt_info'].append(gt_info.cpu())
+                output_state_dict['res_info'].append(res_info.cpu())
+
+        _cnt += 1
+        if args.debug:
+            if _cnt % 15 == 0:
+                print("BREAK!" * 5)
+                break
+
+    if args.save_results:
+        import os.path as osp
+        savepath = osp.join(args.output_dir, 'results-{}.pkl'.format(utils.get_rank()))
+        print("Saving res to {}".format(savepath))
+        torch.save(output_state_dict, savepath)
+
+    metric_logger.synchronize_between_processes()
+    print("Averaged stats:", metric_logger.format_meters(DISPLAY_KEYS))
+    if export_enabled:
+        batches = utils.all_gather((export_records, export_images))
+        if utils.is_main_process():
+            # DistributedSampler may repeat tail images: preserve one complete record set per ID.
+            merged_records, merged_images, seen = [], [], set()
+            for records, images in batches:
+                # Linear grouping avoids scanning all detections once per image.
+                records_by_image = {}
+                for record in records:
+                    records_by_image.setdefault(record['image_id'], []).append(record)
+                for row in images:
+                    if row['image_id'] not in seen:
+                        seen.add(row['image_id'])
+                        merged_images.append(row)
+                        merged_records.extend(records_by_image.get(row['image_id'], []))
+            stamp = time.time_ns()
+            save_predictions(Path(output_dir) / f'predictions_{stamp}', merged_records,
+                             merged_images, base_ds.dataset['categories'], vars(args))
+    if coco_evaluator is not None:
+        coco_evaluator.synchronize_between_processes()
+    if panoptic_evaluator is not None:
+        panoptic_evaluator.synchronize_between_processes()
+
+    if coco_evaluator is not None:
+        coco_evaluator.accumulate()
+        coco_evaluator.summarize()
+        if getattr(args, 'export_diagnostics', False) and utils.is_main_process():
+            from util.factor_diagnostics import export_class_metrics
+            export_class_metrics(coco_evaluator.coco_eval['bbox'], Path(output_dir) / 'class_metrics.json')
+
+    panoptic_res = None
+    if panoptic_evaluator is not None:
+        panoptic_res = panoptic_evaluator.summarize()
+    stats = {k: meter.global_avg for k, meter in metric_logger.meters.items() if meter.count > 0}
+    gathered = utils.all_gather((evaluated_query_counts, executed_tokens, legacy_tokens))
+    evaluated_query_counts = [count for counts, _, _ in gathered for count in counts]
+    executed_tokens = sum(item[1] for item in gathered)
+    legacy_tokens = sum(item[2] for item in gathered)
+    stats.update(evaluated_images=len(evaluated_query_counts),
+                 decoder_query_tokens=executed_tokens, legacy_query_tokens=legacy_tokens,
+                 query_token_reduction=1. - executed_tokens / max(legacy_tokens, 1))
+    if evaluated_query_counts:
+        stats['mean_executed_queries'] = sum(evaluated_query_counts) / len(evaluated_query_counts)
+        ordered_counts = sorted(evaluated_query_counts)
+        stats['p50_query_count'] = ordered_counts[round((len(ordered_counts) - 1) * 0.50)]
+        stats['p90_query_count'] = ordered_counts[round((len(ordered_counts) - 1) * 0.90)]
+    if coco_evaluator is not None:
+        if 'bbox' in postprocessors.keys():
+            stats['coco_eval_bbox'] = coco_evaluator.coco_eval['bbox'].stats.tolist()
+            stats['bbox_metrics'] = coco_evaluator.named_metrics('bbox')
+        if 'segm' in postprocessors.keys():
+            stats['coco_eval_masks'] = coco_evaluator.coco_eval['segm'].stats.tolist()
+    if panoptic_res is not None:
+        stats['PQ_all'] = panoptic_res["All"]
+        stats['PQ_th']  = panoptic_res["Things"]
+        stats['PQ_st']  = panoptic_res["Stuff"]
+
+    if device.type == 'cuda':
+        torch.cuda.synchronize(device)
+    stats['evaluation_seconds'] = time.perf_counter()-phase_started
+    print(f"[Evaluation completed] elapsed={stats['evaluation_seconds']:.2f}s "
+          f"({datetime.timedelta(seconds=int(stats['evaluation_seconds']))})")
+    return stats, coco_evaluator

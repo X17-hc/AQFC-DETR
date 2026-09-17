@@ -1,7 +1,7 @@
 # AQFC-DETR
 
 2026-09-07 核心优化更新：新增轻量AQBA、空间候选、密度目标优化、离线分析/切片工具和五个手动PyCharm配置。
-**现有默认模型不变，完整训练未自动启动。** 使用方法与兼容限制见 [更新指南](CORE_UPDATE_GUIDE.md)，验收结果见 [更新审查报告](CORE_UPDATE_REVIEW.md)。
+**现有默认模型不变，完整训练未自动启动。** 使用方法与兼容限制见 [更新指南](MDs/CORE_UPDATE_GUIDE.md)，验收结果见 [更新审查报告](MDs/CORE_UPDATE_REVIEW.md)。
 
 AQFC-DETR（Adaptive Query and Feature Calibration DETR）面向密集微小目标检测，在 two-stage Deformable DETR 主线上加入三个协同机制：
 
@@ -25,7 +25,7 @@ AQFC-DETR（Adaptive Query and Feature Calibration DETR）面向密集微小目�
 
 2026-09-06 已在全新独立环境 `D:\venv\AQFC-DETR` 验证：Python 3.11.9、PyTorch 2.7.1+cu118、torchvision 0.22.1+cu118、CUDA Toolkit 11.8、RTX 4060 Laptop 8GB。
 
-本机安装、启动、续训及显存限制详见 [TRAINING_WINDOWS.md](TRAINING_WINDOWS.md)，实际验证结果见 [TEST_REPORT.md](TEST_REPORT.md)。环境已配置好，不需要重新安装。
+本机安装、启动、续训及显存限制详见 [TRAINING_WINDOWS.md](MDs/TRAINING_WINDOWS.md)，实际验证结果见 [TEST_REPORT.md](MDs/TEST_REPORT.md)。环境已配置好，不需要重新安装。
 
 在其他兼容环境中，先安装匹配 CUDA 的 PyTorch，再安装项目依赖和算子：
 
@@ -109,11 +109,11 @@ python -m compileall -q .
 
 完整模型前向/反向依赖已编译的 CUDA 扩展和实际数据。默认主方法是 fused proposal、密度权重 0.25、Tanh+空间 DGFC、分组 Decoder。论文应同时报告 AP、平均实际查询数、Decoder query token 和真实延迟。
 
-迁移细节见 [MIGRATION.md](MIGRATION.md)，模型数据流与损失定义见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+迁移细节见 [MIGRATION.md](MDs/MIGRATION.md)，模型数据流与损失定义见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 # 2026-09-07 运行修复说明
 
-第二轮多方面审查、91项测试及真实短训证据见 [第二轮审查报告](REVIEW_ROUND2_20260907.md)；
-上一轮记录保留于 [修复与复审报告](REPAIR_REVIEW_20260907.md)。
+第二轮多方面审查、91项测试及真实短训证据见 [第二轮审查报告](MDs/REVIEW_ROUND2_20260907.md)；
+上一轮记录保留于 [修复与复审报告](MDs/REPAIR_REVIEW_20260907.md)。
 新训练必须使用未包含 checkpoint 的输出目录；短测断点不能按完整 epoch 续训。
 默认 trainval/test 协议仍可运行，但测试集不再用于选择最佳 checkpoint；开发选模请同时设置
 `--options train_split=train eval_split=val`。
