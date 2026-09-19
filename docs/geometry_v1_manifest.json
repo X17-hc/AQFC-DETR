@@ -1,0 +1,74 @@
+{
+  "version": "geometry_v1",
+  "checkpoint_sha256": "c447367e2d19411319a990985e0127af8db08bfb7eec0329b2065b095ccc64eb",
+  "files": [
+    {
+      "path": "engine.py",
+      "sha256": "cf6c403945be5e2df98e94714a41c50be68061057f81ac79118a18b7e603b5ed"
+    },
+    {
+      "path": "main.py",
+      "sha256": "eec1956c8631c875a5e97c5ef66c66f202d27fb4223851319a5cf88238c31ba1"
+    },
+    {
+      "path": ".run/AQFC-DETR_Geometry_c0.run.xml",
+      "sha256": "a9b60fda524c6398d7f95713a3b3c893b70556573a120bb039712ebd987c6da3"
+    },
+    {
+      "path": ".run/AQFC-DETR_Geometry_c1.run.xml",
+      "sha256": "c5ee321f3c8f02de7ee6dfdec4bddf2f47bc350d67dd9baf80b706a52aca69f3"
+    },
+    {
+      "path": "configs/geometry_v1/c0_3e.py",
+      "sha256": "9360967f6872c5a44e2b1c37335f1d9b567b78018e2a3a35f20cc77c9a759180"
+    },
+    {
+      "path": "configs/geometry_v1/c1_3e.py",
+      "sha256": "126dfa567c3c77c953cf2670a956a2e0ee8a981673412da7bbb807c18cb4d60a"
+    },
+    {
+      "path": "docs/geometry_v1_manual.md",
+      "sha256": "722e3f00e09b234ff82c2043e8859768ee8246affdb013351875187eeaa5c2af"
+    },
+    {
+      "path": "models/aqfcdetr/model.py",
+      "sha256": "626c4658e0f7aa3b65ab3d8dd387b60ea57a47c6c1c4791d3b01f3acf0d81908"
+    },
+    {
+      "path": "tests/test_geometry_v1.py",
+      "sha256": "f42a7d006d8bb9d7a32803172c54dd766d188301c96d41c550828cc9eef133e6"
+    },
+    {
+      "path": "util/checkpoint.py",
+      "sha256": "3f8da86cf94b88707731bff921eeeeb9f348628582fd0eb1d4ac18a84170a753"
+    },
+    {
+      "path": "util/experiment.py",
+      "sha256": "7355a2b9892908ef89331c1bce38e20644545dc2581393df546d1dde7d0183e7"
+    },
+    {
+      "path": "util/geometry_loss.py",
+      "sha256": "96974793a729dc2bbb482dee204611636e5e2b5ec6f9f02680660e16bd42aef8"
+    },
+    {
+      "path": "util/incremental.py",
+      "sha256": "92dd918a4f053357740a9a986b27e0b1661d30724efda885491390333ddfb82e"
+    }
+  ],
+  "tests": {
+    "local_targeted_passed": 40,
+    "server_cpu_targeted_passed": 36,
+    "server_cpu_targeted_skipped": 4,
+    "local_full": {
+      "passed": 319,
+      "failed": 3
+    },
+    "server_cpu_full": {
+      "passed": 287,
+      "failed": 1,
+      "skipped": 34
+    }
+  },
+  "real_training": "NOT_RUN",
+  "real_evaluation": "NOT_RUN"
+}

@@ -101,6 +101,8 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                     mosaic_scheduler=None, scaler=None):
 
     from util.incremental import training_phase, quality_progress
+    from util.geometry_loss import initialize_geometry_progress, update_geometry_weight
+    initialize_geometry_progress(criterion, args, len(data_loader))
     phase_epoch, phase_total = training_phase(args, epoch)
     phase_started = time.perf_counter()
 
@@ -179,6 +181,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         current_allocator_weight = allocator_weight_scheduler.get_weight(
             phase_epoch, _cnt, len(data_loader))
         criterion.quality_lambda = quality_progress(args, criterion.quality_successful_updates, len(data_loader))
+        update_geometry_weight(criterion)
 
         with torch.amp.autocast('cuda', enabled=args.amp):
             # AQBA needs GT counts for teacher routing even when DN is disabled.
@@ -273,6 +276,8 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
         metric_logger.update(allocator_weight=current_allocator_weight)
         metric_logger.update(quality_lambda=criterion.quality_lambda, training_phase_epoch=phase_epoch)
+        if criterion.geometry_max_weight > 0:
+            metric_logger.update(geometry_weight=criterion.weight_dict['loss_geometry'])
         metric_logger.update(optimizer_step_applied=float(step_applied))
         spatial_reports = allocator_outputs.get('spatial_selection_statistics', [])
         if spatial_reports:

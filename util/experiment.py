@@ -34,6 +34,11 @@ def variant_signature(args):
                    if k.endswith(('_loss_weight', '_loss_coef')) or k in
                    ('lr', 'lr_backbone', 'weight_decay', 'use_dn', 'dn_number',
                     'dn_box_noise_scale', 'dn_label_noise_ratio', 'use_ema', 'amp')})
+    # Omit neutral new fields so old, geometry-disabled resumes stay compatible.
+    from .geometry_loss import DEFAULTS as geometry_defaults
+    for key, value in geometry_defaults.items():
+        if result.get(key) == value:
+            result.pop(key, None)
     return json.loads(json.dumps(result, default=str))
 
 

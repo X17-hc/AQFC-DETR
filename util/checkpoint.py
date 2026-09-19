@@ -53,6 +53,10 @@ def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, e
         progress=checkpoint.get('criterion_progress',{}).get('successful_updates',0)
         if type(progress) is not int or progress < 0:
             raise ValueError('criterion_progress.successful_updates must be a non-negative integer')
+        if expected_values.get('geometry_loss_weight', 0) > 0:
+            steps = checkpoint.get('criterion_progress', {}).get('geometry_warmup_steps')
+            if type(steps) is not int or steps < 1:
+                raise ValueError('Geometry resume requires a positive geometry_warmup_steps')
     if is_legacy_state_dict(state):
         raise ValueError('Legacy checkpoints are warm-start weights; use --pretrained instead of --resume')
     metadata = checkpoint.get('run_metadata', {})
@@ -94,6 +98,12 @@ def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, e
                 expected_args['quality_successful_updates']=count
             else:
                 expected_args.quality_successful_updates=count
+            if expected_values.get('geometry_loss_weight', 0) > 0:
+                steps = checkpoint['criterion_progress']['geometry_warmup_steps']
+                if isinstance(expected_args, dict):
+                    expected_args['geometry_warmup_steps'] = steps
+                else:
+                    expected_args.geometry_warmup_steps = steps
     if scheduler is not None:
         scheduler.load_state_dict(checkpoint['lr_scheduler'])
     if ema is not None:

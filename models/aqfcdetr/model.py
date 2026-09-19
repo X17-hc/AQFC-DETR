@@ -288,7 +288,9 @@ class AQFCDETR(nn.Module):
 
 class SetCriterion(nn.Module):
     def __init__(self, num_classes, matcher, weight_dict, focal_alpha, losses,
-                 aligned_box_loss=False, classification_loss_type='focal'):
+                 aligned_box_loss=False, classification_loss_type='focal',
+                 geometry_loss_weight=0.0, geometry_min_size_pixels=4.0,
+                 geometry_smooth_l1_beta=0.1):
         super().__init__()
         self.num_classes = num_classes
         self.matcher = matcher
@@ -299,6 +301,13 @@ class SetCriterion(nn.Module):
         self.classification_loss_type = classification_loss_type
         self.quality_lambda = 0.0
         self.quality_successful_updates = 0
+        self.geometry_max_weight = geometry_loss_weight
+        self.geometry_min_size_pixels = geometry_min_size_pixels
+        self.geometry_smooth_l1_beta = geometry_smooth_l1_beta
+        self.geometry_warmup_steps = None
+        if geometry_loss_weight > 0:
+            # Added AFTER auxiliary/DN/encoder weight dictionaries are constructed.
+            self.weight_dict['loss_geometry'] = 0.0
 
     def loss_labels(self, outputs, targets, indices, num_boxes, log=True, quality_eligible=True):
         assert 'pred_logits' in outputs
@@ -483,6 +492,12 @@ class SetCriterion(nn.Module):
 
         for loss in self.losses:
             losses.update(self.get_loss(loss, outputs, targets, indices, num_boxes))
+
+        if self.geometry_max_weight > 0:
+            from util.geometry_loss import matched_geometry_loss
+            losses['loss_geometry'] = matched_geometry_loss(
+                outputs['pred_boxes'], targets, indices, num_boxes,
+                self.geometry_min_size_pixels, self.geometry_smooth_l1_beta)
 
         if 'aux_outputs' in outputs:
             for idx, aux_outputs in enumerate(outputs['aux_outputs']):
@@ -709,7 +724,10 @@ def build_aqfcdetr(args):
     criterion = SetCriterion(num_classes, matcher=matcher, weight_dict=weight_dict,
                              focal_alpha=args.focal_alpha, losses=losses,
                              aligned_box_loss=getattr(args,'aligned_box_loss',False),
-                             classification_loss_type=getattr(args,'classification_loss_type','focal'))
+                             classification_loss_type=getattr(args,'classification_loss_type','focal'),
+                             geometry_loss_weight=getattr(args,'geometry_loss_weight',0.0),
+                             geometry_min_size_pixels=getattr(args,'geometry_min_size_pixels',4.0),
+                             geometry_smooth_l1_beta=getattr(args,'geometry_smooth_l1_beta',0.1))
     criterion.to(device)
     postprocessors = {'bbox': PostProcess(nms_iou_threshold=args.nms_iou_threshold,
         valid_category_ids=(range(1, 11) if getattr(args, 'dataset_file', '') == 'visdrone'

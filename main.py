@@ -21,6 +21,7 @@ from util.slconfig import DictAction, SLConfig
 from util.utils import ModelEma
 from util.runtime import run_metadata, can_select_best
 from util.experiment import unique_output, write_manifest, variant_signature
+from util.geometry_loss import criterion_progress
 from util.checkpoint import load_native_resume, migration_report_path, capture_rng_state
 from util.checkpoint_migration import load_legacy_pretrained
 from util.config_validation import validate_config
@@ -423,7 +424,7 @@ def main(args):
                     'scaler': scaler.state_dict(),
                     'format': 'aqfcdetr_v2',
                     'variant_signature': variant_signature(args),
-                    'criterion_progress': {'successful_updates': criterion.quality_successful_updates},
+                    'criterion_progress': criterion_progress(criterion),
                     'run_metadata': run_metadata(args, train_stats['train_iterations'], len(data_loader_train)),
                     'best_metrics': best_metrics,
                 }

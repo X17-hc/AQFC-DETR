@@ -5,21 +5,28 @@ DEFAULTS = dict(aligned_box_loss=False, batched_metric_transfer=False,
                 training_phase_epoch_offset=0, training_phase_total_epochs=None,
                 strict_warmstart=False, expected_pretrained_epoch=None,
                 expected_pretrained_sha256='')
+from .geometry_loss import DEFAULTS as GEOMETRY_DEFAULTS
+DEFAULTS.update(GEOMETRY_DEFAULTS)
 
 
 def training_phase(args, epoch):
-    return (epoch + getattr(args, 'training_phase_epoch_offset', 0),
+    fixed = getattr(args, 'training_phase_fixed_epoch', None)
+    return (fixed if fixed is not None else epoch + getattr(args, 'training_phase_epoch_offset', 0),
             getattr(args, 'training_phase_total_epochs', None) or args.epochs)
 
 
 def quality_progress(args, successful_updates, steps_per_epoch):
+    # Explicit continuation option: keep an already learned quality objective on.
+    if getattr(args, 'quality_blend_warmup_epochs', 1) == 0:
+        return getattr(args, 'quality_blend_max', .25)
     denominator = max(1, steps_per_epoch * getattr(args, 'quality_blend_warmup_epochs', 1))
     return getattr(args, 'quality_blend_max', .25) * min(1., successful_updates / denominator)
 
 
 def validate_incremental(config):
     import math
-    errors=[]
+    from .geometry_loss import validate_geometry
+    errors=validate_geometry(config)
     for key in config:
         if key.startswith(('quality_', 'training_phase_', 'classification_loss_', 'aligned_box_',
                            'batched_metric_', 'non_blocking_', 'expected_pretrained_', 'strict_warm')) and key not in DEFAULTS:
@@ -32,7 +39,7 @@ def validate_incremental(config):
     value=config.get('quality_blend_max',.25)
     if type(value) not in (float,int) or not math.isfinite(value) or not 0 <= value <= 1:
         errors.append('quality_blend_max must be finite in [0,1]')
-    for key, minimum in [('quality_blend_warmup_epochs',1),('training_phase_epoch_offset',0)]:
+    for key, minimum in [('quality_blend_warmup_epochs',0),('training_phase_epoch_offset',0)]:
         v=config.get(key,DEFAULTS[key])
         if type(v) is not int or v < minimum:
             errors.append(f'{key} must be integer >= {minimum}')
