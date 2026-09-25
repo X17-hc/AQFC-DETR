@@ -20,7 +20,7 @@ def validate_config(config):
         'allocator_teacher_epochs', 'allocator_schedule', 'allocator_use_boundary_ema',
         'calibrator_gate_type', 'calibrator_use_spatial', 'calibrator_spatial_alphas'}
     for key in config:
-        if key.startswith(('allocator_', 'calibrator_', 'density_target_', 'spatial_')) and key not in known:
+        if key.startswith(('allocator_', 'calibrator_', 'density_target_', 'spatial_', 'train_transform_')) and key not in known:
             errors.append(f'Unknown update configuration field: {key}')
     for key in ('allocator_enabled', 'calibrator_enabled'):
         if type(config.get(key, True)) is not bool:
@@ -30,9 +30,13 @@ def validate_config(config):
         'density_target_backend': ('reference', 'vectorized'),
         'eval_backend': ('legacy', 'faster_aitod'),
         'run_purpose': ('engineering_check', 'research', 'benchmark'),
+        'train_transform_mode': ('legacy', 'native800', 'native_multiscale'),
     }.items():
         if config.get(key, UPDATE_DEFAULTS[key]) not in choices:
             errors.append(f'{key} must be one of {choices}')
+    if config.get('train_transform_mode', 'legacy') in ('native800', 'native_multiscale'):
+        if config.get('fix_size', False) or config.get('strong_aug', False):
+            errors.append(f"{config['train_transform_mode']} is incompatible with fix_size=True or strong_aug=True")
     chunk = config.get('density_target_chunk_size', 512)
     if type(chunk) is not int or chunk < 1:
         errors.append('density_target_chunk_size must be a positive integer')

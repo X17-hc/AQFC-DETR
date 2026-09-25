@@ -1256,6 +1256,12 @@ class ConvertCocoPolysToMask(object):
 # ======================================================================
 
 def make_coco_transforms(image_set, fix_size=False, strong_aug=False, args=None):
+    mode = getattr(args, 'train_transform_mode', 'legacy')
+    if mode not in ('legacy', 'native800', 'native_multiscale'):
+        raise ValueError(f'Unknown train_transform_mode: {mode}')
+    if mode in ('native800', 'native_multiscale') and (fix_size or strong_aug
+            or getattr(args, 'fix_size', False) or getattr(args, 'strong_aug', False)):
+        raise ValueError(f'{mode} is incompatible with fix_size=True or strong_aug=True')
     normalize = T.Compose([
         T.ToTensor(),
         T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -1283,6 +1289,14 @@ def make_coco_transforms(image_set, fix_size=False, strong_aug=False, args=None)
         'scales': scales, 'max_size': max_size,
         'scales2_resize': scales2_resize, 'scales2_crop': scales2_crop
     }
+    if mode in ('native800', 'native_multiscale') and image_set in ['train', 'trainval', 'debug']:
+        # This replaces only the post-composition training transform. Mosaic and
+        # Copy-Paste, their phase schedule, and validation transforms are unchanged.
+        from .native_resize import Native800Resize, NativeMultiScaleResize
+        resize = Native800Resize() if mode == 'native800' else NativeMultiScaleResize()
+        print("data_aug_params:", json.dumps(dict(train_transform_mode=mode,
+              scales=resize.sizes, max_size=resize.max_size, random_crop=False), indent=2))
+        return T.Compose([T.RandomHorizontalFlip(), resize, normalize])
     print("data_aug_params:", json.dumps(datadict_for_print, indent=2))
 
     if image_set in ['train', 'trainval', 'debug']:

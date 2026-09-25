@@ -13,6 +13,81 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audit_geometry_gradients import Tee, gradient_summary, cosine
 
+MODES = ('fresh_c0_c1', 'repeat_c0', 'mature_c0_c1')
+
+
+def file_sha256(path):
+    from util.experiment import sha256
+    return sha256(path)
+
+
+def parse_cli(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    for key in ('config', 'data-root', 'pretrained', 'output-dir'):
+        parser.add_argument('--' + key, required=True)
+    parser.add_argument('--images', type=int, default=32)
+    parser.add_argument('--precisions', choices=['fp32', 'amp', 'fp32,amp'], default='fp32,amp')
+    parser.add_argument('--check-only', action='store_true')
+    parser.add_argument('--mode', choices=MODES, default='fresh_c0_c1')
+    parser.add_argument('--image-ids', dest='image_ids', default=None)
+    parser.add_argument('--optimizer-checkpoint', dest='optimizer_checkpoint', default=None)
+    cli = parser.parse_args(argv)
+    if cli.images < 2 or cli.images > 32 or cli.images % 2:
+        parser.error('images must be even, 2..32')
+    if cli.mode == 'mature_c0_c1' and not cli.optimizer_checkpoint:
+        parser.error('--optimizer-checkpoint is required for --mode mature_c0_c1')
+    if cli.optimizer_checkpoint and cli.mode != 'mature_c0_c1':
+        parser.error('--optimizer-checkpoint is only valid with --mode mature_c0_c1')
+    return cli
+
+
+def load_image_ids(path, expected_count):
+    payload = json.loads(Path(path).read_text(encoding='utf-8'))
+    if isinstance(payload, dict):
+        ids = payload.get('image_ids')
+    elif isinstance(payload, list):
+        ids = payload
+    else:
+        raise ValueError('image-ids must be a JSON list or an object with image_ids')
+    if ids is None:
+        raise ValueError('image-ids file missing image_ids')
+    ids = [int(item) for item in ids]
+    if len(ids) != expected_count:
+        raise ValueError(f'image-ids count {len(ids)} != --images {expected_count}')
+    if len(set(ids)) != len(ids):
+        raise ValueError('Duplicate image IDs')
+    return ids
+
+
+def verify_pretrained(path, expected_sha256, mode):
+    digest = file_sha256(path)
+    if uses_frozen_warmstart(mode) and digest != expected_sha256:
+        raise ValueError('Wrong common epoch23 checkpoint')
+    return digest
+
+
+def uses_frozen_warmstart(mode):
+    return mode != 'mature_c0_c1'
+
+
+def arm_losses(mode, base, combined):
+    if mode == 'repeat_c0':
+        return base, base
+    return base, combined
+
+
+def load_optimizer_state(optimizer, state_dict, device):
+    import torch
+    if not isinstance(state_dict, dict) or 'state' not in state_dict or 'param_groups' not in state_dict:
+        raise ValueError('optimizer-checkpoint is missing AdamW state')
+    if len(state_dict['param_groups']) != len(optimizer.param_groups):
+        raise ValueError('optimizer-checkpoint param group count does not match get_param_dict')
+    optimizer.load_state_dict(state_dict)
+    for bucket in optimizer.state.values():
+        for key, value in bucket.items():
+            if torch.is_tensor(value):
+                bucket[key] = value.to(device)
+
 
 def select_images(annotation, count=32):
     ids = sorted(x['id'] for x in annotation['images'])
@@ -53,13 +128,19 @@ def module_name(name):
     return 'other'
 
 
-def disposable_step(named, groups, loss, amp, scale, clip, retain_graph):
+def disposable_step(named, groups, loss, amp, scale, clip, retain_graph,
+                    optimizer_state=None, scaler_state=None):
     """Use real AdamW/GradScaler on clones; original parameters never receive .grad."""
+    import copy
     import torch
     clones = {id(p): torch.nn.Parameter(p.detach().clone()) for _, p in named}
     copied_groups = [{**g, 'params': [clones[id(p)] for p in g['params']]} for g in groups]
     optimizer = torch.optim.AdamW(copied_groups)
+    if optimizer_state is not None:
+        load_optimizer_state(optimizer, copy.deepcopy(optimizer_state), next(iter(clones.values())).device)
     scaler = torch.amp.GradScaler('cuda', enabled=amp, init_scale=scale)
+    if amp and scaler_state is not None:
+        scaler.load_state_dict(copy.deepcopy(scaler_state))
     gradients = torch.autograd.grad(scaler.scale(loss), [p for _, p in named],
                                     retain_graph=retain_graph, allow_unused=True)
     for (_, p), g in zip(named, gradients):
@@ -77,7 +158,8 @@ def disposable_step(named, groups, loss, amp, scale, clip, retain_graph):
     gradient_summary(delta)
     metadata = dict(gradient_norm=norm, clip_factor=min(1., clip/(norm+1e-6)) if clip > 0 else 1.,
                     scale_before=old_scale, scale_after=scaler.get_scale(), update_applied=True,
-                    optimizer_initial_state='fresh_empty', updated_parameters=len(optimizer.state))
+                    optimizer_initial_state='mature_loaded' if optimizer_state is not None else 'fresh_empty',
+                    updated_parameters=len(optimizer.state))
     return delta, metadata
 
 
@@ -107,7 +189,6 @@ def run(cli, output, record):
     from util.slconfig import SLConfig
     from util.config_validation import validate_config
     from util.incremental_checkpoint import validate_warmstart
-    from util.experiment import sha256
     from util.get_param_dicts import get_param_dict
     from util.misc import collate_fn
     from engine import AllocatorWeightScheduler
@@ -122,14 +203,35 @@ def run(cli, output, record):
     if args.geometry_loss_weight != .05 or args.training_phase_fixed_epoch != 23:
         raise ValueError('Requires frozen geometry_v1 C1 configuration')
     annotation = Path(cli.data_root)/'annotations/aitodv2_trainval.json'
-    hashes = {str(p): sha256(p) for p in (Path(cli.pretrained), annotation)}
-    if hashes[cli.pretrained] != args.expected_pretrained_sha256:
-        raise ValueError('Wrong common epoch23 checkpoint')
-    ids, sampling = select_images(json.loads(annotation.read_text()), cli.images)
-    record.update(inputs=hashes, config=config, image_ids=ids, sampling=sampling,
+    hashes = {str(annotation): file_sha256(annotation)}
+    hashes[cli.pretrained] = verify_pretrained(cli.pretrained, args.expected_pretrained_sha256, cli.mode)
+    annotation_data = json.loads(annotation.read_text(encoding='utf-8'))
+    if cli.image_ids:
+        ids = load_image_ids(cli.image_ids, cli.images)
+        known = {item['id'] for item in annotation_data['images']}
+        missing = [item for item in ids if item not in known]
+        if missing:
+            raise ValueError(f'Unknown image_ids: {missing[:8]}')
+        sampling = dict(method='fixed_from_file', source=cli.image_ids, count=len(ids))
+    else:
+        ids, sampling = select_images(annotation_data, cli.images)
+    scopes = {
+        'fresh_c0_c1': 'First AdamW step, fresh optimizer per arm and per batch. Not mature momentum or training.',
+        'repeat_c0': 'C0 to C0 repeat on the same graph; measures numerical noise of a disposable first step.',
+        'mature_c0_c1': 'One disposable step from a loaded C0 optimizer state. Not a replay of the C1 trajectory.',
+    }
+    record.update(inputs=hashes, config=config, image_ids=ids, sampling=sampling, mode=cli.mode,
         cuda_visible_devices=os.getenv('CUDA_VISIBLE_DEVICES'), torch=torch.__version__, cuda=torch.version.cuda,
-        scope='First AdamW step, fresh optimizer per arm and per batch. Not mature momentum or training.',
+        scope=scopes[cli.mode],
         limitations='Plateau geometry weight .05, validation transforms, no AMP equivalence claim; no loss-group attribution in this entry.')
+    if cli.mode == 'mature_c0_c1':
+        packed = torch.load(cli.optimizer_checkpoint, map_location='cpu', weights_only=False)
+        if 'optimizer' not in packed:
+            raise KeyError('optimizer-checkpoint missing optimizer')
+        record['optimizer_checkpoint'] = dict(
+            path=cli.optimizer_checkpoint, sha256=file_sha256(cli.optimizer_checkpoint),
+            epoch=packed.get('epoch'), has_scaler='scaler' in packed)
+        hashes[cli.optimizer_checkpoint] = record['optimizer_checkpoint']['sha256']
     if cli.check_only:
         record['status'] = 'preflight_only'
         return
@@ -137,9 +239,17 @@ def run(cli, output, record):
         raise RuntimeError('CUDA required; no fallback')
     random.seed(42); np.random.seed(42); torch.manual_seed(42); torch.cuda.manual_seed_all(42)
     model, criterion, _ = build_model_main(args)
-    validate_warmstart(model, args)
+    if uses_frozen_warmstart(cli.mode):
+        validate_warmstart(model, args)
     saved = torch.load(cli.pretrained, map_location='cpu', weights_only=False)
-    model.load_state_dict(saved['model'], strict=True); del saved
+    model.load_state_dict(saved['model'], strict=True)
+    optimizer_blob = scaler_blob = None
+    if cli.mode == 'mature_c0_c1':
+        packed = saved if Path(cli.optimizer_checkpoint).resolve() == Path(cli.pretrained).resolve() else (
+            torch.load(cli.optimizer_checkpoint, map_location='cpu', weights_only=False))
+        optimizer_blob = packed['optimizer']
+        scaler_blob = packed.get('scaler')
+    del saved
     model.cuda().train(); model.set_epoch(23); criterion.cuda().train()
     criterion.quality_lambda = .25; criterion.weight_dict['loss_geometry'] = .05
     named = [(n, p) for n, p in model.named_parameters() if p.requires_grad]
@@ -184,9 +294,12 @@ def run(cli, output, record):
                         if k in criterion.weight_dict and k!='loss_geometry')+allocator_weight*allocation['loss_allocator_total']
                     combined=base+.05*losses['loss_geometry']
                 if not torch.isfinite(combined): raise FloatingPointError('Non-finite loss')
+                left, right = arm_losses(cli.mode, base, combined)
                 # Both arms reuse this exact graph/matching. Only cloned parameters are stepped.
-                a, ma=disposable_step(named,groups,base,mode=='amp',args.amp_init_scale,args.clip_max_norm,True)
-                b, mb=disposable_step(named,groups,combined,mode=='amp',args.amp_init_scale,args.clip_max_norm,False)
+                a, ma=disposable_step(named,groups,left,mode=='amp',args.amp_init_scale,args.clip_max_norm,True,
+                                      optimizer_blob, scaler_blob)
+                b, mb=disposable_step(named,groups,right,mode=='amp',args.amp_init_scale,args.clip_max_norm,False,
+                                      optimizer_blob, scaler_blob)
                 record['virtual_optimizer_updates']+=2
                 row=dict(batch=batch,precision=mode,image_ids=[int(t['image_id']) for t in targets],
                     gt_count=sum(len(t['labels']) for t in targets),query_counts=out['executed_query_counts'].tolist(),
@@ -198,18 +311,12 @@ def run(cli, output, record):
         for n,b in model.named_buffers(): b.copy_(buffers[n])
     if any(p._version!=versions[n] or p.grad is not None for n,p in named):
         raise AssertionError('Source model changed')
-    if any(sha256(p)!=h for p,h in hashes.items()): raise AssertionError('Input changed')
+    if any(file_sha256(p)!=h for p,h in hashes.items()): raise AssertionError('Input changed')
     record.update(status='completed',source_model_unchanged=True,inputs_unchanged=True,buffers_restored=True)
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
-    for key in ('config','data-root','pretrained','output-dir'): p.add_argument('--'+key,required=True)
-    p.add_argument('--images',type=int,default=32)
-    p.add_argument('--precisions',choices=['fp32','amp','fp32,amp'],default='fp32,amp')
-    p.add_argument('--check-only',action='store_true')
-    cli=p.parse_args()
-    if cli.images<2 or cli.images>32 or cli.images%2: p.error('images must be even, 2..32')
+    cli=parse_cli()
     from datetime import datetime, timezone
     import uuid
     import hashlib

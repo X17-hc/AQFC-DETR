@@ -12,7 +12,7 @@ UPDATE_DEFAULTS = dict(allocator_encoder_type='standard', allocator_enabled=True
                        calibrator_enabled=True, density_target_backend='reference',
                        density_target_chunk_size=512, spatial_semantic_ratio=.75,
                        spatial_grid_size=[8, 8], eval_backend='legacy',
-                       run_purpose='engineering_check')
+                       run_purpose='engineering_check', train_transform_mode='legacy')
 
 
 def variant_signature(args):
@@ -39,12 +39,16 @@ def variant_signature(args):
     for key, value in geometry_defaults.items():
         if result.get(key) == value:
             result.pop(key, None)
+    # Absence historically means legacy; retain that exact signed representation.
+    if result.get('train_transform_mode') == 'legacy':
+        result.pop('train_transform_mode')
     return json.loads(json.dumps(result, default=str))
 
 
 def original_variant(args):
     sig = variant_signature(args)
-    return (sig['classification_loss_type']=='focal' and sig['training_phase_epoch_offset']==0
+    return ('train_transform_mode' not in sig
+            and sig['classification_loss_type']=='focal' and sig['training_phase_epoch_offset']==0
             and sig['training_phase_total_epochs'] is None
             and sig['allocator_encoder_type'] == 'standard' and sig['allocator_enabled']
             and sig['calibrator_enabled'] and sig['density_target_backend'] == 'reference'
