@@ -1,0 +1,192 @@
+{
+  "status": "DEPLOYED_HASHES_VERIFIED",
+  "root": "D:\\PythonProject\\AQFC-DETR",
+  "backup": "D:\\PythonProject\\AQFC-DETR\\legacy_artifacts\\h1_deployment_20260927T005359930487Z",
+  "manifest": {
+    "version": "legacy_joint_v2_1",
+    "project": "AQFC-DETR",
+    "files": [
+      {
+        "path": ".run/AQFC-DETR H1历史初始化联合增强24轮.run.xml",
+        "before_sha256": null,
+        "after_sha256": "ca414a6cdac21522e85e327be5cc03e6cde3d9373fffb3c72bf4faf124544e53",
+        "size": 1699
+      },
+      {
+        "path": ".run/AQFC-DETR H1历史初始化联合增强epoch0及其评估.run.xml",
+        "before_sha256": null,
+        "after_sha256": "1de20ac264d80174977cf7196e4a76484efceefe0fffa6d93aca9e9ef816f619",
+        "size": 1718
+      },
+      {
+        "path": ".run/AQFC-DETR H1联合增强20步及评估.run.xml",
+        "before_sha256": null,
+        "after_sha256": "2a505636ebca80cc461f70398ebe12ae7efda7f65e6373a4f9a7577a54dd2ebd",
+        "size": 1698
+      },
+      {
+        "path": ".run/AQFC-DETR历史初始化与联合结构检查.run.xml",
+        "before_sha256": null,
+        "after_sha256": "2ceca177fa383f5617a3ec5b34fbafcb70044d86584a68cd4de3c9304c93cb04",
+        "size": 1413
+      },
+      {
+        "path": ".run/AQFC-DETR原主体-H1同卡短性能对照.run.xml",
+        "before_sha256": null,
+        "after_sha256": "7c2276227f845f95c2887fbe156d9ef4c8e0c97e78767b7fd3f63f7f5b059380",
+        "size": 1608
+      },
+      {
+        "path": "configs/legacy_joint/control.py",
+        "before_sha256": null,
+        "after_sha256": "e4f1c7eef11e583e29d7f3c4c52003aace21573a011125b2c2fd36f20a99ae4a",
+        "size": 182
+      },
+      {
+        "path": "configs/legacy_joint/h1_24e.py",
+        "before_sha256": null,
+        "after_sha256": "fd646b90744a7ee0c520c9170cd29db2cf32be73f6160be14b0f75ae640d7731",
+        "size": 680
+      },
+      {
+        "path": "configs/legacy_joint/h1_epoch0.py",
+        "before_sha256": null,
+        "after_sha256": "ad00dec7701d78bb7519023f8cc527ff10f49a36fbc5162f7a6f07bd824d4546",
+        "size": 127
+      },
+      {
+        "path": "configs/legacy_joint/h1_smoke.py",
+        "before_sha256": null,
+        "after_sha256": "7397407a9d918491d870da7e065aed555cbb112d0650bb987d21e06b0c2cf1d6",
+        "size": 149
+      },
+      {
+        "path": "docs/H1_精度优先完整训练_使用说明.md",
+        "before_sha256": null,
+        "after_sha256": "737f9747552fba8a11ff691b93b3edb85b508cccb51d38d6ff143c1c9e6d37f5",
+        "size": 7673
+      },
+      {
+        "path": "main.py",
+        "before_sha256": "d9a9ac0d773cec719b7b2df9c38c2a3177b5f9c6cc97fafcdd26bdff96c3e493",
+        "after_sha256": "a39a8dde6006ebd72278783620e42c06b60ba62059d1e2a7c8058fd06a118ed7",
+        "size": 34125
+      },
+      {
+        "path": "models/aqfcdetr/joint_modules.py",
+        "before_sha256": null,
+        "after_sha256": "093d489f32a116f972061f003eae923887c4b8a4c88a694cfc2aff9d63c28adf",
+        "size": 11487
+      },
+      {
+        "path": "models/aqfcdetr/model.py",
+        "before_sha256": "637b38003726b2a47c79c780612c5eda5ac6378058bc7abf8cb986af72ebd962",
+        "after_sha256": "a7739b511f7fc0b1408d662e916cef23e096cec6311820efd0e5eadfc3b745de",
+        "size": 38409
+      },
+      {
+        "path": "models/aqfcdetr/transformer.py",
+        "before_sha256": "5ee3461a40b32ad87372989ab766be1a1a3fe3608e3857a621b8764eaa9182e7",
+        "after_sha256": "640f3acb5c3e2e91a49ce5f6fad6da4a4a6daad0e9b124d357915a6d5cab0b35",
+        "size": 63540
+      },
+      {
+        "path": "tests/test_f2.py",
+        "before_sha256": "899193eb952a05bee04361165978492f9e46862b39b6ab583d49b13886f78c86",
+        "after_sha256": "7945954da92e1777e138811a39c8634830726114bab183eaa6aebb059fdb6dcd",
+        "size": 12178
+      },
+      {
+        "path": "tests/test_joint_integration.py",
+        "before_sha256": null,
+        "after_sha256": "65d7db542abecf2d4d100df98240aa8ce27b62aa7cb13aa0bd052900c501e37b",
+        "size": 7739
+      },
+      {
+        "path": "tests/test_legacy_joint.py",
+        "before_sha256": null,
+        "after_sha256": "b61b9896898b2f0986d2444b75f6e5eedb09458a98c046a78abb8c043c4047ce",
+        "size": 11357
+      },
+      {
+        "path": "tests/test_precision24.py",
+        "before_sha256": "c3154cb0e76e329eda374b98b00313d06128c4a7154cbf5d10874f0615dde965",
+        "after_sha256": "aa63d395cba525acf643abd086752352ede9db85b7d9719c9206eaa435598d44",
+        "size": 19495
+      },
+      {
+        "path": "tools/benchmark_control.py",
+        "before_sha256": "960d9f5218363984ce04a650f8c8d73caaca745b44e0a28baa3f9bda2aabcfe2",
+        "after_sha256": "62df39d29ed100285c95bd30dd76cb5b7911a9364fa1c9d1f558a394180c6698",
+        "size": 9665
+      },
+      {
+        "path": "tools/benchmark_incremental.py",
+        "before_sha256": "365ce85f4848ad0cc75fd6c03e45ff0b7ab550fa65cfe77f378bafc518e080b5",
+        "after_sha256": "0891cb39929a3f392d6048bdad6360ed5da5ea93ea093f0668e16a9dadb993e3",
+        "size": 11582
+      },
+      {
+        "path": "tools/benchmark_interleaved.py",
+        "before_sha256": "29b00cb152b58f289ba409820e7cb9e69b3a468fa41cdbb96160c2e1e44f974c",
+        "after_sha256": "57387469e0e62ccee7c4572b92d5069ab76c68c1f936a5a819003ec2ecd232da",
+        "size": 13822
+      },
+      {
+        "path": "tools/run_joint_training.py",
+        "before_sha256": null,
+        "after_sha256": "a29bc6a8b2f4571d6b7212ab8f23daec75c32838f961c050a9e7bda1969ed128",
+        "size": 4988
+      },
+      {
+        "path": "tools/validate_joint.py",
+        "before_sha256": null,
+        "after_sha256": "a64abd180c57583d2b7971f79e258e206b332257ad4a05fe80a9dfdecae67949",
+        "size": 3001
+      },
+      {
+        "path": "util/checkpoint.py",
+        "before_sha256": "aa3f8bb631add2df57b6f92560ba0a4ad6ffdb673f974164d5499bca0ab93c0d",
+        "after_sha256": "e5128c189363ee8ad3b1705b1143fafb4740b7b14fa8561f7a7fe64e6d2d0881",
+        "size": 8136
+      },
+      {
+        "path": "util/config_validation.py",
+        "before_sha256": "e4796120f305d6c49f272d2e1c043a1ccfad74bd036bc46d9758020cb6baac1f",
+        "after_sha256": "876ed20ab4ab720b709e303ddebcc5bcc290e1aa9d80c0ea1fcacca2da57d492",
+        "size": 8755
+      },
+      {
+        "path": "util/experiment.py",
+        "before_sha256": "c2770fe1dc36fbd33ccb0094d9b6292c11104953855c8afad3b7a4c80c804889",
+        "after_sha256": "8e23d096cfcb50a584fe321276cb14d4ca33fc494f8728576075deaee27ad32c",
+        "size": 6919
+      },
+      {
+        "path": "util/get_param_dicts.py",
+        "before_sha256": "62af04154a4075edadf0e3dba82e1c16fda646ff79d1a322a65afd3eaeb1c3b2",
+        "after_sha256": "537724333d812d84c6d8278a1b0a20118b567c0caeab78e814ffb84979b1c3fa",
+        "size": 3600
+      },
+      {
+        "path": "util/joint_runtime.py",
+        "before_sha256": null,
+        "after_sha256": "559eb62fc1c9e439f3407eb592eca400dfcefc95112a8746f007a26758d86fbd",
+        "size": 6059
+      },
+      {
+        "path": "util/legacy_joint.py",
+        "before_sha256": null,
+        "after_sha256": "f0b7a68adcb068610d7cf28b3ee7dd3bcbf247b21f61e8757a45786f6f451309",
+        "size": 11983
+      },
+      {
+        "path": "util/precision24.py",
+        "before_sha256": "ccffdd9edffae708c05c71a0fedef23e22b75bdb58b4e6b65178ef831d3794be",
+        "after_sha256": "4b142034839ab00ac6ccdb4c91c55325d90ae8e04e9da4a107ed4ad1c3c7dc49",
+        "size": 9032
+      }
+    ],
+    "scope": "H1 implementation only; no datasets/weights/outputs; no real training started"
+  }
+}

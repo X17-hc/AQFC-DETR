@@ -1,0 +1,42 @@
+{
+  "status": "DEPLOYED_HASHES_VERIFIED",
+  "root": "D:\\PythonProject\\AQFC-DETR",
+  "backup": "D:\\PythonProject\\AQFC-DETR\\legacy_artifacts\\h1_deployment_20260927T010525763182Z",
+  "manifest": {
+    "version": "legacy_joint_v2_1",
+    "project": "AQFC-DETR",
+    "files": [
+      {
+        "path": "docs/evidence_h1_20260927/console.log",
+        "before_sha256": null,
+        "after_sha256": "c32db9388cce5c9467e216b89a9a257ceb581df8147d86c68c000582b181d184",
+        "size": 5237
+      },
+      {
+        "path": "docs/evidence_h1_20260927/entry_validation.log",
+        "before_sha256": null,
+        "after_sha256": "c47e77c5dccadb5d7dbd5737adfb725ed8c5deb2edc8834dd2cf7dcdbe1b43f7",
+        "size": 8106
+      },
+      {
+        "path": "docs/evidence_h1_20260927/result.json",
+        "before_sha256": null,
+        "after_sha256": "f9746cb39bf7a99dedb1487593f30edb6ed7fb932a4bbc695e7f3eda8d5f6219",
+        "size": 526
+      },
+      {
+        "path": "docs/evidence_h1_20260927/server_tests.xml",
+        "before_sha256": null,
+        "after_sha256": "b6f29577dbd909bcbae1fe562681eab6f6ee18e93e772658ebce64fe25fe5e4d",
+        "size": 55234
+      },
+      {
+        "path": "docs/H1_精度优先完整训练_验收报告.md",
+        "before_sha256": null,
+        "after_sha256": "986394dca4704b042e3f838e2d9bf8725540a770ec1de10cc635931e70458c91",
+        "size": 6477
+      }
+    ],
+    "scope": "H1 implementation only; no datasets/weights/outputs; no real training started"
+  }
+}

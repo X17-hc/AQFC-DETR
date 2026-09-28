@@ -482,6 +482,10 @@ class DeformableTransformer(nn.Module):
             ref_token_coord=enc_refpoint_embed,
         )
 
+        if hasattr(self, 'semantic_detail_bridge'):
+            memory, self.joint_features, self.joint_detail_ratios = self.semantic_detail_bridge(memory, srcs, masks)
+            self.joint_aux_outputs = None
+
         # ========== AQBA query-budget allocation ==========
         real_counts = None
         if self.training and dn_targets is not None:
@@ -640,6 +644,9 @@ class DeformableTransformer(nn.Module):
                                              topk_proposals.unsqueeze(-1).repeat(1, 1, 4)).sigmoid()
 
             tgt_undetach = torch.gather(output_memory, 1, topk_proposals.unsqueeze(-1).repeat(1, 1, self.d_model))
+            if self.training and hasattr(self, 'candidate_auxiliary_head'):
+                anchors = torch.gather(output_proposals, 1, topk_proposals.unsqueeze(-1).expand(-1, -1, 4))
+                self.joint_aux_outputs = self.candidate_auxiliary_head(tgt_undetach, anchors, query_valid_mask)
             if self.embed_init_tgt:
                 tgt_ = self.tgt_embed.weight[0:topk, None, :].repeat(1, bs, 1).transpose(0, 1)
             else:
@@ -773,6 +780,13 @@ class TransformerEncoder(nn.Module):
                 ref_token_index: Optional[Tensor] = None,
                 ref_token_coord: Optional[Tensor] = None
                 ):
+        if hasattr(self, 'p2_substitutes'):
+            if ref_token_index is not None or ref_token_coord is not None:
+                raise ValueError('P2 transfer supports standard two-stage encoder only')
+            from .p2_transfer import encoder_forward
+            output, _ = encoder_forward(self, src, pos, spatial_shapes, level_start_index,
+                                        valid_ratios, key_padding_mask)
+            return output, None, None
         if self.two_stage_type in ['no', 'standard', 'enceachlayer', 'enclayer1']:
             assert ref_token_index is None
 
@@ -797,9 +811,16 @@ class TransformerEncoder(nn.Module):
 
             if not dropflag:
                 if self.deformable_encoder:
-                    output = layer(src=output, pos=pos, reference_points=reference_points,
-                                   spatial_shapes=spatial_shapes, level_start_index=level_start_index,
-                                   key_padding_mask=key_padding_mask)
+                    if hasattr(self, 'detail_fusion') and layer_id >= self.detail_full_layers:
+                        split = int(spatial_shapes[0].prod())
+                        low = layer.forward_queries(
+                            output[:, split:], pos[:, split:], reference_points[:, split:],
+                            output, spatial_shapes, level_start_index, key_padding_mask)
+                        output = torch.cat((output[:, :split], low), dim=1)
+                    else:
+                        output = layer(src=output, pos=pos, reference_points=reference_points,
+                                       spatial_shapes=spatial_shapes, level_start_index=level_start_index,
+                                       key_padding_mask=key_padding_mask)
                 else:
                     output = layer(src=output.transpose(0, 1), pos=pos.transpose(0, 1),
                                    key_padding_mask=key_padding_mask).transpose(0, 1)
@@ -824,6 +845,9 @@ class TransformerEncoder(nn.Module):
 
         if self.norm is not None:
             output = self.norm(output)
+
+        if hasattr(self, 'detail_fusion'):
+            output = self.detail_fusion(output, spatial_shapes, key_padding_mask)
 
         if ref_token_index is not None:
             intermediate_output = torch.stack(intermediate_output)
@@ -1045,7 +1069,13 @@ class DeformableTransformerEncoderLayer(nn.Module):
         return src
 
     def forward(self, src, pos, reference_points, spatial_shapes, level_start_index, key_padding_mask=None):
-        src2 = self.self_attn(self.with_pos_embed(src, pos), reference_points, src, spatial_shapes, level_start_index,
+        return self.forward_queries(src, pos, reference_points, src, spatial_shapes,
+                                    level_start_index, key_padding_mask)
+
+    def forward_queries(self, src, pos, reference_points, memory, spatial_shapes,
+                        level_start_index, key_padding_mask=None):
+        # Query residual/FFN need not have the same length as the five-level value memory.
+        src2 = self.self_attn(self.with_pos_embed(src, pos), reference_points, memory, spatial_shapes, level_start_index,
                               key_padding_mask)
         src = src + self.dropout1(src2)
         src = self.norm1(src)

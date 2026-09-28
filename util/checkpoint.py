@@ -89,6 +89,20 @@ def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, e
     rank = torch.distributed.get_rank() if distributed else 0
     if optimizer is not None and rng_states is not None and len(rng_states) != world_size:
         raise ValueError('Checkpoint RNG rank count differs from current world size; use --pretrained')
+    from .precision24 import restore as restore_precision24
+    if getattr(model, 'precision24_enabled', False) and optimizer is not None:
+        if rng_states is None:
+            raise ValueError('precision24 training resume requires RNG state')
+        saved_groups = checkpoint.get('precision24_parameter_groups')
+        if not isinstance(saved_groups, list) or len(saved_groups) != len(optimizer.param_groups):
+            raise ValueError('precision24 optimizer group definitions are missing or differ')
+        for saved_group, current_group in zip(saved_groups, optimizer.param_groups):
+            for key in ('precision24_group', 'precision24_peak_lr', 'precision24_names'):
+                if saved_group.get(key) != current_group.get(key):
+                    raise ValueError(f'precision24 optimizer group differs: {key}')
+    restore_precision24(model, checkpoint)
+    from .legacy_joint import restore as restore_joint
+    restore_joint(model, checkpoint, expected_values, optimizer)
     model.load_state_dict(state, strict=True)
     if optimizer is not None:
         optimizer.load_state_dict(checkpoint['optimizer'])

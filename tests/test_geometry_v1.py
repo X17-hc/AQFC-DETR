@@ -149,10 +149,12 @@ def test_configs_and_xml_identical_except_geometry():
         args=argparse.Namespace(**cfg)
         for epoch in range(3): assert training_phase(args,epoch)==(23,24)
         assert quality_progress(args,0,7009)==.25
-        doc=ET.parse(f'.run/AQFC-DETR_Geometry_{arm}.run.xml')
+        filename = {'c0': 'AQFC-DETR C0原损失对照3轮及最终评估.run.xml',
+                    'c1': 'AQFC-DETR C1尺度归一化几何3轮及最终评估.run.xml'}[arm]
+        doc=ET.parse(Path('.run') / filename)
         opts={x.get('name'):x.get('value') for x in doc.findall('.//option')}
         assert opts['WORKING_DIRECTORY']=='/workspace/AQFC-DETR'
-        assert opts['RUN_WITH_PYTHON_CONSOLE']=='false'
+        assert opts.get('RUN_WITH_PYTHON_CONSOLE','false')=='false'
         cli=get_args_parser().parse_args(shlex.split(opts['PARAMETERS']))
         assert cli.num_workers==2 and cli.seed==42 and cli.amp and cli.unique_output_dir
         assert cli.pretrain_model_path.endswith('resume_epoch11_20260916/checkpoint0023.pth')

@@ -42,6 +42,12 @@ def variant_signature(args):
     # Absence historically means legacy; retain that exact signed representation.
     if result.get('train_transform_mode') == 'legacy':
         result.pop('train_transform_mode')
+    from .precision24 import signature
+    result.update(signature(values))
+    from .p2_transfer import signature as transfer_signature
+    result.update(transfer_signature(values))
+    from .legacy_joint import signature as joint_signature
+    result.update(joint_signature(values))
     return json.loads(json.dumps(result, default=str))
 
 

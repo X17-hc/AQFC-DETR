@@ -15,6 +15,12 @@ LEGACY_FIELDS = {
 def validate_config(config):
     from .incremental import validate_incremental
     errors = validate_incremental(config)
+    from .precision24 import validate as validate_precision24
+    validate_precision24(config, errors)
+    from .p2_transfer import validate as validate_p2_transfer
+    validate_p2_transfer(config, errors)
+    from .legacy_joint import validate as validate_joint
+    validate_joint(config, errors)
     from .experiment import UPDATE_DEFAULTS
     known = set(UPDATE_DEFAULTS) | {'allocator_loss_weight', 'allocator_fallback_queries',
         'allocator_teacher_epochs', 'allocator_schedule', 'allocator_use_boundary_ema',

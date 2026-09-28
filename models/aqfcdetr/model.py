@@ -240,6 +240,28 @@ class AQFCDETR(nn.Module):
                 dn_post_process(outputs_class, outputs_coord_list,
                                 dn_meta, self.aux_loss, self._set_aux_loss)
         out = {'pred_logits': outputs_class[-1], 'pred_boxes': outputs_coord_list[-1]}
+        if hasattr(self, 'local_refiner'):
+            dn_length = int(dn_meta.get('pad_size', 0)) if dn_meta is not None else 0
+            matching_queries = hs[-1][:, dn_length:]
+            image_sizes = torch.stack(((~samples.mask[:, :, 0]).sum(1),
+                                       (~samples.mask[:, 0, :]).sum(1)), dim=1)
+            out['pred_boxes_coarse'] = out['pred_boxes']
+            out['pred_boxes'] = self.local_refiner(
+                matching_queries, out['pred_boxes_coarse'], srcs[:2], masks[:2],
+                image_sizes, query_valid_mask)
+        if hasattr(self, 'distribution_refiner'):
+            dn_length = int(dn_meta.get('pad_size', 0)) if dn_meta is not None else 0
+            image_sizes = torch.stack(((~samples.mask[:, :, 0]).sum(1), (~samples.mask[:, 0, :]).sum(1)), 1)
+            out['pred_boxes_coarse'] = out['pred_boxes']
+            out['pred_boxes'], out['refine_distribution_logits'] = self.distribution_refiner(
+                hs[-1][:, dn_length:], out['pred_boxes_coarse'], self.transformer.joint_features,
+                masks[:2], image_sizes, query_valid_mask)
+            out['joint_image_sizes'] = image_sizes
+            out['joint_detail_ratios'] = self.transformer.joint_detail_ratios
+            if self.training:
+                out['auxiliary_o2m_outputs'] = self.transformer.joint_aux_outputs
+            # Do not retain a completed autograd graph on the module between batches.
+            self.transformer.joint_features = self.transformer.joint_aux_outputs = None
         out['query_valid_mask'] = query_valid_mask
         out['executed_query_counts'] = query_counts
         if self.aux_loss:
@@ -444,6 +466,8 @@ class SetCriterion(nn.Module):
 
     def forward(self, outputs, targets, return_indices=False):
         outputs_without_aux = {k: v for k, v in outputs.items() if k != 'aux_outputs'}
+        if 'pred_boxes_coarse' in outputs:
+            outputs_without_aux['pred_boxes'] = outputs['pred_boxes_coarse']
         device = next(iter(outputs.values())).device
         indices = self.matcher(outputs_without_aux, targets)
 
@@ -491,7 +515,20 @@ class SetCriterion(nn.Module):
             losses.update(l_dict)
 
         for loss in self.losses:
-            losses.update(self.get_loss(loss, outputs, targets, indices, num_boxes))
+            values = self.get_loss(loss, outputs, targets, indices, num_boxes)
+            if loss == 'boxes' and 'pred_boxes_coarse' in outputs:
+                coarse = dict(outputs, pred_boxes=outputs['pred_boxes_coarse'])
+                coarse_values = self.get_loss(loss, coarse, targets, indices, num_boxes)
+                mix = (.5 * min(1., self.quality_successful_updates/self.joint_warmup_updates)
+                       if getattr(self, 'joint_enabled', False) else .5)
+                values = {key: mix*value + (1-mix)*coarse_values[key] for key, value in values.items()}
+            losses.update(values)
+
+        if getattr(self, 'joint_enabled', False):
+            from util.legacy_joint import extra_losses
+            losses.update(extra_losses(self, outputs, targets, indices, num_boxes))
+            losses['joint_detail_p2_ratio'] = outputs['joint_detail_ratios'][0]
+            losses['joint_detail_p3_ratio'] = outputs['joint_detail_ratios'][1]
 
         if self.geometry_max_weight > 0:
             from util.geometry_loss import matched_geometry_loss
@@ -661,6 +698,8 @@ def build_aqfcdetr(args):
         dn_label_noise_ratio=args.dn_label_noise_ratio,
         dn_labelbook_size=dn_labelbook_size,
     )
+    from util.precision24 import configure
+    configure(model, args)
     if args.masks:
         model = DETRsegm(model, freeze_detr=(args.frozen_weights is not None))
 
@@ -728,6 +767,8 @@ def build_aqfcdetr(args):
                              geometry_loss_weight=getattr(args,'geometry_loss_weight',0.0),
                              geometry_min_size_pixels=getattr(args,'geometry_min_size_pixels',4.0),
                              geometry_smooth_l1_beta=getattr(args,'geometry_smooth_l1_beta',0.1))
+    from util.legacy_joint import configure as configure_joint
+    configure_joint(model, criterion, args)
     criterion.to(device)
     postprocessors = {'bbox': PostProcess(nms_iou_threshold=args.nms_iou_threshold,
         valid_category_ids=(range(1, 11) if getattr(args, 'dataset_file', '') == 'visdrone'

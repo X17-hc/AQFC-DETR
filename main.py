@@ -25,6 +25,8 @@ from util.geometry_loss import criterion_progress
 from util.checkpoint import load_native_resume, migration_report_path, capture_rng_state
 from util.checkpoint_migration import load_legacy_pretrained
 from util.config_validation import validate_config
+from util.epoch_boundary import validate_stop, reached_stop, atomic_save, first_epoch_review
+from util import legacy_joint as joint
 import util.misc as utils
 
 import datasets
@@ -109,6 +111,8 @@ def get_args_parser():
                         help='device to use for training / testing')
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--resume', default='', help='resume from checkpoint')
+    parser.add_argument('--p2-adapter', default='', help='Complete layerwise_v2 adapter initialization')
+    parser.add_argument('--p2-acceptance', default='', help='Matching 1000-image quality receipt for student training')
     # 新训练默认加载旧最佳权重。--resume 会取消此默认值；显式同时指定则报错。
     parser.add_argument('--pretrained', dest='pretrain_model_path', type=str,
                         default=str(PROJECT_ROOT / 'weights/legacy/dqdetr_best305.pth'),
@@ -145,6 +149,9 @@ def get_args_parser():
                         help='Limit steps per epoch for smoke tests; 0 means full epoch')
     parser.add_argument('--max-eval-steps', type=int, default=0,
                         help='Limit validation batches; 0 means full evaluation')
+    # Runtime stop only: never shorten the signed 24-epoch learning-rate schedule.
+    parser.add_argument('--stop-after-epochs', type=int, default=0,
+                        help='Stop after N complete epochs in this process, after evaluation/save; 0 disables')
 
     return parser
 
@@ -166,11 +173,18 @@ def build_data_loaders(args):
     if args.eval:
         return None, dataset_val, None, loader_val, None
     dataset_train = build_dataset(image_set=args.train_split, args=args)
+    sampler_generator = worker_generator = None
+    if joint.active(args):
+        from util.joint_runtime import SeededDataset
+        dataset_train = SeededDataset(dataset_train, args.seed)
+        sampler_generator = torch.Generator().manual_seed(args.seed+2001)
+        worker_generator = torch.Generator().manual_seed(args.seed+2002)
     sampler_train = (DistributedSampler(dataset_train) if args.distributed
-                     else torch.utils.data.RandomSampler(dataset_train))
+                     else torch.utils.data.RandomSampler(dataset_train, generator=sampler_generator))
     batches = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
     loader_train = DataLoader(dataset_train, batch_sampler=batches, collate_fn=utils.collate_fn,
-                              num_workers=args.num_workers, pin_memory=True, persistent_workers=False)
+                              num_workers=args.num_workers, pin_memory=True, persistent_workers=False,
+                              generator=worker_generator)
     if len(loader_train) == 0:
         raise ValueError('Training loader is empty; check dataset size and batch_size')
     return dataset_train, dataset_val, loader_train, loader_val, sampler_train
@@ -184,6 +198,7 @@ def build_model_main(args):
 
 def main(args):
     args = resolve_launch_defaults(args)
+    validate_stop(args)
     if getattr(args, 'unique_output_dir', False) and getattr(args, 'world_size', 1) > 1:
         raise ValueError('Unique output directories currently require a single-process launch')
     unique_output(args)
@@ -262,6 +277,8 @@ def main(args):
     # print(args)
 
     device = torch.device(args.device)
+    if joint.active(args) and args.distributed:
+        raise ValueError('H1 v2 currently validates single-process training only')
 
     seed = args.seed + utils.get_rank()
     torch.manual_seed(seed)
@@ -301,6 +318,10 @@ def main(args):
                        'Use train/val splits and full validation for model selection.')
     if args.eval:
         lr_scheduler = None
+    elif joint.active(args):
+        # State is saved for resume, but ONLY the successful-update/epoch clock
+        # in joint.update_lr changes actual rates. No second decay scheduler.
+        lr_scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda _: 1.)
     elif args.onecyclelr:
         lr_scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=args.lr,
                                                            steps_per_epoch=len(data_loader_train), epochs=args.epochs,
@@ -334,22 +355,34 @@ def main(args):
             best_metrics=best_metrics, expected_args=args)
 
     if (not args.resume) and args.pretrain_model_path:
-        if getattr(args,'strict_warmstart',False):
+        if joint.active(args):
+            report = joint.initialize(model_without_ddp, args)
+        elif getattr(args,'strict_warmstart',False):
             from util.incremental_checkpoint import validate_warmstart
             validate_warmstart(model_without_ddp,args)
-        report = load_legacy_pretrained(
-            model_without_ddp, args.pretrain_model_path,
-            report_path=migration_report_path(args.output_dir),
-            expected_sha256=getattr(args, 'expected_pretrained_sha256', ''))
+        if not joint.active(args):
+            report = load_legacy_pretrained(
+                model_without_ddp, args.pretrain_model_path,
+                report_path=migration_report_path(args.output_dir),
+                expected_sha256=getattr(args, 'expected_pretrained_sha256', ''))
         logger.info(
             f"Warm-start coverage: {report['coverage_by_numel']:.2%}; "
             f"missing={len(report['missing_keys'])}, mismatched={len(report['shape_mismatched_keys'])}")
         if ema_m is not None:
             ema_m.module.load_state_dict(model_without_ddp.state_dict(), strict=True)
 
+    from util.p2_transfer import initialize_student
+    initialize_student(model_without_ddp, args)
+    criterion.quality_successful_updates = getattr(args,'quality_successful_updates',0)
+    if joint.active(args) and not args.eval:
+        from util.joint_runtime import restore_loader
+        restore_loader(data_loader_train, getattr(args, '_joint_data_rng', None))
+        if hasattr(args, '_joint_data_rng'):
+            del args._joint_data_rng
+        if not args.resume and not args.pretrain_model_path:
+            raise ValueError('H1 must initialize from the pinned historical checkpoint')
     if args.rank == 0:
         write_manifest(args, PROJECT_ROOT)
-    criterion.quality_successful_updates = getattr(args,'quality_successful_updates',0)
     if args.eval:
         os.environ['EVAL_FLAG'] = 'TRUE'
         evaluation_model = ema_m.module if args.eval_ema else model
@@ -392,7 +425,10 @@ def main(args):
             print(f"[MosaicPScheduler] {mosaic_scheduler}")
 
     for epoch in range(args.start_epoch, args.epochs):
+        if joint.active(args):
+            data_loader_train.dataset.epoch = epoch
         epoch_start_time = time.time()
+        test_stats = None
         best_checkpoint_paths = []
         if args.distributed:
             sampler_train.set_epoch(epoch)
@@ -407,7 +443,7 @@ def main(args):
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
 
-        if not args.onecyclelr:
+        if not args.onecyclelr and not joint.active(args):
             lr_scheduler.step()
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
@@ -428,6 +464,18 @@ def main(args):
                     'run_metadata': run_metadata(args, train_stats['train_iterations'], len(data_loader_train)),
                     'best_metrics': best_metrics,
                 }
+            from util.precision24 import state as precision24_state
+            if joint.active(args):
+                from util.joint_runtime import loader_state
+                weights['joint_state'] = joint.checkpoint_state(model_without_ddp, args, optimizer,
+                    epoch, criterion.quality_successful_updates)
+                weights['joint_data_rng'] = loader_state(data_loader_train)
+            if getattr(args, 'precision24_enabled', False):
+                weights['precision24_state'] = precision24_state(
+                    model_without_ddp, criterion.quality_successful_updates)
+                weights['precision24_parameter_groups'] = [
+                    {k: v for k, v in group.items() if k != 'params'}
+                    for group in optimizer.param_groups]
             if args.rank == 0:
                 write_manifest(args, PROJECT_ROOT, update={
                     'last_epoch': epoch, **weights['run_metadata']})
@@ -436,6 +484,24 @@ def main(args):
                         'ema_model': ema_m.module.state_dict(),
                     })
 
+        # Preserve a complete training boundary BEFORE long validation. Pending
+        # evaluation is explicit and cannot generate a first-epoch continuation.
+        from util.precision24 import is_fixed_six_refiner
+        if (args.output_dir and (is_fixed_six_refiner(args) or joint.active(args))
+                and (epoch in args.val_epoch or (joint.active(args) and epoch in args.joint_subset_epochs))
+                and weights['run_metadata']['epoch_complete']
+                and not weights['run_metadata']['smoke_test']):
+            weights['evaluation_state'] = 'pending'
+            weights['rng_states'] = utils.all_gather(capture_rng_state())
+            if utils.is_main_process():
+                atomic_save(weights, output_dir / f'checkpoint{epoch:04}_pending_eval.pth')
+                logger.info('Complete training epoch saved; evaluation pending.')
+
+        # H1 evaluation never consumes the subsequent training random stream.
+        joint_rng = capture_rng_state() if joint.active(args) else None
+        if joint.active(args) and epoch not in args.val_epoch and epoch in args.joint_subset_epochs:
+            from util.joint_runtime import subset_evaluation
+            subset_evaluation(args, epoch, model, criterion, postprocessors, dataset_val, base_ds, device, evaluate)
         # eval
         if epoch in args.val_epoch:
             test_stats, coco_evaluator = evaluate(
@@ -504,14 +570,45 @@ def main(args):
                 with (output_dir / log_name).open('a') as f:
                     f.write(json.dumps(log_stats) + '\n')
         # Save after validation so resume retains the latest selection history.
+        if joint_rng is not None:
+            from util.checkpoint import restore_rng_state
+            restore_rng_state(joint_rng)
         if args.output_dir:
             # Collect each rank's post-validation RNG stream for epoch-boundary resume.
             weights['rng_states'] = utils.all_gather(capture_rng_state())
+            if is_fixed_six_refiner(args) or joint.active(args):
+                weights['evaluation_state'] = (('partial' if args.max_eval_steps else 'complete')
+                    if test_stats is not None else 'subset_complete'
+                    if joint.active(args) and epoch in args.joint_subset_epochs else 'not_scheduled')
             for checkpoint_path in checkpoint_paths + best_checkpoint_paths:
-                utils.save_on_master(weights, checkpoint_path)
+                if is_fixed_six_refiner(args) or joint.active(args):
+                    if utils.is_main_process():
+                        atomic_save(weights, checkpoint_path)
+                else:
+                    utils.save_on_master(weights, checkpoint_path)
+            if is_fixed_six_refiner(args) and epoch == 0 and args.epochs == 24 and utils.is_main_process():
+                eval_ids = (coco_evaluator.coco_eval['bbox'].params.imgIds
+                            if test_stats is not None and coco_evaluator is not None else [])
+                review = first_epoch_review(args, train_stats, test_stats, len(data_loader_train),
+                    len(dataset_val), eval_ids, output_dir / 'checkpoint0000.pth', PROJECT_ROOT)
+                logger.info('F2 first-epoch review: %s', review['status'])
+            if joint.active(args) and epoch == 0 and test_stats is not None and not args.max_train_steps and not args.max_eval_steps:
+                from util.joint_runtime import continuation
+                continuation(args, train_stats, test_stats, output_dir/'checkpoint0000.pth')
+        if joint.active(args) and args.max_train_steps:
+            logger.info('H1 smoke limit reached; partial epoch is not a resumable full-training checkpoint.')
+            break
+        if reached_stop(args, epoch):
+            if not train_stats['train_iterations'] == len(data_loader_train):
+                raise RuntimeError('Cannot count a partial epoch toward --stop-after-epochs')
+            logger.info('Requested stop after %s complete epoch(s); checkpoint saved. No automatic continuation.',
+                        epoch - args.start_epoch + 1)
+            break
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    print('Training time {}'.format(total_time_str))
+    from util.precision24 import is_fixed_six_refiner
+    label = 'Total run time (training + evaluation + checkpoint I/O)' if is_fixed_six_refiner(args) or joint.active(args) else 'Training time'
+    print('{} {}'.format(label, total_time_str))
 
     # remove the copied files.
     copyfilelist = vars(args).get('copyfilelist')

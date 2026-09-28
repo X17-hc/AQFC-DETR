@@ -151,6 +151,8 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
     model_without_ddp = model.module if hasattr(model, 'module') else model
     if hasattr(model_without_ddp, 'set_epoch'):
         model_without_ddp.set_epoch(phase_epoch)
+    from util.precision24 import set_epoch as set_structure_epoch, update_lr
+    set_structure_epoch(model_without_ddp, epoch)
     criterion.train()
     metric_logger = utils.MetricLogger(delimiter="  ", batched_transfer=getattr(args,'batched_metric_transfer',False))
     metric_logger.add_meter('lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
@@ -181,6 +183,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         current_allocator_weight = allocator_weight_scheduler.get_weight(
             phase_epoch, _cnt, len(data_loader))
         criterion.quality_lambda = quality_progress(args, criterion.quality_successful_updates, len(data_loader))
+        update_lr(optimizer, args, epoch, criterion.quality_successful_updates)
         update_geometry_weight(criterion)
 
         with torch.amp.autocast('cuda', enabled=args.amp):
@@ -276,6 +279,12 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         metric_logger.update(loss=loss_value, **loss_dict_reduced_scaled, **loss_dict_reduced_unscaled)
         metric_logger.update(allocator_weight=current_allocator_weight)
         metric_logger.update(quality_lambda=criterion.quality_lambda, training_phase_epoch=phase_epoch)
+        if getattr(args, 'precision24_enabled', False):
+            metric_logger.update(encoder_full_layers=model_without_ddp.transformer.encoder.detail_full_layers)
+            if 'pred_boxes_coarse' in outputs:
+                valid = outputs['query_valid_mask']
+                delta = (outputs['pred_boxes'].detach() - outputs['pred_boxes_coarse'].detach()).abs()
+                metric_logger.update(refinement_mean_abs_normalized=delta[valid].mean())
         if criterion.geometry_max_weight > 0:
             metric_logger.update(geometry_weight=criterion.weight_dict['loss_geometry'])
         metric_logger.update(optimizer_step_applied=float(step_applied))

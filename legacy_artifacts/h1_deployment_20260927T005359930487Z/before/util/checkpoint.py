@@ -1,0 +1,137 @@
+from pathlib import Path
+import random
+import warnings
+
+import numpy as np
+import torch
+
+from .checkpoint_migration import extract_state_dict, is_legacy_state_dict
+
+
+def capture_rng_state():
+    """Capture the calling rank's random streams at an epoch boundary."""
+    return dict(python=random.getstate(), numpy=np.random.get_state(),
+                torch=torch.get_rng_state(),
+                cuda=torch.cuda.get_rng_state_all() if torch.cuda.is_available() else [])
+
+
+def restore_rng_state(state):
+    random.setstate(state['python'])
+    np.random.set_state(state['numpy'])
+    torch.set_rng_state(state['torch'])
+    if state['cuda'] and torch.cuda.is_available():
+        if len(state['cuda']) != torch.cuda.device_count():
+            raise ValueError('Checkpoint CUDA RNG device count differs from this host')
+        torch.cuda.set_rng_state_all(state['cuda'])
+
+
+def load_native_resume(model, checkpoint_path, optimizer=None, scheduler=None, ema=None, scaler=None,
+                       best_metrics=None, expected_args=None):
+    checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
+    state = extract_state_dict(checkpoint)
+    expected_values = (expected_args if isinstance(expected_args,dict) else
+                       vars(expected_args) if expected_args is not None else {})
+    if expected_args is not None and optimizer is not None:
+        from .experiment import variant_signature, original_variant
+        saved = checkpoint.get('variant_signature')
+        from .incremental import DEFAULTS
+        # Historical epoch-boundary resumes remain possible on the original clocks/loss.
+        # Never reinterpret a missing signature as authorization for a new loss/phase.
+        incremental = {k: expected_values.get(k,v) for k,v in DEFAULTS.items()}
+        original_clock = (incremental['classification_loss_type']=='focal' and
+                          incremental['training_phase_epoch_offset']==0 and
+                          incremental['training_phase_total_epochs'] is None)
+        if saved is not None and 'correctness_revision' not in saved and original_clock:
+            saved = {**saved, **{k:v for k,v in variant_signature(expected_args).items()
+                                 if k in DEFAULTS or k=='correctness_revision'}}
+            warnings.warn('Historical checkpoint predates correctness_revision; corrected inference applies', RuntimeWarning)
+        if ((saved is not None and saved != variant_signature(expected_args)) or
+                (saved is None and not original_variant(expected_args))):
+            raise ValueError('Training variant signature differs or is unknown; use --pretrained')
+        if expected_values.get('classification_loss_type','focal')=='quality_blend' and 'criterion_progress' not in checkpoint:
+            raise KeyError('Quality-blend resume requires criterion_progress')
+        progress=checkpoint.get('criterion_progress',{}).get('successful_updates',0)
+        if type(progress) is not int or progress < 0:
+            raise ValueError('criterion_progress.successful_updates must be a non-negative integer')
+        if expected_values.get('geometry_loss_weight', 0) > 0:
+            steps = checkpoint.get('criterion_progress', {}).get('geometry_warmup_steps')
+            if type(steps) is not int or steps < 1:
+                raise ValueError('Geometry resume requires a positive geometry_warmup_steps')
+    if is_legacy_state_dict(state):
+        raise ValueError('Legacy checkpoints are warm-start weights; use --pretrained instead of --resume')
+    metadata = checkpoint.get('run_metadata', {})
+    old_args = checkpoint.get('args')
+    old_limits = any(getattr(old_args, name, 0) for name in ('max_train_steps', 'max_eval_steps'))
+    if optimizer is not None and (metadata.get('smoke_test') or
+                                  metadata.get('epoch_complete') is False or old_limits):
+        raise ValueError('A smoke/partial checkpoint cannot resume a full epoch; use --pretrained')
+    required = []
+    if (optimizer is not None or scheduler is not None) and 'epoch' not in checkpoint:
+        required.append('epoch')
+    if optimizer is not None and 'optimizer' not in checkpoint:
+        required.append('optimizer')
+    if scheduler is not None and 'lr_scheduler' not in checkpoint:
+        required.append('lr_scheduler')
+    if ema is not None and 'ema_model' not in checkpoint:
+        required.append('ema_model')
+    if scaler is not None and 'scaler' not in checkpoint:
+        required.append('scaler')
+    if best_metrics is not None and optimizer is not None and 'best_metrics' not in checkpoint:
+        required.append('best_metrics (use --pretrained for older initialization-only checkpoints)')
+    if required:
+        raise KeyError(f"Native resume checkpoint is missing: {', '.join(required)}")
+    if optimizer is not None and 'epoch' in checkpoint:
+        if type(checkpoint['epoch']) is not int or checkpoint['epoch'] < 0:
+            raise ValueError('Resume epoch must be a non-negative integer')
+    rng_states = checkpoint.get('rng_states')
+    distributed = torch.distributed.is_available() and torch.distributed.is_initialized()
+    world_size = torch.distributed.get_world_size() if distributed else 1
+    rank = torch.distributed.get_rank() if distributed else 0
+    if optimizer is not None and rng_states is not None and len(rng_states) != world_size:
+        raise ValueError('Checkpoint RNG rank count differs from current world size; use --pretrained')
+    from .precision24 import restore as restore_precision24
+    if getattr(model, 'precision24_enabled', False) and optimizer is not None:
+        if rng_states is None:
+            raise ValueError('precision24 training resume requires RNG state')
+        saved_groups = checkpoint.get('precision24_parameter_groups')
+        if not isinstance(saved_groups, list) or len(saved_groups) != len(optimizer.param_groups):
+            raise ValueError('precision24 optimizer group definitions are missing or differ')
+        for saved_group, current_group in zip(saved_groups, optimizer.param_groups):
+            for key in ('precision24_group', 'precision24_peak_lr', 'precision24_names'):
+                if saved_group.get(key) != current_group.get(key):
+                    raise ValueError(f'precision24 optimizer group differs: {key}')
+    restore_precision24(model, checkpoint)
+    model.load_state_dict(state, strict=True)
+    if optimizer is not None:
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        if expected_args is not None:
+            count=checkpoint.get('criterion_progress',{}).get('successful_updates',0)
+            if isinstance(expected_args,dict):
+                expected_args['quality_successful_updates']=count
+            else:
+                expected_args.quality_successful_updates=count
+            if expected_values.get('geometry_loss_weight', 0) > 0:
+                steps = checkpoint['criterion_progress']['geometry_warmup_steps']
+                if isinstance(expected_args, dict):
+                    expected_args['geometry_warmup_steps'] = steps
+                else:
+                    expected_args.geometry_warmup_steps = steps
+    if scheduler is not None:
+        scheduler.load_state_dict(checkpoint['lr_scheduler'])
+    if ema is not None:
+        ema.module.load_state_dict(checkpoint['ema_model'], strict=True)
+    if scaler is not None and 'scaler' in checkpoint:
+        scaler.load_state_dict(checkpoint['scaler'])
+    if best_metrics is not None:
+        best_metrics.update(checkpoint.get('best_metrics', {}))
+    if optimizer is not None:
+        if rng_states is not None:
+            restore_rng_state(rng_states[rank])
+        else:
+            warnings.warn('Checkpoint has no RNG state: resume is not random-stream reproducible',
+                          RuntimeWarning)
+    return int(checkpoint.get('epoch', -1)) + 1
+
+
+def migration_report_path(output_dir):
+    return Path(output_dir) / 'checkpoint_migration_report.json'

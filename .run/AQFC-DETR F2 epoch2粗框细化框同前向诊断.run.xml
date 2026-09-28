@@ -1,0 +1,25 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AQFC-DETR F2 epoch2粗框细化框同前向诊断" type="PythonConfigurationType" factoryName="Python">
+    <module name="AQFC-DETR" />
+    <option name="INTERPRETER_OPTIONS" value="-u" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+      <env name="PYTHONIOENCODING" value="utf-8" />
+      <env name="CUDA_VISIBLE_DEVICES" value="2" />
+      <env name="OMP_NUM_THREADS" value="2" />
+      <env name="MKL_NUM_THREADS" value="2" />
+    </envs>
+    <option name="SDK_HOME" value="/opt/conda/envs/AQFC-DETR/bin/python" />
+    <option name="SDK_NAME" value="SSH (sftp://root@219.216.64.62:32880/opt/conda/envs/AQFC-DETR/bin/python)" />
+    <option name="WORKING_DIRECTORY" value="/workspace/AQFC-DETR" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tools/diagnose_f2_boxes.py" />
+    <option name="PARAMETERS" value="--checkpoint /workspace/AQFC-DETR/outputs/precision24/f2_24e/20260925_092806_619953_b2fdd00ce16c/checkpoint0002.pth --data-root /workspace/DQDetr/data/path/AITODv2 --precheck-ids /workspace/AQFC-DETR/outputs/precision24/stage_audit/20260925T050600Z_f2e5365c/image_ids.json --image-ids /workspace/AQFC-DETR/outputs/legacy24_diagnosis_20260917/subset_ids.json --output-dir /workspace/AQFC-DETR/outputs/precision24/f2_epoch2_box_diagnosis" />
+    <option name="EMULATE_TERMINAL" value="false" />
+    <option name="MODULE_MODE" value="false" />
+    <method v="2" />
+  </configuration>
+</component>

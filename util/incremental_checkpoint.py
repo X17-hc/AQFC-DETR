@@ -16,7 +16,13 @@ def validate_warmstart(model,args):
         raise ValueError('Strict warm-start requires an explicitly complete epoch checkpoint')
     saved=checkpoint.get('model',{})
     target=model.state_dict()
-    if saved.keys()!=target.keys() or any(saved[k].shape!=target[k].shape for k in target):
+    from .precision24 import NEW_PREFIXES, is_fixed_six_refiner
+    missing = set(target) - set(saved)
+    prefixes = ('local_refiner.',) if is_fixed_six_refiner(args) else NEW_PREFIXES
+    allowed = (getattr(args, 'precision24_enabled', False) and
+               all(key.startswith(prefixes) for key in missing))
+    if (set(saved) - set(target) or (missing and not allowed) or
+            any(saved[k].shape != target[k].shape for k in saved if k in target)):
         raise ValueError('Strict warm-start requires 100% model state coverage')
     if any(not torch.isfinite(v).all() for v in saved.values() if v.is_floating_point()):
         raise ValueError('Non-finite state in warm-start checkpoint')

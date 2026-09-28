@@ -72,7 +72,7 @@ def test_resume_rejects_cross_mode(tmp_path):
                 load_native_resume(model,path,optimizer=optimizer,expected_args=args)
 
 def test_xml():
-    paths=list((ROOT/'.run').glob('*S2*.run.xml')); assert len(paths)==2
+    paths=list((ROOT/'.run').glob('AQFC-DETR S2温和多尺度*.run.xml')); assert len(paths)==2
     for p in paths:
         c=ET.parse(p).getroot().find('configuration')
         o={x.get('name'):x.get('value') for x in c.findall('option')}

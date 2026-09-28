@@ -16,10 +16,14 @@ def test_active_remote_launchers_are_safe_and_unique():
         config=E.parse(path).getroot().find('configuration')
         names.append(config.get('name'))
         options={x.get('name'):x.get('value') for x in config.findall('option')}
-        assert options['SDK_HOME']=='/opt/conda/envs/AQFC-DETR/bin/python'
+        expected='/opt/conda/envs/AQFC-DETR/bin/python'
+        # PyCharm can serialize a named remote interpreter with an empty SDK_HOME.
+        assert options['SDK_HOME']==expected or (options['SDK_HOME']=='' and
+            options.get('SDK_NAME')==f'SSH (sftp://root@219.216.64.62:32880{expected})')
         assert options['WORKING_DIRECTORY']=='/workspace/AQFC-DETR'
         visible=config.find("envs/env[@name='CUDA_VISIBLE_DEVICES']").get('value')
-        assert visible.isdigit() or visible.startswith('GPU-')
+        cpu_offline = options['SCRIPT_NAME'].endswith('/tools/offline_geometry_review.py')
+        assert visible.isdigit() or visible.startswith('GPU-') or (visible == '-1' and cpu_offline)
         script=options['SCRIPT_NAME'].replace('$PROJECT_DIR$',str(root))
         assert Path(script).is_file()
         if script.endswith('/main.py'):

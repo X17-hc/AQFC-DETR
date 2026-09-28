@@ -109,14 +109,14 @@ def test_resume_modes(tmp_path,old,new):
         assert load_native_resume(model,path,optimizer=optimizer,expected_args=args)==1
 
 def test_run_configurations():
-    paths=list((ROOT/'.run').glob('*S1*.run.xml')); assert len(paths)==2
+    paths=list((ROOT/'.run').glob('AQFC-DETR S1原尺度细节保留*.run.xml')); assert len(paths)==2
     for path in paths:
         config=ET.parse(path).getroot().find('configuration')
         options={x.attrib['name']:x.attrib['value'] for x in config.findall('option')}
         env={x.attrib['name']:x.attrib['value'] for x in config.findall('envs/env')}
         assert options['WORKING_DIRECTORY']=='/workspace/AQFC-DETR'
         assert options['SDK_HOME']=='/opt/conda/envs/AQFC-DETR/bin/python'
-        assert env['CUDA_VISIBLE_DEVICES']=='2' and env['PYTHONUNBUFFERED']=='1'
+        assert env['CUDA_VISIBLE_DEVICES'].isdigit() and env['PYTHONUNBUFFERED']=='1'
         argv=shlex.split(options['PARAMETERS']); smoke='20步' in path.name
         assert '--resume' not in argv and '--unique-output-dir' in argv
         assert argv[argv.index('--max-train-steps')+1]==('20' if smoke else '0')

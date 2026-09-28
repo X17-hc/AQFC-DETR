@@ -1,0 +1,19 @@
+{
+  "test_exit_code": 0,
+  "gpu_environment": "2",
+  "status": "SYNTHETIC_AND_INITIALIZATION_PASSED",
+  "real_data_training": "NOT_RUN",
+  "benchmark": "NOT_RUN",
+  "initialization": [
+    {
+      "variant": "control",
+      "common_sha256": "c542f128ff0d9edc1c110c0f4c181f24d2b7eca21b6a1b704e481da4d3b1507f",
+      "coverage": 0.9894531588976959
+    },
+    {
+      "variant": "h1_24e",
+      "common_sha256": "c542f128ff0d9edc1c110c0f4c181f24d2b7eca21b6a1b704e481da4d3b1507f",
+      "coverage": 0.9734706262531655
+    }
+  ]
+}

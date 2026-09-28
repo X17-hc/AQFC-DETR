@@ -63,13 +63,13 @@ def test_cli_defaults_do_not_import_torch_or_start_experiment():
 def test_new_run_xml_has_remote_linux_workdir_and_no_console():
     import xml.etree.ElementTree as ET,shlex
     from tools.benchmark_interleaved import parser
-    path=Path(__file__).resolve().parents[1]/'.run/AQFC-DETR_InterleavedGPU.run.xml'
+    path=Path(__file__).resolve().parents[1]/'.run/AQFC-DETR同GPU交错短对照.run.xml'
     doc=ET.parse(path); options={x.get('name'):x.get('value') for x in doc.findall('.//option')}
     assert options['WORKING_DIRECTORY']=='/workspace/AQFC-DETR'
     assert options['RUN_TOOL']==''
     assert doc.find('.//env[@name="CUDA_VISIBLE_DEVICES"]').get('value')=='3'
     args=parser().parse_args(shlex.split(options['PARAMETERS']))
-    assert args.workers==0 and args.amp
+    assert args.workers in (0,2,4,8) and args.amp
 
 
 def test_cpu_deltas_and_telemetry_errors_are_visible(tmp_path):

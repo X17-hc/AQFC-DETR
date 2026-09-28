@@ -28,12 +28,19 @@ from util.profiling import training_profile
 
 def run(variant,workers,repeat,cli,ids):
     random.seed(42); np.random.seed(42); torch.manual_seed(42); torch.cuda.manual_seed_all(42)
-    config=SLConfig.fromfile(str(ROOT/f'configs/incremental_v2/{variant}.py'))._cfg_dict.to_dict()
+    joint_run = variant in ('joint_control', 'joint_h1')
+    precision = variant in ('f0', 'f1', 'p2_student')
+    relative = ('configs/legacy_joint/'+('control' if variant=='joint_control' else 'h1_24e')+'.py' if joint_run else
+                'configs/p2_transfer/student_24e.py' if variant == 'p2_student' else
+                f'configs/precision24/{variant}_24e.py' if precision else f'configs/incremental_v2/{variant}.py')
+    config=SLConfig.fromfile(str(ROOT/relative))._cfg_dict.to_dict()
     validate_config(config)
     config.update(coco_path=cli.data_root,device='cuda',distributed=False,rank=0,
         fix_size=False,masks=False,pretrain_model_path=cli.pretrained,num_workers=workers,
         data_aug_scales=[800],data_aug_max_size=1333,mosaic_p=0.,copy_paste_p=0.)
     args=argparse.Namespace(**config)
+    if joint_run:
+        args.seed=42;args.output_dir=cli.output_dir
     # Training members with validation transforms: deterministic geometry across workers.
     dataset=build_dataset('trainval',args)
     dataset._transforms=make_coco_transforms('val',fix_size=False,strong_aug=False,args=args)
@@ -42,11 +49,25 @@ def run(variant,workers,repeat,cli,ids):
     loader=DataLoader(Subset(dataset,[index[i] for i in ids]),batch_size=2,
         num_workers=workers,collate_fn=collate_fn,pin_memory=True,persistent_workers=False)
     model,criterion,_=build_model_main(args)
-    validate_warmstart(model,args)
-    state=torch.load(cli.pretrained,map_location='cpu',weights_only=False)
-    model.load_state_dict(state['model'],strict=True); del state
-    model.cuda().train(); model.set_epoch(11); criterion.cuda().train()
-    criterion.quality_lambda=.25 if variant=='p2' else 0.
+    if joint_run:
+        from util.legacy_joint import initialize
+        initialize(model,args)
+        model.transformer.force_query_budget=900
+        criterion.quality_successful_updates=500  # Mature new-loss ramps, not a free warmup speedup.
+    else:
+        validate_warmstart(model,args)
+        state=torch.load(cli.pretrained,map_location='cpu',weights_only=False)
+        # validate_warmstart checks shared keys and the exact new-key allowlist.
+        model.load_state_dict(state['model'],strict=not precision); del state
+    if variant == 'p2_student':
+        from util.p2_transfer import load_artifact
+        load_artifact(model, cli.adapter, require_receipt=True, receipt=cli.acceptance)
+    phase = 23 if precision or joint_run else 11
+    model.cuda().train(); model.set_epoch(phase); criterion.cuda().train()
+    if precision:
+        from util.precision24 import set_epoch
+        set_epoch(model, 4)  # Final structure, not the six-layer transition stage.
+    criterion.quality_lambda=.25 if variant=='p2' or precision or joint_run else 0.
     optimizer=torch.optim.AdamW(get_param_dict(args,model),lr=args.lr,weight_decay=args.weight_decay)
     scaler=torch.amp.GradScaler('cuda',enabled=cli.amp,init_scale=32.)
     budget=QueryBudgetLoss(coverage_weight=args.coverage_loss_weight,spacing_weight=args.spacing_loss_weight,
@@ -54,7 +75,7 @@ def run(variant,workers,repeat,cli,ids):
         boundary_guide_weight=args.boundary_guide_loss_weight,density_weight=args.density_map_loss_weight,
         density_target_backend=args.density_target_backend,density_target_chunk_size=args.density_target_chunk_size).cuda()
     from engine import AllocatorWeightScheduler
-    weight=AllocatorWeightScheduler(**args.allocator_schedule,total_epochs=24).get_weight(11,0,len(loader))*args.allocator_loss_weight
+    weight=AllocatorWeightScheduler(**args.allocator_schedule,total_epochs=24).get_weight(phase,0,len(loader))*args.allocator_loss_weight
     timings=[]; core=[]; calls=[]; skips=0; streak=0; total_skips=0
     measured_start_unix=None; measured_end_unix=None
     profile_accounting={}
@@ -108,6 +129,9 @@ def run(variant,workers,repeat,cli,ids):
         timing_schema_version=2,measured_step_seconds=sum(timings),
         profiled=bool(cli.profile),profile_accounting=profile_accounting,
         resolved_config=config,quality_lambda=criterion.quality_lambda,measurements=calls)
+    if joint_run:
+        result.update(common_initialization_sha256=model.joint_common_sha,
+                      fixed_budget=900,phase_epoch=phase,joint_ramp=1.)
     del model,criterion,optimizer,budget,out,loss,losses,alloc,loader,iterator
     torch.cuda.empty_cache()
     return result

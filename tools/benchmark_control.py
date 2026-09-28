@@ -60,6 +60,30 @@ def summarize(rows):
                 throughput_drift_warning=any(x is not None and x>10 for x in ranges.values()))
 
 
+def summarize_precision24(rows):
+    mapped = [dict(r, variant={'f0': 'p1', 'f1': 'p2'}[r['variant']]) for r in rows]
+    data = summarize(mapped)
+    med = data['median_images_per_second']
+    return dict(comparison='F0 vs F1 final two-full-layer stage',
+                median_images_per_second={'f0': med['p1'], 'f1': med['p2']},
+                f1_throughput_gain_percent=(-data['p2_throughput_penalty_percent']
+                    if data['p2_throughput_penalty_percent'] is not None else None),
+                paired_gain_percent=[-x for x in data['paired_penalty_percent']],
+                throughput_drift_warning=data['throughput_drift_warning'])
+
+
+def summarize_joint(rows):
+    data=summarize([dict(r,variant={'joint_control':'p1','joint_h1':'p2'}[r['variant']]) for r in rows])
+    med=data['median_images_per_second']
+    return dict(comparison='Historical common initialization; original body vs H1, fixed900, mature loss ramps',
+        median_images_per_second={'control':med['p1'],'h1':med['p2']},
+        h1_throughput_penalty_percent=data['p2_throughput_penalty_percent'],
+        h1_step_time_overhead_percent=(100*(med['p1']/med['p2']-1) if all(med.values()) else None),
+        paired_penalty_percent=data['paired_penalty_percent'],
+        throughput_drift_warning=data['throughput_drift_warning'],
+        limitation='Short architecture cost check, not a new H0 full24 accuracy control')
+
+
 def summarize_spatial(rows):
     """Both arms use P2; do not mislabel backend speed as a focal/quality comparison."""
     mapped=[dict(r,variant={'reference':'p1','optimized':'p2'}[r['variant']]) for r in rows]

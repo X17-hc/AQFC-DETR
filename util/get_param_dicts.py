@@ -13,6 +13,12 @@ def match_name_keywords(n: str, name_keywords: list):
 
 
 def get_param_dict(args, model_without_ddp: nn.Module):
+    from .legacy_joint import active, parameter_groups
+    if active(args):
+        return parameter_groups(args, model_without_ddp)
+    if getattr(args, 'precision24_enabled', False):
+        from .precision24 import param_groups
+        return param_groups(args, model_without_ddp)
     try:
         param_dict_type = args.param_dict_type
     except:

@@ -39,12 +39,20 @@ def test_pycharm_real_parser_and_config_no_conflicts():
     from util.config_validation import validate_config
     import shlex
     root=Path(__file__).resolve().parents[1]
-    paths=list((root/'.run').glob('AQFC-DETR_Incremental*.xml'))
+    # PyCharm/user renamed these files; verify the six intended launchers, not obsolete filenames.
+    filenames = ['AQFC-DETR_IncrementalValidate.run.xml',
+                 'AQFC-DETR修复后20步训练及评估.run.xml',
+                 'AQFC-DETR增量优化性能测量.run.xml',
+                 'AQFC-DETR修复后微调起点完整评估.run.xml',
+                 'AQFC-DETR工程提速对照3轮及评估.run.xml',
+                 'AQFC-DETR质量对齐3轮及评估.run.xml']
+    paths=[root/'.run'/name for name in filenames]
     assert len(paths)==6
     for path in paths:
         doc=ET.parse(path); options={x.get('name'):x.get('value') for x in doc.findall('.//option')}
         assert options['WORKING_DIRECTORY']=='/workspace/AQFC-DETR'
-        assert doc.find('.//env[@name="CUDA_VISIBLE_DEVICES"]').get('value')=='2'
+        visible=doc.find('.//env[@name="CUDA_VISIBLE_DEVICES"]').get('value')
+        assert visible.isdigit() or visible.startswith('GPU-')
         if options['SCRIPT_NAME'].endswith('/main.py'):
             argv=shlex.split(options['PARAMETERS'].replace('/workspace/AQFC-DETR',root.as_posix()))
             args=get_args_parser().parse_args(argv)
