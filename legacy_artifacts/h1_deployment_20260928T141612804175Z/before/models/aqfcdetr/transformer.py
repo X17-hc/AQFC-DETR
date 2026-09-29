@@ -322,7 +322,7 @@ class DeformableTransformer(nn.Module):
         return flattened
 
     def select_proposal_indices(self, class_logits, density_prior, padding_mask, topk, proposal_boxes=None,
-                               spatial_shapes=None, query_counts=None, decoded_proposal_boxes=None):
+                               spatial_shapes=None, query_counts=None):
         from util.profiling import region
         with region('CandidateSelection'):
             return select_proposal_indices(
@@ -332,8 +332,7 @@ class DeformableTransformer(nn.Module):
                 mixed_density_ratio=self.mixed_density_ratio, proposal_boxes=proposal_boxes,
                 spatial_shapes=spatial_shapes, spatial_semantic_ratio=self.spatial_semantic_ratio,
                 spatial_grid_size=self.spatial_grid_size, diagnostics=self.spatial_diagnostics,
-                query_counts=query_counts, decoded_proposal_boxes=decoded_proposal_boxes,
-                protected_density_valid_classes=getattr(self, 'protected_density_valid_classes', tuple(range(8))))
+                query_counts=query_counts)
 
     @staticmethod
     def _build_target_padding_mask(tgt, query_valid_mask):
@@ -374,9 +373,7 @@ class DeformableTransformer(nn.Module):
             proposal_indices = self.select_proposal_indices(
                 group_class, group_density, group_padding, count,
                 proposal_boxes=output_proposals.index_select(0, sample_indices),
-                spatial_shapes=spatial_shapes,
-                decoded_proposal_boxes=(coord_logits.index_select(0, sample_indices).detach().float().sigmoid()
-                    if getattr(self, 'proposal_selection_mode', None) == 'protected_density' else None))
+                spatial_shapes=spatial_shapes)
 
             group_coords = coord_logits.index_select(0, sample_indices)
             group_output_memory = output_memory.index_select(0, sample_indices)
@@ -638,9 +635,7 @@ class DeformableTransformer(nn.Module):
                 topk_proposals = self.select_proposal_indices(
                     enc_outputs_class_unselected, density_prior_flat, mask_flatten, topk,
                     proposal_boxes=output_proposals, spatial_shapes=spatial_shapes,
-                    query_counts=query_counts,
-                    decoded_proposal_boxes=(enc_outputs_coord_unselected.detach().float().sigmoid()
-                        if self.proposal_selection_mode == 'protected_density' else None))
+                    query_counts=query_counts)
 
             refpoint_embed_undetach = torch.gather(enc_outputs_coord_unselected, 1,
                                                    topk_proposals.unsqueeze(-1).repeat(1, 1, 4))

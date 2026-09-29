@@ -139,7 +139,6 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         density_target_chunk_size=getattr(args, 'density_target_chunk_size', 512)
     ).to(device)
     budget_criterion.train()
-    budget_criterion.underestimate_enabled = getattr(args, 'density_underestimate_weight', 0.) > 0
 
     allocator_weight_scheduler = AllocatorWeightScheduler(
         warmup_epochs=args.allocator_schedule['warmup_epochs'],
@@ -206,16 +205,6 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                     current_allocator_weight * args.allocator_loss_weight)
                 losses = losses + weighted_allocator_loss
                 loss_dict['loss_allocator_total'] = weighted_allocator_loss
-                if budget_criterion.underestimate_enabled:
-                    from util.dome_transfer import under_weight
-                    coefficient = under_weight(args, criterion.quality_successful_updates)
-                    raw = budget_loss_out['loss_density_under_raw']
-                    weighted = coefficient * raw
-                    losses = losses + weighted
-                    loss_dict.update(loss_density_under=weighted, loss_density_under_raw=raw,
-                        density_under_support=budget_loss_out['density_under_support'],
-                        density_under_weight=raw.detach().new_tensor(coefficient))
-                    weight_dict['loss_density_under'] = 1.
                 for key in ('loss_budget_coverage', 'loss_budget_interval', 'loss_count',
                             'loss_budget_spacing', 'loss_boundary_guide', 'loss_density_map'):
                     loss_dict[key] = budget_loss_out[key]

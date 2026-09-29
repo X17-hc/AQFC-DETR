@@ -28,11 +28,9 @@ from util.profiling import training_profile
 
 def run(variant,workers,repeat,cli,ids):
     random.seed(42); np.random.seed(42); torch.manual_seed(42); torch.cuda.manual_seed_all(42)
-    dome_run = variant in ('d0','d1')
-    joint_run = variant in ('joint_control', 'joint_h1') or dome_run
+    joint_run = variant in ('joint_control', 'joint_h1')
     precision = variant in ('f0', 'f1', 'p2_student')
-    relative = (f'configs/dome_transfer/{variant}_3e.py' if dome_run else
-                'configs/legacy_joint/'+('control' if variant=='joint_control' else 'h1_24e')+'.py' if joint_run else
+    relative = ('configs/legacy_joint/'+('control' if variant=='joint_control' else 'h1_24e')+'.py' if joint_run else
                 'configs/p2_transfer/student_24e.py' if variant == 'p2_student' else
                 f'configs/precision24/{variant}_24e.py' if precision else f'configs/incremental_v2/{variant}.py')
     config=SLConfig.fromfile(str(ROOT/relative))._cfg_dict.to_dict()
@@ -54,8 +52,7 @@ def run(variant,workers,repeat,cli,ids):
     if joint_run:
         from util.legacy_joint import initialize
         initialize(model,args)
-        if not dome_run:
-            model.transformer.force_query_budget=900
+        model.transformer.force_query_budget=900
         criterion.quality_successful_updates=500  # Mature new-loss ramps, not a free warmup speedup.
     else:
         validate_warmstart(model,args)
@@ -77,19 +74,9 @@ def run(variant,workers,repeat,cli,ids):
         count_weight=args.count_loss_weight,interval_weight=args.interval_loss_weight,
         boundary_guide_weight=args.boundary_guide_loss_weight,density_weight=args.density_map_loss_weight,
         density_target_backend=args.density_target_backend,density_target_chunk_size=args.density_target_chunk_size).cuda()
-    budget.underestimate_enabled = dome_run and args.density_underestimate_weight > 0
     from engine import AllocatorWeightScheduler
     weight=AllocatorWeightScheduler(**args.allocator_schedule,total_epochs=24).get_weight(phase,0,len(loader))*args.allocator_loss_weight
     timings=[]; core=[]; calls=[]; skips=0; streak=0; total_skips=0
-    selection_events=[]
-    if dome_run:
-        original_selection=model.transformer.select_proposal_indices
-        def timed_selection(*a,**kw):
-            start,end=torch.cuda.Event(enable_timing=True),torch.cuda.Event(enable_timing=True)
-            start.record(); result=original_selection(*a,**kw); end.record()
-            selection_events.append((start,end))
-            return result
-        model.transformer.select_proposal_indices=timed_selection
     measured_start_unix=None; measured_end_unix=None
     profile_accounting={}
     meter=MetricLogger(batched_transfer=args.batched_metric_transfer)
@@ -98,7 +85,6 @@ def run(variant,workers,repeat,cli,ids):
     with training_profile(trace,model,criterion,accounting=profile_accounting,
                           warmup_steps=cli.warmup,measured_steps=cli.steps) if cli.profile else contextlib.nullcontext():
         for step in range(cli.warmup+cli.steps):
-            selection_events.clear()
             torch.cuda.synchronize(); begin=time.perf_counter()
             if step==cli.warmup: measured_start_unix=time.time()
             samples,targets=next(iterator)
@@ -113,9 +99,6 @@ def run(variant,workers,repeat,cli,ids):
                 loss=sum(v*criterion.weight_dict[k] for k,v in losses.items() if k in criterion.weight_dict)
                 alloc=budget(out['allocator_outputs'],dict(targets=targets,real_counts=torch.tensor([len(t['labels']) for t in targets],device='cuda')))
                 loss=loss+weight*alloc['loss_allocator_total']
-                if budget.underestimate_enabled:
-                    # Stable mature coefficient: no warmup discount in timing.
-                    loss=loss+args.density_underestimate_weight*alloc['loss_density_under_raw']
             if not torch.isfinite(loss): raise FloatingPointError('Non-finite benchmark loss')
             scale=scaler.get_scale(); scaler.scale(loss).backward(); scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(),args.clip_max_norm)
@@ -136,8 +119,6 @@ def run(variant,workers,repeat,cli,ids):
                                   step_seconds=end-begin,core_seconds=end-core_begin,
                                   optimizer_applied=bool(applied),
                                   image_ids=ids[2*step:2*step+2]))
-                if dome_run:
-                    calls[-1]['candidate_cuda_stream_span_ms']=sum(a.elapsed_time(b) for a,b in selection_events)
     result=dict(variant=variant,workers=workers,repeat=repeat,images_per_second=2/statistics.mean(timings),
         mean_step_seconds=statistics.mean(timings),mean_h2d_model_loss_backward_optimizer_seconds=statistics.mean(core),
         p50_step_seconds=float(np.percentile(timings,50)),p90_step_seconds=float(np.percentile(timings,90)),
@@ -150,10 +131,7 @@ def run(variant,workers,repeat,cli,ids):
         resolved_config=config,quality_lambda=criterion.quality_lambda,measurements=calls)
     if joint_run:
         result.update(common_initialization_sha256=model.joint_common_sha,
-                      fixed_budget=None if dome_run else 900,phase_epoch=phase,joint_ramp=1.)
-    if dome_run:
-        result['candidate_timing_note']='Two CUDA events per selection; stream span includes launch gaps, not exclusive kernel time. Same instrumentation in both arms; no extra synchronization.'
-        result['mean_candidate_cuda_stream_span_ms']=statistics.mean(c['candidate_cuda_stream_span_ms'] for c in calls)
+                      fixed_budget=900,phase_epoch=phase,joint_ramp=1.)
     del model,criterion,optimizer,budget,out,loss,losses,alloc,loader,iterator
     torch.cuda.empty_cache()
     return result

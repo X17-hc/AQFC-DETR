@@ -519,7 +519,7 @@ class SetCriterion(nn.Module):
             if loss == 'boxes' and 'pred_boxes_coarse' in outputs:
                 coarse = dict(outputs, pred_boxes=outputs['pred_boxes_coarse'])
                 coarse_values = self.get_loss(loss, coarse, targets, indices, num_boxes)
-                mix = (.5 * (1. if getattr(self, 'joint_mature', False) else min(1., self.quality_successful_updates/self.joint_warmup_updates))
+                mix = (.5 * min(1., self.quality_successful_updates/self.joint_warmup_updates)
                        if getattr(self, 'joint_enabled', False) else .5)
                 values = {key: mix*value + (1-mix)*coarse_values[key] for key, value in values.items()}
             losses.update(values)

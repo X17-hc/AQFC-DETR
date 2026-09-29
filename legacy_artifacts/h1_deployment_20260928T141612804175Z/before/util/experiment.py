@@ -48,8 +48,6 @@ def variant_signature(args):
     result.update(transfer_signature(values))
     from .legacy_joint import signature as joint_signature
     result.update(joint_signature(values))
-    from .dome_transfer import signature as dome_signature
-    result.update(dome_signature(values))
     return json.loads(json.dumps(result, default=str))
 
 

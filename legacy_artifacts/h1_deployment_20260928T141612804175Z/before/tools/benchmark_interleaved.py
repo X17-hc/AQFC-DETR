@@ -30,7 +30,7 @@ def parser():
     p.add_argument('--steps',type=int,default=200)
     p.add_argument('--amp',action=argparse.BooleanOptionalAction,default=True)
     p.add_argument('--profile',action='store_true',help='Separate manual profile; never a speed conclusion')
-    p.add_argument('--comparison',choices=['classification','spatial','precision24','legacy_joint','dome_transfer'],default='classification',
+    p.add_argument('--comparison',choices=['classification','spatial','precision24','legacy_joint'],default='classification',
                    help='spatial compares reference/optimized implementations, BOTH with P2 loss')
     p.add_argument('--telemetry-seconds',type=float,default=5)
     p.add_argument('--worker-spec',help=argparse.SUPPRESS)
@@ -116,8 +116,7 @@ def main():
     jobs=schedule(cli.order,cli.workers,
                   variants=('reference','optimized') if cli.comparison=='spatial' else
                   ('f0','f1') if cli.comparison=='precision24' else
-                  ('joint_control','joint_h1') if cli.comparison=='legacy_joint' else
-                  ('d0','d1') if cli.comparison=='dome_transfer' else ('p1','p2'))
+                  ('joint_control','joint_h1') if cli.comparison=='legacy_joint' else ('p1','p2'))
     if cli.profile:
         if cli.comparison!='classification': p.error('Spatial speed comparison must be unprofiled')
         if cli.order!='p1,p2': p.error('Profile requires explicit --order p1,p2')
@@ -185,10 +184,6 @@ def main():
                         changed = [k for k in changed if k not in ('architecture_variant','joint_subset_epochs')]
                         if row['common_initialization_sha256']!=record['results'][0]['common_initialization_sha256']:
                             raise RuntimeError('Common initialization differs across benchmark arms')
-                    if cli.comparison == 'dome_transfer':
-                        changed = [k for k in changed if k not in ('dome_transfer_recipe','density_underestimate_weight','proposal_selection_mode')]
-                        if row['common_initialization_sha256']!=record['results'][0]['common_initialization_sha256']:
-                            raise RuntimeError('D0/D1 initialization differs')
                     if changed: raise RuntimeError(f'Unexpected config differences: {changed}')
                 row['telemetry']=telemetry_review(directory/'telemetry.jsonl',gpu,row['measured_start_unix'],row['measured_end_unix'])
                 record['results'].append(row)
@@ -196,15 +191,7 @@ def main():
                 summary=(summarize_spatial if cli.comparison=='spatial' else
                          summarize_precision24 if cli.comparison=='precision24' else
                          summarize_joint if cli.comparison=='legacy_joint' else summarize)
-                if cli.comparison == 'dome_transfer':
-                    # Reuse paired/drift accounting without changing stored identities.
-                    record['summary']=summarize([{**r,'variant':'p1' if r['variant']=='d0' else 'p2'} for r in record['results']])
-                    record['summary']['comparison']='D0 vs D1, mature H1 source, dynamic budget'
-                    record['summary']['d1_throughput_penalty_percent']=record['summary'].pop('p2_throughput_penalty_percent')
-                    for key in ('median_images_per_second','within_variant_range_percent'):
-                        record['summary'][key]={('d0' if k=='p1' else 'd1'):v for k,v in record['summary'][key].items()}
-                else:
-                    record['summary']=summary(record['results'])
+                record['summary']=summary(record['results'])
                 record['summary']['measurement_kind']='instrumented_not_speed_evidence' if cli.profile else 'unprofiled'
                 announce(json.dumps(dict(variant=variant,images_per_second=row['images_per_second'],
                                          amp_skips=row['amp_skips'],telemetry=row['telemetry'])))

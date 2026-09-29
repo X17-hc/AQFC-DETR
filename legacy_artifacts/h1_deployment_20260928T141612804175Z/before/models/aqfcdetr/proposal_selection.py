@@ -7,8 +7,7 @@ def select_proposal_indices(class_logits, density_prior, padding_mask, topk,
                             mode='fused', density_weight=0.25,
                             mixed_density_ratio=0.25, proposal_boxes=None,
                             spatial_shapes=None, spatial_semantic_ratio=.75,
-                            spatial_grid_size=(8, 8), diagnostics=None, query_counts=None,
-                            decoded_proposal_boxes=None, protected_density_valid_classes=tuple(range(8))):
+                            spatial_grid_size=(8, 8), diagnostics=None, query_counts=None):
     """Select valid encoder-token indices with semantic/density ranking."""
     if query_counts is not None:
         # Quotas depend on K: selecting Kmax then truncating is not equivalent
@@ -29,9 +28,7 @@ def select_proposal_indices(class_logits, density_prior, padding_mask, topk,
                     density_weight=density_weight, mixed_density_ratio=mixed_density_ratio,
                     proposal_boxes=None if proposal_boxes is None else proposal_boxes[b:b + 1],
                     spatial_shapes=spatial_shapes, spatial_semantic_ratio=spatial_semantic_ratio,
-                    spatial_grid_size=spatial_grid_size, diagnostics=diagnostics,
-                    decoded_proposal_boxes=None if decoded_proposal_boxes is None else decoded_proposal_boxes[b:b+1],
-                    protected_density_valid_classes=protected_density_valid_classes)[0]
+                    spatial_grid_size=spatial_grid_size, diagnostics=diagnostics)[0]
                 # Repeated tail entries are exclusively padding. Existing masks
                 # exclude them from attention keys, matching, losses and export.
                 rows.append(torch.cat([selected, selected[:1].expand(int(topk) - count)]))
@@ -43,12 +40,6 @@ def select_proposal_indices(class_logits, density_prior, padding_mask, topk,
     invalid = padding_mask.bool()
     if proposal_boxes is not None:
         invalid = invalid | ~torch.isfinite(proposal_boxes).all(-1)
-    if mode == 'protected_density':
-        from .protected_selection import protected_indices
-        return protected_indices(class_logits, density_prior, padding_mask.bool(), invalid,
-            min(int(topk),class_logits.shape[1]), spatial_shapes, decoded_proposal_boxes,
-            density_weight, spatial_semantic_ratio, spatial_grid_size, diagnostics,
-            protected_density_valid_classes)
     if mode == 'spatial':
         from .spatial_selection import spatial_indices
         return spatial_indices(semantic_logits, density_prior, padding_mask.bool(), invalid,

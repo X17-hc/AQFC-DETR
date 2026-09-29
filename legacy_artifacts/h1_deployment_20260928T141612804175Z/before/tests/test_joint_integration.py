@@ -21,9 +21,7 @@ def recipe(name='h1_epoch0'):
 def test_five_manual_configs():
     from main import get_args_parser
     from tools.benchmark_interleaved import parser as bench_parser
-    files=[p for p in Path('.run').glob('*.run.xml')
-           if any(x in p.name for x in ('H1','历史初始化与联合结构'))
-           and '/configs/dome_transfer/' not in p.read_text(encoding='utf-8')]
+    files=[p for p in Path('.run').glob('*.run.xml') if any(x in p.name for x in ('H1','历史初始化与联合结构'))]
     assert len(files)==5
     for path in files:
         c=ET.parse(path).getroot().find('configuration');options={o.get('name'):o.get('value') for o in c.findall('option')}

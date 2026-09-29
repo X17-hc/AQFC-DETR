@@ -1,0 +1,144 @@
+{
+  "status": "DEPLOYED_HASHES_VERIFIED",
+  "root": "D:\\PythonProject\\AQFC-DETR",
+  "backup": "D:\\PythonProject\\AQFC-DETR\\legacy_artifacts\\h1_deployment_20260928T141612804175Z",
+  "manifest": {
+    "files": [
+      {
+        "path": ".run/AQFC-DETR D0-D1同卡短性能对照.run.xml",
+        "before_sha256": null,
+        "after_sha256": "f359a0a3d7c86c14118c6295899b1cc20d5393f1e885e447bc028e09225faa86"
+      },
+      {
+        "path": ".run/AQFC-DETR D0原H1三轮及最终评估.run.xml",
+        "before_sha256": null,
+        "after_sha256": "292d797127f7cbbe4cea4f618b7bcb4fa133c11a767502af96cdd951b963d222"
+      },
+      {
+        "path": ".run/AQFC-DETR D1密度候选联合三轮及最终评估.run.xml",
+        "before_sha256": null,
+        "after_sha256": "96cfe12b2524798084beb6acf3cb93cdee9b8b798273e883f429b0a04fd94a48"
+      },
+      {
+        "path": ".run/AQFC-DETR Dome借鉴版20步及小规模评估.run.xml",
+        "before_sha256": null,
+        "after_sha256": "c5cb2f36edd9722bb8ef23edeeaa11d7c8ab22b774dfdc8b146372a142a28717"
+      },
+      {
+        "path": ".run/AQFC-DETR Dome借鉴版32图与1000图候选预检.run.xml",
+        "before_sha256": null,
+        "after_sha256": "80280a1c7747631f24a6bf7a79f4f559cc744ac4d9d81f94278275e8ba21f394"
+      },
+      {
+        "path": ".run/AQFC-DETR Dome借鉴版合成与兼容检查.run.xml",
+        "before_sha256": null,
+        "after_sha256": "2f5464c62cd5d05fb82eda3f6740c48bdec246787e4d6792000fdad0c6b43c9e"
+      },
+      {
+        "path": "configs/dome_transfer/d0_3e.py",
+        "before_sha256": null,
+        "after_sha256": "5c129768bb33cabeb77e3ffc7df9240ab489e7c29e6a53a6f4c693a8ad55cc93"
+      },
+      {
+        "path": "configs/dome_transfer/d1_3e.py",
+        "before_sha256": null,
+        "after_sha256": "2f7c8d88b0e432b2c4425d16accddf21ffae99965baeca5a10190d61bbbca63a"
+      },
+      {
+        "path": "configs/dome_transfer/d1_smoke.py",
+        "before_sha256": null,
+        "after_sha256": "04afa897643a361ada285f78d7d731f92c8eae7bfbe075dfc5fc045333a16cce"
+      },
+      {
+        "path": "docs/DOME_TRANSFER.md",
+        "before_sha256": null,
+        "after_sha256": "6d7724324ae9cede3be20b550d3b43abbacea4992d56294c874b5d4617153d1e"
+      },
+      {
+        "path": "docs/DOME_TRANSFER_VALIDATION.md",
+        "before_sha256": null,
+        "after_sha256": "cb0253451f67833c20a91d6a2a956bce2b837dcc9c5f8c27dacb94eb655757b7"
+      },
+      {
+        "path": "engine.py",
+        "before_sha256": "946c83a97a65146cf27de0436e55b94937e8dff9d0ee9d97371803c71135c5db",
+        "after_sha256": "4e28b7b28d3208913d86ca01863552a8f90008126541e4f215ba936664fb05df"
+      },
+      {
+        "path": "models/aqfcdetr/model.py",
+        "before_sha256": "a7739b511f7fc0b1408d662e916cef23e096cec6311820efd0e5eadfc3b745de",
+        "after_sha256": "a1ea32a2819b5c0c0b0ffd38cccc25ca87892c072c5cc209e4e3934a5d933ee1"
+      },
+      {
+        "path": "models/aqfcdetr/proposal_selection.py",
+        "before_sha256": "04b9cb10e5222da595c34d0f5fbee39b09af5960f1941cbc842ea98e9c8cf20a",
+        "after_sha256": "82624c0ea0400f5e8d06ad1226d5adb635df50c145368b59d159847da81a45ba"
+      },
+      {
+        "path": "models/aqfcdetr/protected_selection.py",
+        "before_sha256": null,
+        "after_sha256": "150537f731830b9148c3ba909e5b7d6dfa022f6a2c85aaa78d987d3e5ef8c74e"
+      },
+      {
+        "path": "models/aqfcdetr/query_allocator.py",
+        "before_sha256": "a98fad1e5c5901754986db71fcafa101c192282545c0cd33e741b4a68fc9c604",
+        "after_sha256": "2b28b5a40e90bdeebebaeced7864fd6bfdc9d7d8675234a84b955602aad7bd1f"
+      },
+      {
+        "path": "models/aqfcdetr/transformer.py",
+        "before_sha256": "640f3acb5c3e2e91a49ce5f6fad6da4a4a6daad0e9b124d357915a6d5cab0b35",
+        "after_sha256": "fb3303a4946227a7d80305b3f72075398f1485ea46b4ded90cdbf8372c5c5f45"
+      },
+      {
+        "path": "tests/test_dome_transfer.py",
+        "before_sha256": null,
+        "after_sha256": "052f588b35760222f3f595eadaf18102fdef3c5152c465b91dec7b972568d0ae"
+      },
+      {
+        "path": "tests/test_joint_integration.py",
+        "before_sha256": "65d7db542abecf2d4d100df98240aa8ce27b62aa7cb13aa0bd052900c501e37b",
+        "after_sha256": "cee41f349127e4e2fcac68e2c3d20a337be87df197c2028343c61136db566557"
+      },
+      {
+        "path": "tools/benchmark_incremental.py",
+        "before_sha256": "0891cb39929a3f392d6048bdad6360ed5da5ea93ea093f0668e16a9dadb993e3",
+        "after_sha256": "0bb4bd91a207c33a8d75a27d388951ffac7f612b70a768ddd7ef6f2207707d08"
+      },
+      {
+        "path": "tools/benchmark_interleaved.py",
+        "before_sha256": "57387469e0e62ccee7c4572b92d5069ab76c68c1f936a5a819003ec2ecd232da",
+        "after_sha256": "07c47f1b0d2cf95d31d415fee21bc4c00dfba2c3e9659b9de921e3a72a7bd7d0"
+      },
+      {
+        "path": "tools/check_dome_transfer.py",
+        "before_sha256": null,
+        "after_sha256": "b56e3d61f0f25489ad911f7d31d673a34611e4b359aaa5c0da3cd204a0187ee7"
+      },
+      {
+        "path": "tools/diagnose_dome_candidates.py",
+        "before_sha256": null,
+        "after_sha256": "b5c6944e8c17fbd93b037c8aab7f88ade15f312f2d0d8d53bc2ded72ea5951a2"
+      },
+      {
+        "path": "util/config_validation.py",
+        "before_sha256": "876ed20ab4ab720b709e303ddebcc5bcc290e1aa9d80c0ea1fcacca2da57d492",
+        "after_sha256": "d5cb961c1e663adad42cf1621bc2960bdefd783781df9ada6d30b74fef02860c"
+      },
+      {
+        "path": "util/dome_transfer.py",
+        "before_sha256": null,
+        "after_sha256": "282426a48f28a72e3faf16d3308359472f5902814b6ca9a7ed2a48a31e9d12d3"
+      },
+      {
+        "path": "util/experiment.py",
+        "before_sha256": "8e23d096cfcb50a584fe321276cb14d4ca33fc494f8728576075deaee27ad32c",
+        "after_sha256": "ada76a72f79906a675ec6343ad297d38ca98a08db714932100416221781e174d"
+      },
+      {
+        "path": "util/legacy_joint.py",
+        "before_sha256": "f0b7a68adcb068610d7cf28b3ee7dd3bcbf247b21f61e8757a45786f6f451309",
+        "after_sha256": "aa7356b2ff5da86ca089a25a6a95c6bbd076f7e91e05937eaaf6560fed05a57c"
+      }
+    ]
+  }
+}

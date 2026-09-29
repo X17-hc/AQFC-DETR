@@ -450,10 +450,6 @@ class QueryBudgetLoss(nn.Module):
         }
         if 'log_boundaries_ema' in outputs:
             result['boundary_vals_ema'] = torch.exp(outputs['log_boundaries_ema']).mean(dim=0)
-        if getattr(self, 'underestimate_enabled', False) and detection_targets is not None:
-            from util.dome_transfer import underestimate_loss
-            result['loss_density_under_raw'], result['density_under_support'] = underestimate_loss(
-                outputs['density_prior'], density_target, density_valid_mask)
         if self.enable_adaptive_targets:
             result['adaptive_target_boundaries'] = torch.exp(target_boundaries_log).mean(dim=0)
             result['adaptive_target_coverage'] = target_coverage.mean(dim=0)

@@ -20,8 +20,6 @@ def active(args):
 
 
 def validate(v, errors):
-    from .dome_transfer import active as fine_tune, validate as validate_fine_tune
-    validate_fine_tune(v, errors)
     if v.get('architecture_variant') is not None and v['architecture_variant'] not in VARIANTS:
         errors.append('Unknown architecture_variant')
     for k in v:
@@ -35,8 +33,6 @@ def validate(v, errors):
         allocator_encoder_type='light_dw', density_target_backend='vectorized',
         proposal_selection_mode='spatial', use_ema=False, onecyclelr=False,
         allocator_enabled=True, calibrator_enabled=True)
-    if fine_tune(v):
-        required['proposal_selection_mode'] = ('protected_density' if v['dome_transfer_recipe']=='d1' else 'spatial')
     for k, expected in required.items():
         if v.get(k) != expected:
             errors.append(f'H1 requires {k}={expected!r}')
@@ -50,14 +46,13 @@ def validate(v, errors):
     lr = v.get('joint_new_lr', 1e-4)
     if type(lr) not in (float, int) or not math.isfinite(lr) or lr <= 0:
         errors.append('joint_new_lr must be positive finite')
-    if not fine_tune(v) and (v.get('lr_drop_list') != [13, 23] or not v.get('multi_step_lr')):
+    if v.get('lr_drop_list') != [13, 23] or not v.get('multi_step_lr'):
         errors.append('H1 uses the explicit epoch13/23 schedule')
     if any(type(x) is not int or x < 0 for x in v.get('joint_subset_epochs', [0,3,7,12])):
         errors.append('Invalid joint_subset_epochs')
 
 
 def signature(args):
-    from .dome_transfer import signature as dome_signature
     v = args if isinstance(args, dict) else vars(args)
     if not active(v):
         return {}
@@ -68,8 +63,7 @@ def signature(args):
         joint_lr_drop_list=v.get('lr_drop_list'), joint_source_sha=v.get('expected_pretrained_sha256'),
         joint_scales=v.get('data_aug_scales'), joint_max_size=v.get('data_aug_max_size'),
         joint_mosaic=[v.get('mosaic_p'), v.get('mosaic_warmup_end'), v.get('mosaic_decay_start')],
-        joint_copy_paste=v.get('copy_paste_p'), joint_lr_projection_mult=v.get('lr_linear_proj_mult', .1),
-        **dome_signature(v))
+        joint_copy_paste=v.get('copy_paste_p'), joint_lr_projection_mult=v.get('lr_linear_proj_mult', .1))
 
 
 def configure(model, criterion, args):
@@ -78,9 +72,6 @@ def configure(model, criterion, args):
     model.joint_variant = args.architecture_variant
     criterion.joint_enabled = args.architecture_variant == VARIANTS[0]
     criterion.joint_warmup_updates = getattr(args, 'joint_warmup_updates', 500)
-    from .dome_transfer import active as fine_tune
-    criterion.joint_mature = fine_tune(args)
-    model.transformer.protected_density_valid_classes = getattr(args, 'protected_density_valid_classes', list(range(8)))
     if not criterion.joint_enabled:
         return
     from models.aqfcdetr.joint_modules import (SemanticDetailBridge, CandidateAuxiliaryHead,
@@ -129,9 +120,6 @@ def tensor_digest(state):
 
 def initialize(model, args):
     """Verified, frozen legacy migration allowlist; never accepts a different source."""
-    from .dome_transfer import active as fine_tune, initialize as initialize_fine_tune
-    if fine_tune(args):
-        return initialize_fine_tune(model, args)
     from .checkpoint_migration import extract_state_dict, migrate_state_dict, load_legacy_pretrained
     from .experiment import sha256
     if sha256(args.pretrain_model_path) != SOURCE_SHA:
@@ -200,7 +188,7 @@ def restore(model, checkpoint, args, optimizer=None):
 
 def extra_losses(criterion, outputs, targets, indices, num_boxes):
     from models.aqfcdetr.joint_modules import auxiliary_matches, distribution_loss
-    ramp = 1. if getattr(criterion, 'joint_mature', False) else min(1., criterion.quality_successful_updates/criterion.joint_warmup_updates)
+    ramp = min(1., criterion.quality_successful_updates/criterion.joint_warmup_updates)
     losses = {}
     if 'refine_distribution_logits' in outputs:
         value, diagnostics = distribution_loss(outputs, targets, indices, num_boxes)

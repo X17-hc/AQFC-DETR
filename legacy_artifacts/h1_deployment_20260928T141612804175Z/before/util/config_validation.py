@@ -99,7 +99,7 @@ def validate_config(config):
         errors.append('mosaic_p and copy_paste_p must be probabilities with sum <= 1')
     if config.get('masks', False) and (mosaic_p or copy_paste_p):
         errors.append('Mosaic/Copy-Paste support detection boxes only; disable them for masks')
-    if config.get('proposal_selection_mode') not in {'semantic', 'fused', 'mixed', 'spatial', 'protected_density'}:
+    if config.get('proposal_selection_mode') not in {'semantic', 'fused', 'mixed', 'spatial'}:
         errors.append("proposal_selection_mode must be 'semantic', 'fused', or 'mixed'")
     ratio = float(config.get('mixed_density_ratio', 0.25))
     if not 0.0 <= ratio <= 1.0:
