@@ -327,6 +327,7 @@ class SetCriterion(nn.Module):
         self.geometry_min_size_pixels = geometry_min_size_pixels
         self.geometry_smooth_l1_beta = geometry_smooth_l1_beta
         self.geometry_warmup_steps = None
+        self.box_tighten = False
         if geometry_loss_weight > 0:
             # Added AFTER auxiliary/DN/encoder weight dictionaries are constructed.
             self.weight_dict['loss_geometry'] = 0.0
@@ -399,6 +400,9 @@ class SetCriterion(nn.Module):
         target_boxes = torch.cat([t['boxes'][i] for t, (_, i) in zip(targets, indices)], dim=0)
 
         loss_bbox = F.l1_loss(src_boxes, target_boxes, reduction='none')
+        tighten = self._box_tighten_weights(src_boxes, target_boxes, targets, indices)
+        if tighten is not None:
+            loss_bbox = torch.cat([loss_bbox[:, :2], loss_bbox[:, 2:] * tighten[:, None]], dim=1)
         losses = {}
         losses['loss_bbox'] = loss_bbox.sum() / num_boxes
 
@@ -407,6 +411,8 @@ class SetCriterion(nn.Module):
         giou = (box_ops.aligned_generalized_box_iou(pred_xyxy, target_xyxy) if self.aligned_box_loss
                 else box_ops.generalized_box_iou(pred_xyxy, target_xyxy).diag())
         loss_giou = 1 - giou
+        if tighten is not None:
+            loss_giou = loss_giou * tighten
         losses['loss_giou'] = loss_giou.sum() / num_boxes
 
         # [NWD Loss]
@@ -422,6 +428,26 @@ class SetCriterion(nn.Module):
             losses['loss_hw'] = loss_bbox[..., 2:].sum() / num_boxes
 
         return losses
+
+    def _box_tighten_weights(self, src_boxes, target_boxes, targets, indices):
+        """Extra weight for 8px+ boxes whose match IoU is still below 0.75."""
+        if not self.box_tighten or src_boxes.numel() == 0:
+            return None
+        pred_xyxy = box_ops.box_cxcywh_to_xyxy(src_boxes)
+        target_xyxy = box_ops.box_cxcywh_to_xyxy(target_boxes)
+        iou = box_ops.box_iou(pred_xyxy, target_xyxy)[0].diag().detach()
+        sizes = []
+        for target, (_, matched) in zip(targets, indices):
+            count = int(matched.numel())
+            if count == 0:
+                continue
+            size = target['orig_size'].to(device=src_boxes.device, dtype=src_boxes.dtype).flatten()
+            sizes.append(size[:2].view(1, 2).expand(count, 2))
+        orig = torch.cat(sizes, dim=0)
+        area = target_boxes[:, 2] * orig[:, 1] * target_boxes[:, 3] * orig[:, 0]
+        selected = (iou >= 0.5) & (iou < 0.75) & (area >= 64)
+        weight = float(getattr(self, 'box_tighten_weight', 3.0))
+        return torch.where(selected, torch.full_like(iou, weight), torch.ones_like(iou))
 
     def loss_masks(self, outputs, targets, indices, num_boxes):
         assert "pred_masks" in outputs
@@ -767,6 +793,8 @@ def build_aqfcdetr(args):
                              geometry_loss_weight=getattr(args,'geometry_loss_weight',0.0),
                              geometry_min_size_pixels=getattr(args,'geometry_min_size_pixels',4.0),
                              geometry_smooth_l1_beta=getattr(args,'geometry_smooth_l1_beta',0.1))
+    criterion.box_tighten = bool(getattr(args, 'box_tighten', False))
+    criterion.box_tighten_weight = float(getattr(args, 'box_tighten_weight', 3.0))
     from util.legacy_joint import configure as configure_joint
     configure_joint(model, criterion, args)
     criterion.to(device)

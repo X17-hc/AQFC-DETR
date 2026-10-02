@@ -364,7 +364,9 @@ def main(args):
             best_metrics=best_metrics, expected_args=args)
 
     if (not args.resume) and args.pretrain_model_path:
-        if joint.active(args):
+        if getattr(args, 'native_weight_finetune', False):
+            report = joint.load_native_finetune(model_without_ddp, args)
+        elif joint.active(args):
             report = joint.initialize(model_without_ddp, args)
         elif getattr(args,'strict_warmstart',False):
             from util.incremental_checkpoint import validate_warmstart

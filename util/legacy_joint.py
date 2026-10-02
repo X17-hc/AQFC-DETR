@@ -70,6 +70,39 @@ def validate(v, errors):
             errors.append('H1 finetune EMA requires joint_allow_ema')
         if v.get('calibrator_gate_type', 'tanh') == 'swish':
             errors.append('Swish remains closed on H1 probes')
+    elif v.get('native_weight_finetune') and v.get('edge_refine_only'):
+        if v.get('decoder_heads_only') or v.get('box_head_only') or v.get('box_tighten'):
+            errors.append('Edge refine trains only the distribution refiner')
+        if v.get('epochs') not in (1, 24) or v.get('lr_drop_list') != [] or v.get('multi_step_lr'):
+            errors.append('Edge refine is 1 or 24 epochs without learning-rate drops')
+        if abs(float(v.get('lr', 0)) - 1e-5) > 1e-12 or abs(float(v.get('joint_new_lr', 0)) - 1e-5) > 1e-12:
+            errors.append('Edge refine uses lr and joint_new_lr 1e-5')
+        if v.get('val_epoch') != [] or v.get('joint_subset_epochs') != []:
+            errors.append('Edge refine evaluates outside the training loop')
+        if v.get('joint_warmup_updates') != 1:
+            errors.append('Edge refine warms up for one update')
+    elif v.get('native_weight_finetune') and v.get('decoder_heads_only'):
+        if v.get('box_head_only'):
+            errors.append('Decoder-head finetune does not also set box_head_only')
+        if v.get('epochs') not in (1, 24) or v.get('lr_drop_list') != [] or v.get('multi_step_lr'):
+            errors.append('Decoder-head finetune is 1 or 24 epochs without learning-rate drops')
+        if abs(float(v.get('lr', 0)) - 1e-5) > 1e-12:
+            errors.append('Decoder-head finetune uses lr 1e-5')
+        if v.get('val_epoch') != [] or v.get('joint_subset_epochs') != []:
+            errors.append('Decoder-head finetune evaluates outside the training loop')
+        if v.get('joint_warmup_updates') != 1:
+            errors.append('Decoder-head finetune warms up for one update')
+        if v.get('box_tighten') and abs(float(v.get('box_tighten_weight', 0)) - 2.0) > 1e-12:
+            errors.append('Decoder-head tighten weight is 2')
+    elif v.get('native_weight_finetune'):
+        if v.get('epochs') != 3 or v.get('lr_drop_list') != [] or v.get('multi_step_lr'):
+            errors.append('Box-head finetune is three epochs without learning-rate drops')
+        if abs(float(v.get('lr', 0)) - 1e-5) > 1e-12:
+            errors.append('Box-head finetune uses lr 1e-5')
+        if not v.get('box_head_only'):
+            errors.append('Box-head finetune trains the decoder box head only')
+        if v.get('joint_subset_epochs') != [2] or v.get('val_epoch') != []:
+            errors.append('Box-head finetune evaluates the locked 1000-image subset at epoch 2')
     elif not fine_tune(v) and (v.get('lr_drop_list') != [13, 23] or not v.get('multi_step_lr')):
         errors.append('H1 uses the explicit epoch13/23 schedule')
     if any(type(x) is not int or x < 0 for x in v.get('joint_subset_epochs', [0,3,7,12])):
@@ -116,9 +149,44 @@ def configure(model, criterion, args):
     for key in ('loss_ce', 'loss_bbox', 'loss_giou', 'loss_nwd'):
         criterion.weight_dict[key+'_joint_o2m'] = criterion.weight_dict[key]
     criterion.weight_dict['loss_joint_dfl'] = 1.
+    criterion.edge_logwh = bool(getattr(args, 'edge_logwh', False))
+    if criterion.edge_logwh:
+        criterion.weight_dict['loss_edge_logwh'] = 1.
+
+
+def _decoder_box_head(name):
+    return name.startswith('bbox_embed') or '.decoder.bbox_embed.' in name
+
+
+def _decoder_class_head(name):
+    if 'enc_out_class_embed' in name:
+        return False
+    return name.startswith('class_embed') or '.decoder.class_embed.' in name
+
+
+def _distribution_refiner(name):
+    return name.startswith('distribution_refiner.') or '.distribution_refiner.' in name
+
+
+def _freeze_decoder_heads(args, model):
+    edge_only = getattr(args, 'edge_refine_only', False)
+    decoder_heads = getattr(args, 'decoder_heads_only', False)
+    box_only = getattr(args, 'box_head_only', False)
+    if not edge_only and not decoder_heads and not box_only:
+        return False
+    for name, parameter in model.named_parameters():
+        if edge_only:
+            trainable = _distribution_refiner(name)
+        elif decoder_heads:
+            trainable = _decoder_box_head(name) or _decoder_class_head(name)
+        else:
+            trainable = _decoder_box_head(name)
+        parameter.requires_grad_(trainable)
+    return True
 
 
 def parameter_groups(args, model):
+    _freeze_decoder_heads(args, model)
     names, params = {}, {}
     rates = dict(loaded=args.lr, backbone=args.lr_backbone,
                  projection=args.lr*getattr(args, 'lr_linear_proj_mult', .1),
@@ -226,6 +294,25 @@ def initialize(model, args):
     return report
 
 
+def load_native_finetune(model, args):
+    """Strict load of a finished native checkpoint. New optimizer, no historical allowlist."""
+    from .checkpoint_migration import extract_state_dict
+    from .experiment import sha256
+    digest = sha256(args.pretrain_model_path)
+    expected = getattr(args, 'expected_native_sha256', '')
+    if not expected or digest != expected:
+        raise ValueError('Box-head finetune requires the scheme-2 epoch23 SHA-256')
+    payload = torch.load(args.pretrain_model_path, map_location='cpu', weights_only=False)
+    incompatible = model.load_state_dict(extract_state_dict(payload), strict=True)
+    if incompatible.missing_keys or incompatible.unexpected_keys:
+        raise ValueError('Native finetune state dict is not strict')
+    saved = payload.get('joint_state') or {}
+    model.joint_common_sha = saved.get('common_sha256') or tensor_digest({
+        key: value for key, value in model.state_dict().items() if not key.startswith(NEW_PREFIXES)})
+    return dict(coverage_by_numel=1.0, missing_keys=[], shape_mismatched_keys=[],
+                native_finetune=True, source_sha256=digest)
+
+
 def checkpoint_state(model, args, optimizer, epoch, updates):
     return dict(signature=signature(args), common_sha256=model.joint_common_sha,
                 epoch=epoch, successful_updates=updates,
@@ -261,6 +348,9 @@ def extra_losses(criterion, outputs, targets, indices, num_boxes):
         value, diagnostics = distribution_loss(outputs, targets, indices, num_boxes)
         losses['loss_joint_dfl'] = getattr(criterion, 'joint_dfl_coef', .25)*ramp*value
         losses.update(diagnostics)
+    if getattr(criterion, 'edge_logwh', False) and 'pred_boxes' in outputs:
+        from util.edge_logwh import low_iou_logwh_loss
+        losses['loss_edge_logwh'] = low_iou_logwh_loss(outputs, targets, indices, num_boxes)
     if 'auxiliary_o2m_outputs' in outputs:
         auxiliary = outputs['auxiliary_o2m_outputs']
         pairs = auxiliary_matches(auxiliary, targets, criterion.matcher)

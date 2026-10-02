@@ -157,6 +157,18 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
     model.train()
     model_without_ddp = model.module if hasattr(model, 'module') else model
+    heads_only = getattr(args, 'box_head_only', False) or getattr(args, 'decoder_heads_only', False)
+    edge_only = getattr(args, 'edge_refine_only', False)
+    if heads_only or edge_only:
+        model.eval()
+        if heads_only:
+            for module in model_without_ddp.bbox_embed:
+                module.train()
+            if getattr(args, 'decoder_heads_only', False):
+                for module in model_without_ddp.class_embed:
+                    module.train()
+        if edge_only and hasattr(model_without_ddp, 'distribution_refiner'):
+            model_without_ddp.distribution_refiner.train()
     if hasattr(model_without_ddp, 'set_epoch'):
         model_without_ddp.set_epoch(phase_epoch)
     from util.precision24 import set_epoch as set_structure_epoch, update_lr
@@ -192,7 +204,8 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
             phase_epoch, _cnt, len(data_loader))
         transformer = getattr(model_without_ddp, 'transformer', None)
         if transformer is not None and getattr(args, 'calibrator_density_spatial', False):
-            transformer.density_gate_scale = float(current_allocator_weight)
+            transformer.density_gate_scale = (
+                1.0 if heads_only or edge_only else float(current_allocator_weight))
         criterion.quality_lambda = quality_progress(args, criterion.quality_successful_updates, len(data_loader))
         update_lr(optimizer, args, epoch, criterion.quality_successful_updates)
         update_geometry_weight(criterion)
@@ -452,6 +465,10 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         diagnostics_directory = Path(output_dir) / f'diagnostics_rank{utils.get_rank()}_{time.time_ns()}'
         diagnostics_directory.mkdir(parents=True, exist_ok=False)
     run_loader = LimitedLoader(data_loader, getattr(args, 'max_eval_steps', 0))
+    edge_screen = None
+    if getattr(args, 'edge_refine_only', False):
+        from util.edge_logwh import EdgeScreen
+        edge_screen = EdgeScreen()
     for samples, targets in metric_logger.log_every(run_loader, eval_print_freq, header, logger=logger,
                                                    display_keys=DISPLAY_KEYS):
 
@@ -502,6 +519,8 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
             target_sizes = torch.stack([t["size"] for t in targets], dim=0)
             results = postprocessors['segm'](results, outputs, orig_target_sizes, target_sizes)
         res = {target['image_id'].item(): output for target, output in zip(targets, results)}
+        if edge_screen is not None:
+            edge_screen.add_batch(results, targets)
         if export_enabled:
             for sample_index, (target, result) in enumerate(zip(targets, results)):
                 image_id = int(target['image_id'])
@@ -626,6 +645,8 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
         stats['PQ_th']  = panoptic_res["Things"]
         stats['PQ_st']  = panoptic_res["Stuff"]
 
+    if edge_screen is not None and output_dir and utils.is_main_process():
+        edge_screen.write(Path(output_dir) / 'edge_geometry.json')
     if device.type == 'cuda':
         torch.cuda.synchronize(device)
     stats['evaluation_seconds'] = time.perf_counter()-phase_started
