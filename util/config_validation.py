@@ -24,12 +24,16 @@ def validate_config(config):
     from .experiment import UPDATE_DEFAULTS
     known = set(UPDATE_DEFAULTS) | {'allocator_loss_weight', 'allocator_fallback_queries',
         'allocator_teacher_epochs', 'allocator_schedule', 'allocator_use_boundary_ema',
-        'calibrator_gate_type', 'calibrator_use_spatial', 'calibrator_spatial_alphas'}
+        'calibrator_gate_type', 'calibrator_use_spatial', 'calibrator_spatial_alphas',
+        'calibrator_density_spatial', 'allocator_quantile_boundaries'}
     for key in config:
         if key.startswith(('allocator_', 'calibrator_', 'density_target_', 'spatial_', 'train_transform_')) and key not in known:
             errors.append(f'Unknown update configuration field: {key}')
     for key in ('allocator_enabled', 'calibrator_enabled'):
         if type(config.get(key, True)) is not bool:
+            errors.append(f'{key} must be boolean')
+    for key in ('calibrator_density_spatial', 'allocator_quantile_boundaries'):
+        if key in config and type(config[key]) is not bool:
             errors.append(f'{key} must be boolean')
     for key, choices in {
         'allocator_encoder_type': ('standard', 'light_dw'),

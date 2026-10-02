@@ -2,6 +2,38 @@
 import itertools
 
 
+def compute_eval_criterion(args):
+    """Eval may skip SetCriterion; detections still come from the same forward/postprocess."""
+    return not bool(getattr(args, 'eval_boxes_only', False))
+
+
+def coco_places_agree(left, right, keys=('AP', 'AP50', 'AP75', 'APvt'), places=3):
+    """H1 boxes-only vs full-eval: COCO metrics must match at three decimals."""
+    return all(round(float(left[k]), places) == round(float(right[k]), places) for k in keys)
+
+
+def training_eval_weights(args):
+    """Which weights run at val_epoch. EMA-only skips the live-model eval tax."""
+    if getattr(args, 'eval_ema_only', False):
+        if not getattr(args, 'use_ema', False):
+            raise ValueError('--eval-ema-only requires use_ema')
+        return ('ema',)
+    if getattr(args, 'use_ema', False):
+        return ('model', 'ema')
+    return ('model',)
+
+
+def detection_fingerprint(results):
+    """Stable payload for boxes-only vs full-eval equality checks."""
+    rows = []
+    for item in results:
+        boxes = item['boxes'].detach().float().cpu().reshape(-1).tolist()
+        scores = item['scores'].detach().float().cpu().reshape(-1).tolist()
+        labels = item['labels'].detach().cpu().reshape(-1).tolist()
+        rows.append((tuple(round(x, 6) for x in boxes), tuple(round(x, 6) for x in scores), tuple(int(x) for x in labels)))
+    return tuple(rows)
+
+
 def validate_eval_query_floor(floor, evaluation, levels, forced=None):
     if type(floor) is not int or floor < 0:
         raise ValueError('Query floor must be a nonnegative integer')

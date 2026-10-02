@@ -349,11 +349,13 @@ class DensityGuidedFeatureCalibrator(nn.Module):
                  num_feature_levels: int = 4,
                  level_spatial_alphas: list = None,
                  channel_init_sf: float = 0.1,
-                 gate_type: str = 'tanh'):          # ← 新增消融控制参数
+                 gate_type: str = 'tanh',
+                 density_spatial: bool = False):
         super().__init__()
         self.num_feat = num_feature_levels
         self.use_spatial = use_spatial
         self.gate_type = gate_type
+        self.density_spatial = bool(density_spatial)
 
         # ── 通道注意力 (根据 gate_type 选择) ──────────────────────────
         if gate_type == 'tanh':
@@ -388,10 +390,18 @@ class DensityGuidedFeatureCalibrator(nn.Module):
                  else list(self._DEFAULT_SPATIAL_ALPHAS)
         while len(alphas) < num_feature_levels:
             alphas.append(alphas[-1])
-        self.level_spatial_alphas = alphas[:num_feature_levels]
+        alphas = alphas[:num_feature_levels]
+        self.level_spatial_alphas = alphas
+        if self.density_spatial:
+            init = list(alphas)
+            if init[0] == 0:
+                init[0] = 0.05
+            self.level_alpha = nn.Parameter(torch.tensor(init, dtype=torch.float32))
+        self.density_gate_scale = 1.0
 
     def forward(self, x: list, memory: torch.Tensor,
-                spatial_shapes: list) -> torch.Tensor:
+                spatial_shapes: list, density_prior: torch.Tensor = None,
+                padding_mask: torch.Tensor = None) -> torch.Tensor:
         feats = []
         idx   = 0
         enc   = memory.transpose(1, 2)
@@ -404,15 +414,32 @@ class DensityGuidedFeatureCalibrator(nn.Module):
 
             feat = enc[:, :, idx: idx + hw].view(bs, c, h, w)
 
-            # 残差空间注意力（level-0 跳过）
-            alpha = self.level_spatial_alphas[i]
-            if self.use_spatial and alpha > 0.0:
-                aux = x[i]
-                if aux.shape[2:] != (h, w):
-                    aux = F.interpolate(aux, size=(h, w),
-                                        mode='bilinear', align_corners=False)
-                scale = self.spatial_attention(aux)
-                feat  = feat * (1.0 + alpha * scale)
+            if self.density_spatial and i == 0:
+                if density_prior is None:
+                    raise ValueError('density_spatial requires density_prior')
+                prior = F.interpolate(density_prior.float(), size=(h, w),
+                                      mode='bilinear', align_corners=False)
+                if padding_mask is not None:
+                    level_pad = padding_mask[:, idx:idx + hw].view(bs, 1, h, w)
+                    prior = prior.masked_fill(level_pad, 0.0)
+                flat = prior.reshape(bs, -1)
+                keep = max(1, int(round(flat.shape[1] * 0.1)))
+                index = torch.topk(flat, keep, dim=1).indices
+                mask = torch.zeros_like(flat)
+                mask.scatter_(1, index, 1.0)
+                prior = prior * mask.view(bs, 1, h, w)
+                alpha = self.level_alpha[0].clamp(0.0, 0.05) * float(self.density_gate_scale)
+                feat = feat * (1.0 + alpha * prior)
+            else:
+                # 残差空间注意力（level-0 默认跳过）
+                alpha = self.level_spatial_alphas[i]
+                if self.use_spatial and alpha > 0.0:
+                    aux = x[i]
+                    if aux.shape[2:] != (h, w):
+                        aux = F.interpolate(aux, size=(h, w),
+                                            mode='bilinear', align_corners=False)
+                    scale = self.spatial_attention(aux)
+                    feat = feat * (1.0 + alpha * scale)
 
             # 通道注意力 (tanh or se，由 gate_type 决定)
             feat = self.channel_gate(feat)

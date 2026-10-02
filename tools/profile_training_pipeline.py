@@ -13,8 +13,8 @@ def main():
     parser.add_argument('--pretrained')
     parser.add_argument('--steps', type=int, default=20)
     args = parser.parse_args()
-    if not 1 <= args.steps <= 100:
-        parser.error('Profile steps must be between 1 and 100')
+    if not 1 <= args.steps <= 250:
+        parser.error('Profile steps must be between 1 and 250')
     command = [sys.executable, 'main.py', '--config', args.config, '--data-root', args.data_root,
                '--output-dir', args.output_dir, '--unique-output-dir', '--profile-trace', 'training_trace.json',
                '--num_workers', '0', '--max-train-steps', str(args.steps),

@@ -17,7 +17,7 @@ from datasets.coco_eval import CocoEvaluator
 from datasets.panoptic_eval import PanopticEvaluator
 
 from models.aqfcdetr.query_allocator import QueryBudgetLoss
-from util.runtime import LimitedLoader, optimizer_step_statistics
+from util.runtime import LimitedLoader, compute_eval_criterion, optimizer_step_statistics
 from util.profiling import region, ProfileLoader
 
 print_freq = 1000
@@ -136,8 +136,15 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         enable_adaptive_targets=True,
         enable_loss_clipping=True,
         density_target_backend=getattr(args, 'density_target_backend', 'reference'),
-        density_target_chunk_size=getattr(args, 'density_target_chunk_size', 512)
+        density_target_chunk_size=getattr(args, 'density_target_chunk_size', 512),
+        quantile_boundaries=getattr(args, 'allocator_quantile_boundaries', False),
     ).to(device)
+    allocator = getattr(getattr(model, 'transformer', None), 'query_allocator', None)
+    if budget_criterion.quantile_boundaries and allocator is not None and hasattr(allocator, 'quantile_samples'):
+        budget_criterion.quantile_log_boundaries.copy_(allocator.quantile_log_boundaries)
+        budget_criterion.quantile_samples.copy_(allocator.quantile_samples)
+        if hasattr(allocator, 'routing_reservoir'):
+            budget_criterion.routing_reservoir.copy_(allocator.routing_reservoir)
     budget_criterion.train()
     budget_criterion.underestimate_enabled = getattr(args, 'density_underestimate_weight', 0.) > 0
 
@@ -183,6 +190,9 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
         current_allocator_weight = allocator_weight_scheduler.get_weight(
             phase_epoch, _cnt, len(data_loader))
+        transformer = getattr(model_without_ddp, 'transformer', None)
+        if transformer is not None and getattr(args, 'calibrator_density_spatial', False):
+            transformer.density_gate_scale = float(current_allocator_weight)
         criterion.quality_lambda = quality_progress(args, criterion.quality_successful_updates, len(data_loader))
         update_lr(optimizer, args, epoch, criterion.quality_successful_updates)
         update_geometry_weight(criterion)
@@ -348,6 +358,11 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         resstat.update({f'weight_{k}': v for k, v in criterion.weight_dict.items()})
     if device.type == 'cuda':
         torch.cuda.synchronize(device)
+    if budget_criterion.quantile_boundaries and allocator is not None and hasattr(allocator, 'quantile_samples'):
+        allocator.quantile_log_boundaries.copy_(budget_criterion.quantile_log_boundaries.detach())
+        allocator.quantile_samples.copy_(budget_criterion.quantile_samples)
+        if hasattr(allocator, 'routing_reservoir'):
+            allocator.routing_reservoir.copy_(budget_criterion.routing_reservoir.detach())
     resstat['training_seconds'] = time.perf_counter()-phase_started
     print(f"[Training completed] epoch={epoch} phase_epoch={phase_epoch} elapsed={resstat['training_seconds']:.2f}s "
           f"({datetime.timedelta(seconds=int(resstat['training_seconds']))})")
@@ -389,6 +404,9 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
 
     model.eval()
     criterion.eval()
+    transformer = getattr(model.module if hasattr(model, 'module') else model, 'transformer', None)
+    if transformer is not None:
+        transformer.density_gate_scale = 1.0
 
     metric_logger = utils.MetricLogger(delimiter="  ")
     if not wo_class_error:
@@ -445,23 +463,25 @@ def evaluate(model, criterion, postprocessors, data_loader, base_ds, device, out
                 outputs = model(samples, targets)
             else:
                 outputs = model(samples)
-            loss_dict = criterion(outputs, targets)
-        weight_dict = criterion.weight_dict
+            if compute_eval_criterion(args):
+                loss_dict = criterion(outputs, targets)
+        if compute_eval_criterion(args):
+            weight_dict = criterion.weight_dict
 
-        loss_dict_reduced = utils.reduce_dict(loss_dict)
-        loss_dict_reduced_scaled = {
-            k: v * weight_dict[k]
-            for k, v in loss_dict_reduced.items() if k in weight_dict
-        }
-        loss_dict_reduced_unscaled = {f'{k}_unscaled': v for k, v in loss_dict_reduced.items()}
+            loss_dict_reduced = utils.reduce_dict(loss_dict)
+            loss_dict_reduced_scaled = {
+                k: v * weight_dict[k]
+                for k, v in loss_dict_reduced.items() if k in weight_dict
+            }
+            loss_dict_reduced_unscaled = {f'{k}_unscaled': v for k, v in loss_dict_reduced.items()}
 
-        metric_logger.update(
-            loss=sum(loss_dict_reduced_scaled.values()),
-            **loss_dict_reduced_scaled,
-            **loss_dict_reduced_unscaled
-        )
-        if 'class_error' in loss_dict_reduced:
-            metric_logger.update(class_error=loss_dict_reduced['class_error'])
+            metric_logger.update(
+                loss=sum(loss_dict_reduced_scaled.values()),
+                **loss_dict_reduced_scaled,
+                **loss_dict_reduced_unscaled
+            )
+            if 'class_error' in loss_dict_reduced:
+                metric_logger.update(class_error=loss_dict_reduced['class_error'])
 
         orig_target_sizes = torch.stack([t["orig_size"] for t in targets], dim=0)
         results = postprocessors['bbox'](outputs, orig_target_sizes)

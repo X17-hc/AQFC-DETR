@@ -43,7 +43,8 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
 
     def __init__(self, feature_dim=256, query_budget_levels=None,
                  max_objects=1500, fallback_queries=900, use_ema=True,
-                 ema_decay=0.9997, boundary_warmup_steps=5000, encoder_type='standard'):
+                 ema_decay=0.9997, boundary_warmup_steps=5000, encoder_type='standard',
+                 quantile_boundaries=False):
         super().__init__()
         self.query_budget_levels = list(query_budget_levels or [300, 500, 900, 1500])
         if len(self.query_budget_levels) != 4:
@@ -112,6 +113,12 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
 
         self.register_buffer('training_steps', torch.tensor(0, dtype=torch.long))
         self.warmup_steps = int(boundary_warmup_steps)
+        self.quantile_boundaries = bool(quantile_boundaries)
+        if self.quantile_boundaries:
+            self.register_buffer('quantile_log_boundaries',
+                                 torch.log(torch.tensor([60.0, 150.0, 350.0])))
+            self.register_buffer('quantile_samples', torch.zeros((), dtype=torch.long))
+            self.register_buffer('routing_reservoir', torch.zeros(8192))
 
         self._init_weights()
 
@@ -238,7 +245,6 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
 
         density_logits = self.density_head(density_feat).float()
         density_prior = torch.sigmoid(density_logits.clamp(-10, 10))
-        density_peaks = self._generate_density_peaks(density_prior, h, w)
 
         if self.training:
             self.training_steps.add_(1)
@@ -255,7 +261,6 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
             'density_feature': density_feat,
             'density_prior': density_prior,
             'density_logits': density_logits,
-            'density_peaks': density_peaks,
             'query_counts': query_counts,
             'budget_indices': budget_indices,
             'routing_count': routing_count,
@@ -279,44 +284,10 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
             return 1.0
         return 0.5 * (1 + torch.cos(torch.tensor((1 - steps / self.warmup_steps) * 3.14159))).item()
 
-    def _smooth_boundaries_for_longtail(self, log_boundaries: torch.Tensor, real_counts: torch.Tensor) -> torch.Tensor:
-        if real_counts is None:
-            return log_boundaries
-        log_boundaries = log_boundaries.clone()
-        extreme_mask = real_counts > 100
-        if extreme_mask.any():
-            if self.history_ptr > 10:
-                hist_mean = self.boundary_history[:self.history_ptr].mean(dim=0)
-                log_boundaries[extreme_mask] = 0.7 * log_boundaries[extreme_mask] + 0.3 * hist_mean
-        return log_boundaries
-
-    def _compute_dynamic_ema_decay(self, real_counts: torch.Tensor) -> float:
-        if real_counts is None:
-            return self.ema_decay
-        max_count = real_counts.max().item()
-        if max_count > 150:
-            return 0.999
-        elif max_count > 80:
-            return 0.998
-        else:
-            return self.ema_decay
-
     def _update_boundary_history(self, boundaries: torch.Tensor):
         ptr = self.history_ptr.item()
         self.boundary_history[ptr % 100] = boundaries
         self.history_ptr += 1
-
-    def _compute_soft_weights(self, N_eval, log_boundaries):
-        temperature = 1.0
-        log_N = torch.log(N_eval.clamp(min=1.0)).unsqueeze(1)
-        c0 = log_boundaries[:, 0] - 0.5
-        c1 = (log_boundaries[:, 0] + log_boundaries[:, 1]) / 2
-        c2 = (log_boundaries[:, 1] + log_boundaries[:, 2]) / 2
-        c3 = log_boundaries[:, 2] + 0.5
-        centers = torch.stack([c0, c1, c2, c3], dim=1)
-        distances = -torch.abs(log_N - centers)
-        soft_weights = F.softmax(distances / temperature, dim=1)
-        return soft_weights
 
     def _assign_query_levels(self, N_eval, boundaries):
         bs = N_eval.shape[0]
@@ -326,23 +297,6 @@ class AdaptiveQueryBudgetAllocator(nn.Module):
         level_indices[(N_eval >= b2) & (N_eval < b3)] = 2
         level_indices[N_eval >= b3] = 3
         return level_indices
-
-    def _generate_density_peaks(self, density_prior, h, w):
-        bs = density_prior.shape[0]
-        max_k = max(self.query_budget_levels)
-        heatmap_flat = density_prior.flatten(2).squeeze(1)
-        actual_k = min(h * w, max_k)
-        _, topk_ind = torch.topk(heatmap_flat, actual_k, dim=1)
-        topk_y = (topk_ind // w).float() + 0.5
-        topk_x = (topk_ind % w).float() + 0.5
-        peaks = torch.stack([
-            (topk_x / w).clamp(0.01, 0.99),
-            (topk_y / h).clamp(0.01, 0.99)
-        ], dim=-1)
-        if actual_k < max_k:
-            padding = density_prior.new_zeros(bs, max_k - actual_k, 2)
-            peaks = torch.cat([peaks, padding], dim=1)
-        return peaks
 
 
 class QueryBudgetLoss(nn.Module):
@@ -355,7 +309,7 @@ class QueryBudgetLoss(nn.Module):
                  density_weight=0.25,
                  enable_adaptive_targets=True,
                  enable_loss_clipping=True, density_target_backend='reference',
-                 density_target_chunk_size=512):
+                 density_target_chunk_size=512, quantile_boundaries=False):
         super().__init__()
         self.coverage_weight = coverage_weight
         self.spacing_weight = spacing_weight
@@ -365,6 +319,7 @@ class QueryBudgetLoss(nn.Module):
         self.density_weight = density_weight
         self.enable_adaptive_targets = enable_adaptive_targets
         self.enable_loss_clipping = enable_loss_clipping
+        self.quantile_boundaries = bool(quantile_boundaries)
         self.smooth_l1 = nn.SmoothL1Loss()
         self.density_target_backend = density_target_backend
         self.density_target_chunk_size = density_target_chunk_size
@@ -373,14 +328,54 @@ class QueryBudgetLoss(nn.Module):
                              torch.tensor([0.40, 0.70, 0.90]))
         self.register_buffer('default_target_boundaries_log',
                              torch.log(torch.tensor([60.0, 150.0, 350.0])))
+        self.register_buffer('quantile_log_boundaries',
+                             torch.log(torch.tensor([60.0, 150.0, 350.0])))
+        self.register_buffer('quantile_samples', torch.zeros((), dtype=torch.long))
+        self.register_buffer('routing_reservoir', torch.zeros(8192))
+        self.quantile_min_samples = 2000
+        self.quantile_updates_this_epoch = 0
 
     def _compute_adaptive_targets(self, real_counts, device):
         # Boundaries and coverage are population-level routing statistics, not
         # per-object pixel sizes. Keep the target in routing-count units.
         batch_size = real_counts.shape[0]
-        target_boundaries_log = self.default_target_boundaries_log.to(device).expand(batch_size, -1)
+        if self.quantile_boundaries:
+            boundary_log = self._quantile_boundary_log(real_counts)
+        else:
+            boundary_log = self.default_target_boundaries_log.to(device)
+        target_boundaries_log = boundary_log.expand(batch_size, -1)
         target_coverage = self.default_target_coverage.to(device).expand(batch_size, -1)
         return target_boundaries_log, target_coverage
+
+    def _store_routing(self, real_counts):
+        route = count_to_routing(real_counts.detach()).reshape(-1)
+        count = int(route.numel())
+        capacity = int(self.routing_reservoir.numel())
+        start = int(self.quantile_samples.item()) % capacity
+        index = (torch.arange(count, device=route.device) + start) % capacity
+        self.routing_reservoir[index] = route.to(self.routing_reservoir.dtype)
+        self.quantile_samples += count
+
+    def _refresh_capped_quantiles(self):
+        seen = int(self.quantile_samples.item())
+        capacity = int(self.routing_reservoir.numel())
+        data = self.routing_reservoir if seen >= capacity else self.routing_reservoir[:seen]
+        quantiles = torch.quantile(
+            data.float(), torch.tensor([0.40, 0.70, 0.90], device=data.device))
+        caps = torch.tensor([60.0, 150.0, 350.0], device=data.device)
+        clipped = torch.minimum(quantiles, caps).clamp(min=1.0)
+        self.quantile_log_boundaries.copy_(torch.log(clipped))
+
+    def _quantile_boundary_log(self, real_counts):
+        if self.training:
+            self._store_routing(real_counts)
+            if (int(self.quantile_samples.item()) >= self.quantile_min_samples
+                    and self.quantile_updates_this_epoch == 0):
+                self._refresh_capped_quantiles()
+                self.quantile_updates_this_epoch = 1
+        if int(self.quantile_samples.item()) < self.quantile_min_samples:
+            return self.default_target_boundaries_log.to(real_counts.device)
+        return self.quantile_log_boundaries
 
     def forward(self, outputs, targets):
         device = outputs['boundaries'].device
@@ -413,9 +408,12 @@ class QueryBudgetLoss(nn.Module):
                 F.relu(log_b[:, 1] + 0.3 - log_b[:, 2]) * 3.0
         ).mean()
 
-        target_boundaries = torch.exp(target_boundaries_log)
+        if self.quantile_boundaries and 'boundaries' in outputs:
+            label_boundaries = outputs['boundaries'].detach()
+        else:
+            label_boundaries = torch.exp(target_boundaries_log)
         target_intervals = (
-            (route_count[:, None] >= target_boundaries).long().sum(dim=1)
+            (route_count[:, None] >= label_boundaries).long().sum(dim=1)
         ).clamp(max=outputs['budget_logits'].shape[1] - 1)
         loss_interval = F.cross_entropy(outputs['budget_logits'].float(), target_intervals)
         loss_count = self.smooth_l1(outputs['raw_count'].float().reshape(-1), log_object_count)

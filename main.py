@@ -125,10 +125,16 @@ def get_args_parser():
     parser.add_argument('--start_epoch', default=0, type=int, metavar='N',
                         help='start epoch')
     parser.add_argument('--eval', action='store_true')
+    parser.add_argument('--eval-boxes-only', action='store_true',
+                        help='Skip SetCriterion during evaluate(); same forward and boxes. Default off.')
     parser.add_argument('--eval-ema', action='store_true',
                         help='Evaluate ema_model instead of model; requires --eval --resume')
+    parser.add_argument('--eval-ema-only', action='store_true',
+                        help='At val_epoch, evaluate EMA weights only; requires use_ema')
     # Windows/PyCharm 默认使用主进程读取数据，避免多进程启动和额外内存开销。
     parser.add_argument('--num_workers', default=0, type=int)
+    parser.add_argument('--persistent-workers', action='store_true',
+                        help='Keep DataLoader workers alive when num_workers>0; default off')
     parser.add_argument('--test', action='store_true')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--find_unused_params', action='store_true')
@@ -182,8 +188,9 @@ def build_data_loaders(args):
     sampler_train = (DistributedSampler(dataset_train) if args.distributed
                      else torch.utils.data.RandomSampler(dataset_train, generator=sampler_generator))
     batches = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
+    persist = bool(getattr(args, 'persistent_workers', False) and args.num_workers > 0)
     loader_train = DataLoader(dataset_train, batch_sampler=batches, collate_fn=utils.collate_fn,
-                              num_workers=args.num_workers, pin_memory=True, persistent_workers=False,
+                              num_workers=args.num_workers, pin_memory=True, persistent_workers=persist,
                               generator=worker_generator)
     if len(loader_train) == 0:
         raise ValueError('Training loader is empty; check dataset size and batch_size')
@@ -206,8 +213,8 @@ def main(args):
         raise FileExistsError('Output directory already contains checkpoints; use a new --output-dir or --resume')
     if min(args.max_train_steps, args.max_eval_steps) < 0:
         raise ValueError('Step limits must be non-negative')
-    if args.profile_trace and not 1 <= args.max_train_steps <= 100:
-        raise ValueError('Profiling requires --max-train-steps in [1,100]')
+    if args.profile_trace and not 1 <= args.max_train_steps <= 250:
+        raise ValueError('Profiling requires --max-train-steps in [1,250]')
     if args.export_diagnostics and not args.export_predictions:
         raise ValueError('--export-diagnostics requires --export-predictions')
     # 定期清理显存
@@ -254,6 +261,8 @@ def main(args):
     # update some new args temporally
     if not getattr(args, 'use_ema', None):
         args.use_ema = False
+    if getattr(args, 'eval_ema_only', False) and not args.use_ema:
+        raise ValueError('--eval-ema-only requires use_ema')
     if not getattr(args, 'debug', None):
         args.debug = False
 
@@ -429,6 +438,7 @@ def main(args):
             data_loader_train.dataset.epoch = epoch
         epoch_start_time = time.time()
         test_stats = None
+        coco_evaluator = None
         best_checkpoint_paths = []
         if args.distributed:
             sampler_train.set_epoch(epoch)
@@ -504,22 +514,22 @@ def main(args):
             subset_evaluation(args, epoch, model, criterion, postprocessors, dataset_val, base_ds, device, evaluate)
         # eval
         if epoch in args.val_epoch:
-            test_stats, coco_evaluator = evaluate(
-                model, criterion, postprocessors, data_loader_val, base_ds, device, args.output_dir,
-                wo_class_error=wo_class_error, args=args, logger=(logger if args.save_log else None)
-            )
-            map_regular = test_stats['coco_eval_bbox'][0]
-            _isbest = can_select_best(args) and map_regular >= 0 and map_regular > best_metrics.get('regular_AP', -1.)
-            if _isbest and args.output_dir:
-                best_metrics.update(regular_AP=map_regular, regular_epoch=epoch)
-                best_checkpoint_paths.append(output_dir / 'checkpoint_best.pth')
-            log_stats = {
-                **{f'train_{k}': v for k, v in train_stats.items()},
-                **{f'test_{k}': v for k, v in test_stats.items()},
-            }
+            from util.runtime import training_eval_weights
+            eval_targets = training_eval_weights(args)
+            log_stats = {**{f'train_{k}': v for k, v in train_stats.items()}}
+            if 'model' in eval_targets:
+                test_stats, coco_evaluator = evaluate(
+                    model, criterion, postprocessors, data_loader_val, base_ds, device, args.output_dir,
+                    wo_class_error=wo_class_error, args=args, logger=(logger if args.save_log else None)
+                )
+                map_regular = test_stats['coco_eval_bbox'][0]
+                _isbest = can_select_best(args) and map_regular >= 0 and map_regular > best_metrics.get('regular_AP', -1.)
+                if _isbest and args.output_dir:
+                    best_metrics.update(regular_AP=map_regular, regular_epoch=epoch)
+                    best_checkpoint_paths.append(output_dir / 'checkpoint_best.pth')
+                log_stats.update({f'test_{k}': v for k, v in test_stats.items()})
 
-            # eval ema
-            if args.use_ema:
+            if 'ema' in eval_targets:
                 ema_test_stats, ema_coco_evaluator = evaluate(
                     ema_m.module, criterion, postprocessors, data_loader_val, base_ds, device, args.output_dir,
                     wo_class_error=wo_class_error, args=args, logger=(logger if args.save_log else None)
@@ -530,6 +540,8 @@ def main(args):
                 if _isbest and args.output_dir:
                     best_metrics.update(ema_AP=map_ema, ema_epoch=epoch)
                     best_checkpoint_paths.append(output_dir / 'checkpoint_best_ema.pth')
+                if 'model' not in eval_targets:
+                    test_stats, coco_evaluator = ema_test_stats, ema_coco_evaluator
 
             log_stats.update(best_metrics=best_metrics)
 

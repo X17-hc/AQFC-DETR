@@ -1,7 +1,24 @@
 from types import SimpleNamespace
 import pytest
 import torch
-from util.runtime import apply_eval_query_floor, validate_eval_query_floor, update_skipped_streak
+from util.runtime import (
+    apply_eval_query_floor, compute_eval_criterion, detection_fingerprint,
+    validate_eval_query_floor, update_skipped_streak,
+)
+
+
+def test_eval_boxes_only_skips_criterion():
+    assert compute_eval_criterion(SimpleNamespace()) is True
+    assert compute_eval_criterion(SimpleNamespace(eval_boxes_only=False)) is True
+    assert compute_eval_criterion(SimpleNamespace(eval_boxes_only=True)) is False
+
+
+def test_detection_fingerprint_is_stable():
+    boxes = torch.tensor([[1., 2., 3., 4.]])
+    scores = torch.tensor([0.5])
+    labels = torch.tensor([3])
+    payload = [dict(boxes=boxes, scores=scores, labels=labels)]
+    assert detection_fingerprint(payload) == detection_fingerprint(payload)
 
 
 def test_floor_preserves_high_budgets():

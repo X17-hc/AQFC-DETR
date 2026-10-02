@@ -50,6 +50,10 @@ def variant_signature(args):
     result.update(joint_signature(values))
     from .dome_transfer import signature as dome_signature
     result.update(dome_signature(values))
+    if values.get('calibrator_density_spatial'):
+        result['calibrator_density_spatial'] = True
+    if values.get('allocator_quantile_boundaries'):
+        result['allocator_quantile_boundaries'] = True
     return json.loads(json.dumps(result, default=str))
 
 

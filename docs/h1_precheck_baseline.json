@@ -1,0 +1,14 @@
+{
+  "note": "Fill h1_e23_1000 after the first unchanged-code eval of checkpoint0023 on the locked 1000 IDs. 32-image AP is not a promotion number. 1000-image AP is about 4pp high versus full 14018.",
+  "weight": "checkpoint0023",
+  "weight_sha256": "15862ce9658c871c0152c5120f1562675a5ce294bf7029a4b7ed28b4bbbd9aee",
+  "published_full_14018": {"AP": 0.322, "AP50": 0.682, "AP75": 0.263, "APvt": 0.156},
+  "h1_e23_1000": {
+    "source": "/workspace/AQFC-DETR/outputs/legacy_joint/h1_precheck_20260929",
+    "ids_sha256": "bf625782d4151802bc3c4c9363cc5232d9a427875fa5b513ae9a916d7968651f",
+    "fp32": {"AP": 0.356, "AP50": 0.713, "AP75": 0.322, "APvt": 0.231},
+    "amp": {"AP": 0.359, "AP50": 0.712, "AP75": 0.331, "APvt": 0.231},
+    "note": "Unchanged server eval of H1 epoch23. Not a full-test promotion number. AMP AP is 0.3pp above FP32; APvt matches. Later code changes pause if AP or APvt drops more than 1pp versus fp32."
+  },
+  "pause_rule": "AP or APvt drop >1pp, or VT cover@0.5 drop >2pp, versus the filled h1_e23_1000 or same-weight pre-change run"
+}

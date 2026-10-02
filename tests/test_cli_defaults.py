@@ -15,6 +15,7 @@ def test_no_arguments_use_local_training_defaults():
     assert Path(args.pretrain_model_path) == PROJECT_ROOT / 'weights/legacy/dqdetr_best305.pth'
     assert Path(args.output_dir) == PROJECT_ROOT / 'outputs/aitodv2_pycharm'
     assert args.num_workers == 0
+    assert args.persistent_workers is False
     assert not args.eval and args.max_train_steps == 0
 
 
@@ -60,6 +61,14 @@ def test_resume_with_no_pretrained_is_allowed():
 
 def test_default_pretrained_can_be_disabled():
     assert parse(['--no-pretrained']).pretrain_model_path == ''
+
+
+def test_eval_boxes_only_is_opt_in():
+    assert parse([]).eval_boxes_only is False
+    assert parse(['--eval-boxes-only']).eval_boxes_only is True
+    assert parse(['--eval', '--eval-boxes-only']).eval_boxes_only is True
+    assert parse([]).eval_ema_only is False
+    assert parse(['--eval-ema-only']).eval_ema_only is True
 
 
 def test_default_project_paths_are_independent_of_working_directory(tmp_path, monkeypatch):

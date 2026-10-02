@@ -35,6 +35,66 @@ def test_recipe_and_compatibility():
     with pytest.raises(ValueError):validate_config(dict(vars(a),enc_layers=2))
 
 
+def test_refactor_switches_validate_against_h1():
+    base = recipe('h1_24e')
+    both = recipe('h1_aqfc_refactor_24e')
+    dgfc = recipe('h1_aqfc_probe_dgfc')
+    aqba = recipe('h1_aqfc_probe_aqba')
+    assert not getattr(base, 'calibrator_density_spatial', False)
+    assert not getattr(base, 'allocator_quantile_boundaries', False)
+    assert both.calibrator_density_spatial and both.allocator_quantile_boundaries
+    assert dgfc.calibrator_density_spatial and not dgfc.allocator_quantile_boundaries
+    assert aqba.allocator_quantile_boundaries and not aqba.calibrator_density_spatial
+    assert both.epochs == 24 and both.lr == 1e-4 and both.geometry_loss_weight == 0
+    assert both.expected_pretrained_sha256 == joint.SOURCE_SHA
+
+
+def test_finetune_probes_validate():
+    for name in ('h1_finetune_3e', 'h1_ema_3e', 'h1_joint_dfl_035_3e', 'h1_glu_3e'):
+        values = recipe(name)
+        assert values.joint_finetune_from_h1
+        assert values.epochs == 3 and values.val_epoch == [2]
+        assert values.expected_pretrained_sha256 == joint.H1_EPOCH23_SHA
+        assert values.geometry_loss_weight == 0
+    ema = recipe('h1_ema_3e')
+    assert ema.use_ema and ema.joint_allow_ema
+    dfl = recipe('h1_joint_dfl_035_3e')
+    assert dfl.joint_dfl_coef == 0.35 and dfl.joint_o2m_coef == 0.25
+    glu = recipe('h1_glu_3e')
+    assert glu.calibrator_gate_type == 'glu'
+    with pytest.raises(ValueError):
+        validate_config(dict(vars(recipe('h1_finetune_3e')), calibrator_gate_type='swish'))
+    with pytest.raises(ValueError):
+        validate_config(dict(vars(recipe('h1_finetune_3e')), use_ema=True))
+
+
+def test_finetune_load_sets_common_sha(tmp_path):
+    model = nn.Linear(2, 2)
+    ckpt = tmp_path / 'epoch23.pth'
+    torch.save({'model': model.state_dict()}, ckpt)
+    args = argparse.Namespace(pretrain_model_path=str(ckpt), expected_pretrained_sha256='locked',
+                              output_dir=str(tmp_path / 'out'))
+    with patch('util.experiment.sha256', return_value='locked'):
+        report = joint.load_h1_epoch23(model, args)
+    common = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()
+              if not k.startswith(joint.NEW_PREFIXES)}
+    assert model.joint_common_sha == joint.tensor_digest(common)
+    assert report['common_parameter_sha256'] == model.joint_common_sha
+    saved = joint.checkpoint_state(
+        model, argparse.Namespace(), argparse.Namespace(param_groups=[dict(joint_group='loaded')]), 0, 1)
+    assert saved['common_sha256'] == model.joint_common_sha
+
+
+def test_extra_losses_honor_dfl_coefficient():
+    criterion = argparse.Namespace(
+        quality_successful_updates=500, joint_warmup_updates=500,
+        joint_dfl_coef=0.35, joint_o2m_coef=0.25)
+    outputs = dict(refine_distribution_logits=torch.zeros(1), pred_boxes=torch.zeros(1, 1, 4))
+    with patch('models.aqfcdetr.joint_modules.distribution_loss', return_value=(torch.tensor(2.), {})):
+        losses = joint.extra_losses(criterion, outputs, [], [], 1)
+    assert losses['loss_joint_dfl'].item() == pytest.approx(0.7)
+
+
 def test_bridge_padding_identity_gradient():
     torch.manual_seed(4)
     mod=SemanticDetailBridge(16,8)

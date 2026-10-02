@@ -72,6 +72,7 @@ class DeformableTransformer(nn.Module):
                  calibrator_gate_type='tanh',
                  calibrator_use_spatial=True,
                  calibrator_spatial_alphas=None,
+                 calibrator_density_spatial=False,
                  proposal_selection_mode='fused',
                  proposal_density_weight=0.25,
                  mixed_density_ratio=0.25,
@@ -80,6 +81,7 @@ class DeformableTransformer(nn.Module):
                  allocator_encoder_type='standard', allocator_enabled=True,
                  calibrator_enabled=True, spatial_semantic_ratio=.75,
                  spatial_grid_size=(8, 8),
+                 allocator_quantile_boundaries=False,
                  ):
         super().__init__()
         self.num_feature_levels = num_feature_levels
@@ -102,6 +104,8 @@ class DeformableTransformer(nn.Module):
         self.current_epoch = 0
         self.allocator_enabled = allocator_enabled
         self.calibrator_enabled = calibrator_enabled
+        self.calibrator_density_spatial = bool(calibrator_density_spatial)
+        self.density_gate_scale = 1.0
         self.spatial_semantic_ratio = spatial_semantic_ratio
         self.spatial_grid_size = spatial_grid_size
         self.spatial_diagnostics = []
@@ -146,6 +150,7 @@ class DeformableTransformer(nn.Module):
             use_ema=allocator_use_boundary_ema,
             ema_decay=ema_decay,
             encoder_type=allocator_encoder_type,
+            quantile_boundaries=allocator_quantile_boundaries,
         ) if allocator_enabled else None
 
         self.feature_calibrator = DensityGuidedFeatureCalibrator(
@@ -155,6 +160,7 @@ class DeformableTransformer(nn.Module):
             gate_type=calibrator_gate_type,
             use_spatial=calibrator_use_spatial,
             level_spatial_alphas=calibrator_spatial_alphas,
+            density_spatial=calibrator_density_spatial,
         )
         self.density_pyramid = DensityPyramidAdapter(is_5_scale=True)
         if not calibrator_enabled:
@@ -561,8 +567,15 @@ class DeformableTransformer(nn.Module):
         if self.calibrator_enabled and 'density_feature' in allocator_outputs:
             try:
                 density_pyramid_features = self.density_pyramid(allocator_outputs['density_feature'])
-                memory = self.feature_calibrator(
-                    density_pyramid_features, memory, spatial_shapes)
+                if self.calibrator_density_spatial:
+                    self.feature_calibrator.density_gate_scale = self.density_gate_scale
+                    memory = self.feature_calibrator(
+                        density_pyramid_features, memory, spatial_shapes,
+                        density_prior=allocator_outputs['density_prior'],
+                        padding_mask=mask_flatten)
+                else:
+                    memory = self.feature_calibrator(
+                        density_pyramid_features, memory, spatial_shapes)
             except Exception as e:
                 raise RuntimeError('DGFC calibration failed') from e
 
@@ -1295,6 +1308,7 @@ def build_deformable_transformer(args):
         calibrator_gate_type=args.calibrator_gate_type,
         calibrator_use_spatial=args.calibrator_use_spatial,
         calibrator_spatial_alphas=args.calibrator_spatial_alphas,
+        calibrator_density_spatial=getattr(args, 'calibrator_density_spatial', False),
         proposal_selection_mode=args.proposal_selection_mode,
         proposal_density_weight=args.proposal_density_weight,
         mixed_density_ratio=args.mixed_density_ratio,
@@ -1305,4 +1319,5 @@ def build_deformable_transformer(args):
         calibrator_enabled=getattr(args, 'calibrator_enabled', True),
         spatial_semantic_ratio=getattr(args, 'spatial_semantic_ratio', .75),
         spatial_grid_size=getattr(args, 'spatial_grid_size', (8, 8)),
+        allocator_quantile_boundaries=getattr(args, 'allocator_quantile_boundaries', False),
     )
