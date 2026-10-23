@@ -1,0 +1,53 @@
+{
+  "status": {
+    "status": "running",
+    "stage": "formal24",
+    "child_pid": 172447,
+    "command": [
+      "/opt/conda/envs/AQFC-DETR/bin/python",
+      "-u",
+      "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/code/main.py",
+      "--data-root",
+      "/workspace/DQDetr/data/path/AITODv2",
+      "--pretrained",
+      "/workspace/AQFC-DETR/weights/legacy/pretrain_model.pth",
+      "--device",
+      "cuda",
+      "--amp",
+      "--seed",
+      "42",
+      "--num_workers",
+      "2",
+      "--max-consecutive-skipped-steps",
+      "20",
+      "--config",
+      "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/code/configs/mature_pretrain24.py",
+      "--output-dir",
+      "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/run_pretrain24"
+    ],
+    "output": "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/run_pretrain24",
+    "time": 1792038516.5558264
+  },
+  "config_differences": {
+    "expected_pretrained_sha256": [
+      "f854eec1f0d0ebf6e131d01e0b2826ce5690b593a5ed7f3fb8203453a62936e4",
+      "e6c3723b0f82c7aa6a6954576ad4e572bab1f87b57281069dd1814afedc16abe"
+    ],
+    "output_dir": [
+      "/workspace/AQFC-DETR/outputs/legacy_joint/h1_aqfc_refactor_24e/20260930_134930_136792_0b5906dd508f",
+      "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/run_pretrain24"
+    ],
+    "pretrain_model_path": [
+      "/workspace/AQFC-DETR/weights/legacy/dqdetr_best305.pth",
+      "/workspace/AQFC-DETR/weights/legacy/pretrain_model.pth"
+    ],
+    "config_file": [
+      "/workspace/AQFC-DETR/configs/legacy_joint/h1_aqfc_refactor_24e.py",
+      "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/code/configs/mature_pretrain24.py"
+    ]
+  },
+  "initialization_reproducible": true,
+  "progress": [
+    "Epoch: [0]  [   0/7009]  eta: 4:51:28  lr: 0.000010  allocator_weight: 0.000  mosaic_p: 0.000  class_error: -0.00  loss: 8.5728 (8.5728)  loss_ce_dn: 0.0063 (0.0063)  loss_bbox_dn: 0.0212 (0.0212)  loss_giou_dn: 0.4240 (0.4240)  loss_nwd_dn: 0.0556 (0.0556)  loss_ce: 0.1053 (0.1053)  loss_bbox: 0.0286 (0.0286)  loss_giou: 0.5409 (0.5409)  loss_nwd: 0.0718 (0"
+  ]
+}

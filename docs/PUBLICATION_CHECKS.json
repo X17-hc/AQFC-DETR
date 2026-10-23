@@ -1,0 +1,17 @@
+{
+  "original_local_source_files_unchanged": 309,
+  "config_literals_match_run_manifest": 164,
+  "published_tree_files_scanned": 235,
+  "secret_pattern_hits": [],
+  "forbidden_or_large_artifacts": [],
+  "note": "Static verification only; no training/inference/build/install executed.",
+  "baseline_integrity": {
+    "source_hashes_verified": 175,
+    "python_files_parsed": 166,
+    "config_base_references_verified": 82,
+    "epoch_records_verified": 24,
+    "AP": 31.96184653832317,
+    "APvt": 16.555134145271417,
+    "training_or_inference_executed": false
+  }
+}

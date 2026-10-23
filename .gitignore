@@ -128,3 +128,10 @@ work_dirs/
 *.py~
 *.sh~
 outputs/
+
+# Baseline publication excludes model artifacts and secrets
+*.pt
+*.ckpt
+*.safetensors
+*.pem
+*.key

@@ -1,0 +1,51 @@
+{
+  "collected_at_utc": "2026-10-23T15:40:03.392509+00:00",
+  "frozen_root": "/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/code",
+  "verified_manifest_entries": 180,
+  "excluded_build_entries": [
+    {
+      "path": "models/aqfcdetr/ops/build/lib.linux-x86_64-cpython-311/MultiScaleDeformableAttention.cpython-311-x86_64-linux-gnu.so",
+      "sha256": "f1b52d17dcfc52d4988e6e0eb7829a9de3c2d1b4f19a6d2bc240409ea4d58189"
+    },
+    {
+      "path": "models/aqfcdetr/ops/build/lib.linux-x86_64-cpython-311/functions/__init__.py",
+      "sha256": "61d51d3c6d99781502dd7d97053369a9b726bad1a5078d9fec1ffb7f02ad3d09"
+    },
+    {
+      "path": "models/aqfcdetr/ops/build/lib.linux-x86_64-cpython-311/functions/ms_deform_attn_func.py",
+      "sha256": "837083ed78cdfab4a53b392d7faf87c3ed453c622efb77f890e4f8c62791c8f7"
+    },
+    {
+      "path": "models/aqfcdetr/ops/build/lib.linux-x86_64-cpython-311/modules/__init__.py",
+      "sha256": "f7297d8622b771ea53ec28597b6682a271cb1c9c62b42b726d3b1ab9d09604de"
+    },
+    {
+      "path": "models/aqfcdetr/ops/build/lib.linux-x86_64-cpython-311/modules/ms_deform_attn.py",
+      "sha256": "56b86fd8665ef5b966690c53515cdf9a28ddff901f29637b315c4dfbb75528e3"
+    }
+  ],
+  "current_environment_not_historical": {
+    "scipy": "1.16.1",
+    "timm": "1.0.19",
+    "torchvision": "0.19.0+cu124",
+    "aitodpycocotools": "12.0.3",
+    "pycocotools": "2.0.8",
+    "numpy": "1.26.4",
+    "pillow": "11.0.0",
+    "torch": "2.4.0+cu124"
+  },
+  "checkpoint_stat": {
+    "checkpoint0023.pth": {
+      "bytes": 608284500,
+      "mtime_file_property_only": 1792162320.459192
+    },
+    "checkpoint.pth": {
+      "bytes": 608284500,
+      "mtime_file_property_only": 1792162314.8951676
+    },
+    "common_initialization.pth": {
+      "bytes": 206206390,
+      "mtime_file_property_only": 1792038527.262569
+    }
+  }
+}

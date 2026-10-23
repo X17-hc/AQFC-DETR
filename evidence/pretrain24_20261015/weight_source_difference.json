@@ -1,0 +1,29 @@
+{
+  "pretrain_sha256": "e6c3723b0f82c7aa6a6954576ad4e572bab1f87b57281069dd1814afedc16abe",
+  "best305_sha256": "f854eec1f0d0ebf6e131d01e0b2826ce5690b593a5ed7f3fb8203453a62936e4",
+  "additional_missing": [
+    "transformer.density_pyramid.conv1.conv.weight",
+    "transformer.density_pyramid.conv1.gn.bias",
+    "transformer.density_pyramid.conv1.gn.weight",
+    "transformer.density_pyramid.conv2.conv.weight",
+    "transformer.density_pyramid.conv2.gn.bias",
+    "transformer.density_pyramid.conv2.gn.weight",
+    "transformer.density_pyramid.conv3.conv.weight",
+    "transformer.density_pyramid.conv3.gn.bias",
+    "transformer.density_pyramid.conv3.gn.weight",
+    "transformer.density_pyramid.conv4.conv.weight",
+    "transformer.density_pyramid.conv4.gn.bias",
+    "transformer.density_pyramid.conv4.gn.weight",
+    "transformer.feature_calibrator.channel_gate.mlp.1.bias",
+    "transformer.feature_calibrator.channel_gate.mlp.1.weight",
+    "transformer.feature_calibrator.channel_gate.mlp.3.bias",
+    "transformer.feature_calibrator.channel_gate.mlp.3.weight",
+    "transformer.feature_calibrator.spatial_attention.conv.bn.bias",
+    "transformer.feature_calibrator.spatial_attention.conv.bn.num_batches_tracked",
+    "transformer.feature_calibrator.spatial_attention.conv.bn.running_mean",
+    "transformer.feature_calibrator.spatial_attention.conv.bn.running_var",
+    "transformer.feature_calibrator.spatial_attention.conv.bn.weight",
+    "transformer.feature_calibrator.spatial_attention.conv.conv.weight"
+  ],
+  "initialization": "Original model constructor under seed42; retain constructor defaults for these 22 tensors. Candidate auxiliary head still copied after migration."
+}

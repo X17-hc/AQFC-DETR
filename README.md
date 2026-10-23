@@ -1,123 +1,103 @@
-# AQFC-DETR
+# AQFC-DETR：pretrain24 冻结实验基线
 
-2026-09-07 核心优化更新：新增轻量AQBA、空间候选、密度目标优化、离线分析/切片工具和五个手动PyCharm配置。
-**现有默认模型不变，完整训练未自动启动。** 使用方法与兼容限制见 [更新指南](MDs/CORE_UPDATE_GUIDE.md)，验收结果见 [更新审查报告](MDs/CORE_UPDATE_REVIEW.md)。
+本分支归档 **2026-10-15 启动、从 `pretrain_model.pth` 初始化的24轮实验**。训练实现保持实验冻结目录原样；不包含后续门控修复、效率改动或 `improvement_v1`。
 
-AQFC-DETR（Adaptive Query and Feature Calibration DETR）面向密集微小目标检测，在 two-stage Deformable DETR 主线上加入三个协同机制：
+| 项目 | 原始记录 |
+|---|---|
+| AP | **31.9618** |
+| APvt | **16.5551** |
+| AP50 / AP75 | 68.3627 / 25.7250 |
+| 轮次 | `epoch=23`，零基编号，即第24轮 |
+| 数据 | AI-TOD-V2，trainval训练，test评估，14,018张测试图像 |
+| 实现 | ResNet-50，5尺度，6层encoder/6层decoder，`legacy_joint_v2` |
+| 训练 | batch 2，seed 42，AMP，24轮，workers 2，模型EMA关闭 |
+| 最终评估 | `eval_backend=legacy`；常规模型分支；无TTA |
+| 开始时间依据 | 运行清单 `2026-10-15T04:28:53.588777+00:00`，北京时间12:28:53 |
+| 末条指标时间 | `2026-10-16 14:51:54.152651`，原字段未附时区，不据此补造结束时区 |
 
-1. **AQBA**（Adaptive Query Budget Allocator）按图像预测 300/500/900/1500 查询预算；
-2. **DGFC**（Density-Guided Feature Calibrator）用低扰动通道门控和空间残差校准 encoder memory；
-3. **语义—密度候选融合**以 encoder 语义 proposal 为主体，引入受监督密度先验重排候选。
+检测指标统一乘100展示；完整原始浮点值见 [metrics.jsonl](evidence/pretrain24_20261015/run_pretrain24/metrics.jsonl) 的第24条记录、`test_bbox_metrics`。指标数组含 **AP25**，不能套用标准COCO数组下标。
 
-推理时 backbone、encoder、AQBA 和 DGFC 对整个 batch 执行；Decoder 按实际预算分组执行，并恢复原样本顺序。训练保留 DN 查询，采用 batch 最大长度与 `query_valid_mask`，padding 查询不进入 Matcher、检测损失和后处理。
+这是一份历史源码与证据发布，**没有重新训练或重新推理**，不承诺不同环境下逐位数值复现。本实验最终test结果不能当成独立验证集上的最佳模型筛选结果，也不代表后续修复已获验证。
 
-## 目录
+## 版本来源与权重身份
 
-- `models/aqfcdetr/`：模型、Transformer、AQBA、DGFC、Matcher 和 CUDA 算子；
-- `configs/`：AI-TOD-V2、VisDrone 和消融配置；
-- `util/checkpoint_migration.py`：旧权重 warm-start 迁移；
-- `tools/`：配置校验、权重转换、效率统计、TTA 与可视化入口；
-- `tests/`：CPU 单元测试及需 CUDA 扩展的集成测试入口；
-- `legacy_artifacts/`：原始日志、评估结果及一次性历史脚本，只作追溯；
-- `weights/legacy/`：两个原始权重及 SHA-256 清单。
+- 冻结源码：`/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/code`。
+- 原始输出：`/workspace/AQFC-DETR/experiments/aqfc_pretrain24_20261015/run_pretrain24`。
+- 初始化：`/workspace/AQFC-DETR/weights/legacy/pretrain_model.pth`，SHA-256：
+  `e6c3723b0f82c7aa6a6954576ad4e572bab1f87b57281069dd1814afedc16abe`。
+- 第24轮对应输出文件：`checkpoint0023.pth`；另有滚动保存的 `checkpoint.pth`。只核实了文件存在与文件属性，本次未读取大型检查点，也未计算它们的哈希或检验载荷，因此不声称两文件逐字节一致。
+- `pretrain_model.pth` 是**初始化输入**，不是这次24轮训练产生的权重。其更早训练来源在原清单中为 `unknown`。
+- 24轮正式训练从该初始化重新开始，未从20步工程短测检查点续训。
 
-## 环境与算子
+原始源码清单180项均通过采集校验；本分支纳入175项，排除1个编译动态库和4个build目录下的Python构建副本。编译源文件完整保留。见 [发布清单](evidence/pretrain24_20261015/published_source_manifest.json) 和 [原始清单](evidence/pretrain24_20261015/source_manifest.json)。
 
-2026-09-06 已在全新独立环境 `D:\venv\AQFC-DETR` 验证：Python 3.11.9、PyTorch 2.7.1+cu118、torchvision 0.22.1+cu118、CUDA Toolkit 11.8、RTX 4060 Laptop 8GB。
+其他配置文件是冻结目录内原有配置，不能据其存在认定本次运行启用了这些设置。**本次唯一正式配置为 `configs/mature_pretrain24.py`。**
 
-本机安装、启动、续训及显存限制详见 [TRAINING_WINDOWS.md](MDs/TRAINING_WINDOWS.md)，实际验证结果见 [TEST_REPORT.md](MDs/TEST_REPORT.md)。环境已配置好，不需要重新安装。
+## 环境与依赖
 
-在其他兼容环境中，先安装匹配 CUDA 的 PyTorch，再安装项目依赖和算子：
+依赖安装文件和 `cocoapi-aitod` 编译源来自父提交 `058abd66d17480d2e1a30f68bc807d40e0b39b0b`，不是原180项冻结清单的一部分。包内原许可证继续保留。4个评估器Python文件已与服务器当前安装文件按LF换行归一化核对一致，见 [核对结果](evidence/pretrain24_20261015/evaluator_source_verification.json)。
+
+采集时服务器环境：Python环境路径 `/opt/conda/envs/AQFC-DETR`；torch 2.4.0+cu124，torchvision 0.19.0+cu124，numpy 1.26.4，scipy 1.16.1，Pillow 11.0.0，timm 1.0.19，aitodpycocotools 12.0.3，pycocotools 2.0.8。**这是当前环境观测，不是已经证明的训练时完整环境锁。**
+
+在独立的兼容Linux/CUDA环境安装相应PyTorch、项目依赖并编译算子：
 
 ```bash
-pip install -r requirements-runtime.txt
-pip install --no-build-isolation -r requirements.txt
-bash scripts/build_ops.sh
+python -m pip install torch==2.4.0 torchvision==0.19.0 --index-url https://download.pytorch.org/whl/cu124
+python -m pip install -r requirements-runtime.txt
+python -m pip install --no-build-isolation -r requirements.txt
+cd models/aqfcdetr/ops
+python setup.py build install
+cd ../../..
 ```
 
-Windows 使用 `scripts/build_ops.ps1` 配置 MSVC/CUDA 并编译。`scripts/setup_environment.ps1` 只创建新环境，若目标已存在会停止，不覆盖、不复用。
+这些是复现准备命令，本次发布没有执行安装或GPU测试。现有依赖清单部分版本未固定，不能称为完整环境锁；CUDA Toolkit、驱动和编译器须与所选PyTorch环境匹配。
 
-本机启动（完整 24 epoch，不限制训练步数）：
+原控制脚本设置过包含 `faster_coco_eval_aitod` 的外部 `PYTHONPATH`。本次正式配置使用legacy评估器；静态检查显示快速评估器仅在显式选择 `faster_aitod` 后加载，因此此分支的基线命令不要求该可选包，不改用快速评估口径。
 
-```powershell
-cd D:\PythonProject\AQFC-DETR
-.\scripts\train_aitodv2.ps1 -DataRoot D:\PythonProject\DQ-DETR\DQ-DETR\data\path\AITODv2 `
-  -Pretrained weights\legacy\dqdetr_best305.pth
+## 训练与评估入口
+
+先准备原始初始化权重与AI-TOD-V2数据，检查权重SHA-256。数据标注哈希见 [原始运行清单](evidence/pretrain24_20261015/run_pretrain24/experiment_manifest.json)。权重和数据不随Git发布。
+
+在仓库根目录执行以下命令；路径替换为实际绝对路径，`CUDA_VISIBLE_DEVICES` 由运行者选择可用GPU：
+
+```bash
+export CUDA_VISIBLE_DEVICES=0
+export OMP_NUM_THREADS=2
+python -u main.py \
+  --data-root /absolute/path/to/AITODv2 \
+  --pretrained /absolute/path/to/pretrain_model.pth \
+  --device cuda --amp --seed 42 --num_workers 2 \
+  --max-consecutive-skipped-steps 20 \
+  --config configs/mature_pretrain24.py \
+  --output-dir /absolute/path/to/new_pretrain24_run \
+  --options joint_subset_ids="$PWD/evidence/pretrain24_20261015/subset_ids.json"
 ```
 
-此脚本默认使用完整模型的 `local8gb` 低显存配置（batch 1、较小输入、无 Mosaic/Copy-Paste、无 EMA）。原 `24e` 论文配置未降低分辨率；两者不能直接混为同一组精度实验。
+原配置的中间子集评估安排在epoch 0/3/7/12，最终全量评估在epoch 23。上述命令仅将原服务器绝对路径指向归档的同一份子集ID文件，不修改模型或训练配方；该文件采集时的哈希和来源已保存，原运行清单未记录其当时哈希，因此历史逐字节身份仍有此证据边界。
 
-## 配置校验
+现有最终检查点的独立评估入口如下；它是将来由使用者运行的命令，本次未执行：
 
-### 无参数直接启动
-
-本机可使用新环境直接运行 `main.py`，不再需要在 PyCharm 中填写脚本参数：
-
-```powershell
-& D:\venv\AQFC-DETR\Scripts\python.exe D:\PythonProject\AQFC-DETR\main.py
+```bash
+python -u main.py \
+  --data-root /absolute/path/to/AITODv2 \
+  --resume /absolute/path/to/checkpoint0023.pth \
+  --eval --device cuda --amp --seed 42 --num_workers 2 \
+  --config configs/mature_pretrain24.py \
+  --output-dir /absolute/path/to/new_pretrain24_eval
 ```
 
-默认值直接写在 `main.py` 的 `get_args_parser()` 中，各项使用 `parser.add_argument(..., default=...)` 并附中文注释：local8gb 配置、现有 AI-TOD-V2 数据目录、旧最佳权重初始化、输出 `outputs/aitodv2_pycharm`、workers=0。默认项目内路径相对于 `main.py` 所在目录解析。此命令会启动完整 24 epoch，而不是冒烟测试。
+不要无参数启动 `main.py`：冻结实现的默认路径与默认初始化未为发布重新改写。原控制脚本保存于证据目录，仅用于追溯；含原机器路径且有启动/写入行为，不是可直接运行的便携启动器。
 
-命令行仍可覆盖默认值；`--resume` 会取消默认旧权重初始化，`--no-pretrained` 可禁用默认 warm-start。显式同时传入 `--resume` 和非空 `--pretrained` 仍会报冲突。默认预训练只表示检测模型初始化，不会关闭 backbone 原有的 ImageNet 初始化行为。
+## 版本差异与已知边界
 
-已有的 PyCharm `AQFC-DETR训练` 配置已清空重复参数。如果输出目录中已有实验记录，新实验请另设 `--output-dir`，续训请显式指定 `--resume`。
+发布前核对结果：当前服务器294个源码文件，本地309个；换行归一化后284个相同、9个内容不同、服务器独有1个、本地独有16个。详见 [三方版本说明](docs/VERSION_COMPARISON.md)。
 
-```powershell
-python tools/validate_config.py --config configs/aitodv2/aqfc_r50_5scale_24e.py
-```
+特别是服务器当前 `util/legacy_joint.py` 缺少冻结版本针对本次初始化哈希及22个额外缺失参数的兼容逻辑。此次保留冻结实现，不把当前主目录或后续修复冒充本实验版本。权重加载覆盖及缺失项详见 [迁移记录](evidence/pretrain24_20261015/run_pretrain24/checkpoint_migration_report.json)。
 
-旧配置字段会直接报错并给出新字段，不会静默回退。
+冻结版本中既有门控、padding处理等行为均未修复。未来改进必须另建分支并独立验证。本分支只对应一次运行，不提供统计显著性或多随机种子稳定性结论。
 
-## 训练与评估
+## 发布验证
 
-```powershell
-python main.py `
-  --config configs/aitodv2/aqfc_r50_5scale_24e.py `
-  --data-root D:\Datasets\AITODv2 `
-  --output-dir outputs\aitodv2_main
-```
+运行 `python tools/verify_baseline_release.py` 可仅用Python标准库核对175项源码哈希、Python语法、配置继承路径、24轮记录及最终具名指标，不启动模型。
 
-旧权重只用于初始化：
-
-```powershell
-python main.py `
-  --config configs/aitodv2/aqfc_r50_5scale_24e.py `
-  --data-root D:\Datasets\AITODv2 `
-  --pretrained weights\legacy\pretrain_model.pth `
-  --output-dir outputs\aitodv2_warmstart
-```
-
-新格式 checkpoint 可严格恢复训练或评估：
-
-```powershell
-python main.py --config configs/aitodv2/aqfc_r50_5scale_24e.py `
-  --data-root D:\Datasets\AITODv2 --output-dir outputs\aitodv2_main `
-  --resume outputs\aitodv2_main\checkpoint.pth
-
-python main.py --config configs/aitodv2/aqfc_r50_5scale_24e.py `
-  --data-root D:\Datasets\AITODv2 --output-dir outputs\aitodv2_eval `
-  --resume outputs\aitodv2_main\checkpoint_best.pth --eval
-```
-
-## 验证
-
-```powershell
-python -m pytest -q tests
-python -m compileall -q .
-```
-
-完整模型前向/反向依赖已编译的 CUDA 扩展和实际数据。默认主方法是 fused proposal、密度权重 0.25、Tanh+空间 DGFC、分组 Decoder。论文应同时报告 AP、平均实际查询数、Decoder query token 和真实延迟。
-
-迁移细节见 [MIGRATION.md](MDs/MIGRATION.md)，模型数据流与损失定义见 [ARCHITECTURE.md](ARCHITECTURE.md)。
-# 2026-09-07 运行修复说明
-
-第二轮多方面审查、91项测试及真实短训证据见 [第二轮审查报告](MDs/REVIEW_ROUND2_20260907.md)；
-上一轮记录保留于 [修复与复审报告](MDs/REPAIR_REVIEW_20260907.md)。
-新训练必须使用未包含 checkpoint 的输出目录；短测断点不能按完整 epoch 续训。
-默认 trainval/test 协议仍可运行，但测试集不再用于选择最佳 checkpoint；开发选模请同时设置
-`--options train_split=train eval_split=val`。
-
-独立评估 EMA 使用 `--eval --eval-ema --resume <checkpoint>`，不带 `--eval-ema` 时始终评估普通模型。
-新 checkpoint 保存各 rank 的随机状态；旧 checkpoint 缺少该状态会警告。增强缓存没有序列化，
-因此不承诺位级精确续训。EMA 仅平均参数，计数和运行 buffers 直接复制。
+证据目录保留原始配置、运行清单、迁移记录、状态与指标；说明和清单由本次发布整理生成。原始实验没有Git提交号，本次Git提交是**事后归档标识**，不能写作训练当时提交号。其他历史实验与工具可在父提交及main查阅，不作为本分支当前运行入口。

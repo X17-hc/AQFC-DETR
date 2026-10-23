@@ -248,6 +248,10 @@ def initialize(model, args):
         return initialize_fine_tune(model, args)
     if getattr(args, 'joint_finetune_from_h1', False):
         return load_h1_epoch23(model, args)
+    SOURCE_SHA = globals()['SOURCE_SHA']
+    pretrain_source = getattr(args, 'expected_pretrained_sha256', '') == 'e6c3723b0f82c7aa6a6954576ad4e572bab1f87b57281069dd1814afedc16abe'
+    if pretrain_source:
+        SOURCE_SHA = 'e6c3723b0f82c7aa6a6954576ad4e572bab1f87b57281069dd1814afedc16abe'
     from .checkpoint_migration import extract_state_dict, migrate_state_dict, load_legacy_pretrained
     from .experiment import sha256
     if sha256(args.pretrain_model_path) != SOURCE_SHA:
@@ -271,6 +275,8 @@ def initialize(model, args):
     if level_alpha in current:
         missing_exact.add(level_alpha)
     allowed_missing = missing_exact | {k for k in current if k.startswith(NEW_PREFIXES)}
+    if pretrain_source:
+        allowed_missing.update(['transformer.density_pyramid.conv1.conv.weight', 'transformer.density_pyramid.conv1.gn.bias', 'transformer.density_pyramid.conv1.gn.weight', 'transformer.density_pyramid.conv2.conv.weight', 'transformer.density_pyramid.conv2.gn.bias', 'transformer.density_pyramid.conv2.gn.weight', 'transformer.density_pyramid.conv3.conv.weight', 'transformer.density_pyramid.conv3.gn.bias', 'transformer.density_pyramid.conv3.gn.weight', 'transformer.density_pyramid.conv4.conv.weight', 'transformer.density_pyramid.conv4.gn.bias', 'transformer.density_pyramid.conv4.gn.weight', 'transformer.feature_calibrator.channel_gate.mlp.1.bias', 'transformer.feature_calibrator.channel_gate.mlp.1.weight', 'transformer.feature_calibrator.channel_gate.mlp.3.bias', 'transformer.feature_calibrator.channel_gate.mlp.3.weight', 'transformer.feature_calibrator.spatial_attention.conv.bn.bias', 'transformer.feature_calibrator.spatial_attention.conv.bn.num_batches_tracked', 'transformer.feature_calibrator.spatial_attention.conv.bn.running_mean', 'transformer.feature_calibrator.spatial_attention.conv.bn.running_var', 'transformer.feature_calibrator.spatial_attention.conv.bn.weight', 'transformer.feature_calibrator.spatial_attention.conv.conv.weight'])
     allowed_extra = {root+f'density_encoder.{i}.conv.{s}' for i in range(6) for s in ('weight','bias')}
     allowed_extra |= {root+'density_conv1.'+s for s in ('weight','bias')}
     mismatched = [k for k in source.keys() & current.keys() if source[k].shape != current[k].shape]

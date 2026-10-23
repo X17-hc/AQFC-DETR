@@ -1,0 +1,702 @@
+[
+  {
+    "path": "configs/ablations/allocator_without_density_ranking.py",
+    "sha256": "bb7c96ae2e6943ddddbf686b6e588895a33c58d60d5af232d3f159b88868ba6a"
+  },
+  {
+    "path": "configs/ablations/budget_300_600_900_1500.py",
+    "sha256": "2c364509d79a5e7980326e470fc04180f17034087e0a5f7ad35dfd254a126bf2"
+  },
+  {
+    "path": "configs/ablations/density_ranking_fixed_900.py",
+    "sha256": "7d1e935166f50d58aec9a3b42bc83b2b5df9bd28f052dc6ae68bfe59ff5c2a16"
+  },
+  {
+    "path": "configs/ablations/density_weight_0.py",
+    "sha256": "92cc439059c9c3e7c978b45b787b875e6a16f09a7ddd0ccd6e15bf8b9fdecf85"
+  },
+  {
+    "path": "configs/ablations/density_weight_01.py",
+    "sha256": "9a7ae2d36a6d500b22dcb5254cc6fdadb577ed0a8ed30e088129f54925905a4b"
+  },
+  {
+    "path": "configs/ablations/density_weight_05.py",
+    "sha256": "6e6ac3e457b0a1ac19cdf1e13674506792589ed11f41e3b6a63b8135a72ecc99"
+  },
+  {
+    "path": "configs/ablations/dgfc_channel_only.py",
+    "sha256": "7d81f491194310e16e85ff6426003fda026f89542d698ee192881428c6c314e8"
+  },
+  {
+    "path": "configs/ablations/dgfc_glu.py",
+    "sha256": "cc940ce93816e663b9ec4831570121a9ea292420e11b1d1f97f65c3dc3c8c305"
+  },
+  {
+    "path": "configs/ablations/dgfc_se.py",
+    "sha256": "76c9cefc551c6f9834553576137e35241fa8cc5b2343b7c96ee634859cdb5c73"
+  },
+  {
+    "path": "configs/ablations/dgfc_sigmoid.py",
+    "sha256": "fc5c975c339928940dffb2ca702b01a7d539612c8bfd931b166c4485875caac6"
+  },
+  {
+    "path": "configs/ablations/dgfc_swish.py",
+    "sha256": "e0e10ebb20a3811464360ed474e65089d98c8ae6f3ac5d329b7d25de160be1ec"
+  },
+  {
+    "path": "configs/ablations/fixed_1500_queries.py",
+    "sha256": "ff71a664b9ca2202bc84ff34a4d3c6de61d1f99f72a3b5209fa6592f3f7b9b6b"
+  },
+  {
+    "path": "configs/ablations/fixed_900_queries.py",
+    "sha256": "d5422ffd1a177c1c34821f1a2e795ff252829ab626b744d0b063ec0ab27c9f67"
+  },
+  {
+    "path": "configs/ablations/mixed_proposal_selection.py",
+    "sha256": "a3e9bd90f8e1293def9f1db85a90b3ff7938ef1289b1554c15d7b4856f4ea727"
+  },
+  {
+    "path": "configs/aitodv2/aqfc_r50_5scale_24e.py",
+    "sha256": "235a58043e800af44435ec8010b07c0125184ebc3617b70a5752703e69b8cbce"
+  },
+  {
+    "path": "configs/aitodv2/aqfc_r50_5scale_finetune_18e.py",
+    "sha256": "379eefc3ed6a754f29b41ce2646907517ea32ea0e4c3ce39b21fba1abb9161c6"
+  },
+  {
+    "path": "configs/aitodv2/aqfc_r50_5scale_local8gb.py",
+    "sha256": "40a2070b28ac835fd7d90dc74f31d3202647c66ef14355a2a74f8213b324c541"
+  },
+  {
+    "path": "configs/aitodv2/aqfc_runtime_smoke.py",
+    "sha256": "a4a4a3eb19940370f2a746e5d5211e7c84adab6488a8729dabb4963cc9504098"
+  },
+  {
+    "path": "configs/coco_transformer.py",
+    "sha256": "1d165b74a1bd2e0d745fa8a1baec78eb98ef5227d9aaf84736016ad8f8d6d657"
+  },
+  {
+    "path": "configs/dome_transfer/d0_3e.py",
+    "sha256": "5c129768bb33cabeb77e3ffc7df9240ab489e7c29e6a53a6f4c693a8ad55cc93"
+  },
+  {
+    "path": "configs/dome_transfer/d1_3e.py",
+    "sha256": "2f7c8d88b0e432b2c4425d16accddf21ffae99965baeca5a10190d61bbbca63a"
+  },
+  {
+    "path": "configs/dome_transfer/d1_smoke.py",
+    "sha256": "04afa897643a361ada285f78d7d731f92c8eae7bfbe075dfc5fc045333a16cce"
+  },
+  {
+    "path": "configs/experiments/local8gb/aqba_light.py",
+    "sha256": "b557d46d5a7520ffd9d1b6a3089c8bf82e9fe781ff2c98ff8676e5d130f20fa8"
+  },
+  {
+    "path": "configs/experiments/local8gb/baseline.py",
+    "sha256": "0c1f82ef16f5f34d9c76252d7823948d00a13c638d3d7dfa29f20a70121fd5b2"
+  },
+  {
+    "path": "configs/experiments/local8gb/light_spatial.py",
+    "sha256": "a384fd51c0c9001d6317c587937ff326593fd97b340b10993fdea7aca9d7cdc4"
+  },
+  {
+    "path": "configs/experiments/local8gb/modules_off_900.py",
+    "sha256": "ef2e75bef984c8329d0ef0596be5316608234b0139f4e7db74953bad7fa575d2"
+  },
+  {
+    "path": "configs/experiments/local8gb/spatial.py",
+    "sha256": "b42428b3cfb258b8bedbe999599a2f2557091f567bff7baf2a8355f37a09127f"
+  },
+  {
+    "path": "configs/experiments/local8gb/target_fast.py",
+    "sha256": "0a13e9b087e1c1d68df723f4a00337fc92bf084f5d7049c4c012c2cfe87fbf0c"
+  },
+  {
+    "path": "configs/experiments/research/aqba_light.py",
+    "sha256": "5c737c395a40be2a0e28a51b86e3d92b5ad38a788e2aa1a79d7bcf89ec1eb3c3"
+  },
+  {
+    "path": "configs/experiments/research/baseline.py",
+    "sha256": "c55e450a3e6f60f10635f2472d725b31de47afd5d57984ffcef2f80e2fe433f6"
+  },
+  {
+    "path": "configs/experiments/research/light_spatial.py",
+    "sha256": "c9e0172b13a92a548f3953e69c19c3cc10408e2eb6267b153aaac386667fcd86"
+  },
+  {
+    "path": "configs/experiments/research/modules_off_900.py",
+    "sha256": "ad85114de5d0fb2e036207e009ce32ca7e36947488bf1eb3b99df0a3f43c0a21"
+  },
+  {
+    "path": "configs/experiments/research/spatial.py",
+    "sha256": "c9a9665b002fed7c49ac809af163ebaadbccdabeba4b6ecbc4cd6e6d3ab69778"
+  },
+  {
+    "path": "configs/experiments/research/target_fast.py",
+    "sha256": "a497e9219715226bc51c42effbb61fb64b2d074bb592189a12c63b2e0ea7480f"
+  },
+  {
+    "path": "configs/geometry_v1/c0_3e.py",
+    "sha256": "9360967f6872c5a44e2b1c37335f1d9b567b78018e2a3a35f20cc77c9a759180"
+  },
+  {
+    "path": "configs/geometry_v1/c1_3e.py",
+    "sha256": "126dfa567c3c77c953cf2670a956a2e0ee8a981673412da7bbb807c18cb4d60a"
+  },
+  {
+    "path": "configs/geometry_v1/c2_3e.py",
+    "sha256": "1b652498fa98f23a39e06267693bc5ec9c6cae10cbc187a0d680f60506c252ef"
+  },
+  {
+    "path": "configs/geometry_v1/c2_smoke.py",
+    "sha256": "d07b44e0453ed2d11d00c6916f8ab0f20d50d435c7cbe8ff2eccc309ffc8533e"
+  },
+  {
+    "path": "configs/incremental_v2/p1.py",
+    "sha256": "8fbf3b8ce98ab69282631da79df0b856a374e06f4b0a12b88563c0b0f937a1d4"
+  },
+  {
+    "path": "configs/incremental_v2/p2.py",
+    "sha256": "dbadbbb50432737c3dd96d9878da34d23fae18b294aed4f4c00bdb7ddedfe7c8"
+  },
+  {
+    "path": "configs/incremental_v2/p2_24e.py",
+    "sha256": "e8d658c435140e229c00c6a41205b8bba42efdd6fc37635e49321338a1920927"
+  },
+  {
+    "path": "configs/incremental_v2/p2_24e_legacy.py",
+    "sha256": "07218d7ef96bf75a119541e01b7fa2e5496e17474607845193e33fa74817a8bd"
+  },
+  {
+    "path": "configs/incremental_v2/repaired.py",
+    "sha256": "247f1c9884a322932de7530bb973c3f0c84421010b213b991866cc4824a2395e"
+  },
+  {
+    "path": "configs/legacy_joint/control.py",
+    "sha256": "e4f1c7eef11e583e29d7f3c4c52003aace21573a011125b2c2fd36f20a99ae4a"
+  },
+  {
+    "path": "configs/legacy_joint/h1_24e.py",
+    "sha256": "fd646b90744a7ee0c520c9170cd29db2cf32be73f6160be14b0f75ae640d7731"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_box_control_3e.py",
+    "sha256": "57c58cdcc4afb487c2389bbf384bbfee7cefac6e9958af02621af0157fe976c8"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_box_tighten_3e.py",
+    "sha256": "a41454065510acee5c324915efd9285e2e74eb84020d1e56df4f8eff92dc1541"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_edge_24e.py",
+    "sha256": "fe6fdeba9ca3f1ac876728ccc60e6355616b1529360a7181588d2ed82e8351a8"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_edge_control_1e.py",
+    "sha256": "37504fef6113424f1c35f740afd7c3c2f4e767be1c5270a962b4097a6ef1dd37"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_edge_treat_1e.py",
+    "sha256": "61cb2eaf753784d16580ec06ba51aa471591e6c57c4d150e23203b72a64080fd"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_recover_24e.py",
+    "sha256": "4b9a90cd45e8be1c839a881b18a282f1010c9a18dc75fe00e6d700b2b7a1c9e4"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_recover_control_1e.py",
+    "sha256": "5e5673380a578aafd3a55f884337995e07f50a6be780c51f0a5f617cb646738c"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ap_recover_treat_1e.py",
+    "sha256": "42a2c08a2597aa6c9177d98298abc9e8d464e37b7199342e7053a0dfa795bc1d"
+  },
+  {
+    "path": "configs/legacy_joint/h1_aqfc_probe_aqba.py",
+    "sha256": "de13ebb336d2caae22b6fa927a3ed3f861c651746571fe382eddcbcb47e85152"
+  },
+  {
+    "path": "configs/legacy_joint/h1_aqfc_probe_dgfc.py",
+    "sha256": "166e67652e4b672d82e498e5d317f8491cb7d5506133bc8a5af5499bc2f48ac3"
+  },
+  {
+    "path": "configs/legacy_joint/h1_aqfc_refactor_24e.py",
+    "sha256": "de4a088996699f691bb5d7ab5fc13418ba36c021d21dd073049945c01e58f49a"
+  },
+  {
+    "path": "configs/legacy_joint/h1_ema_3e.py",
+    "sha256": "fcb74ff9265a538aa304b70bc27633c0db9b404903b9d1ae4ba7440e970e6685"
+  },
+  {
+    "path": "configs/legacy_joint/h1_epoch0.py",
+    "sha256": "ad00dec7701d78bb7519023f8cc527ff10f49a36fbc5162f7a6f07bd824d4546"
+  },
+  {
+    "path": "configs/legacy_joint/h1_finetune_3e.py",
+    "sha256": "cb743bb1aea6273aa7f537cb2a3a3592f2c40aafe4490bb5533a56555784d4c7"
+  },
+  {
+    "path": "configs/legacy_joint/h1_glu_3e.py",
+    "sha256": "6b23f3addf90b7f9d48a15a6b51d833e64ff993b24c1740ccb596b65a52cae3b"
+  },
+  {
+    "path": "configs/legacy_joint/h1_joint_dfl_035_3e.py",
+    "sha256": "d8f3541122517bb3fa3d5a270c7aaf695e5501eed39434d2c778e36cf0e24042"
+  },
+  {
+    "path": "configs/legacy_joint/h1_smoke.py",
+    "sha256": "7397407a9d918491d870da7e065aed555cbb112d0650bb987d21e06b0c2cf1d6"
+  },
+  {
+    "path": "configs/mature_pretrain24.py",
+    "sha256": "a2165299c5320e879ac7ef826afe407fd68a2704948a5e4b099c92447ff8d0d7"
+  },
+  {
+    "path": "configs/p2_transfer/adapt_2e.py",
+    "sha256": "c9bbd8c659e7cd0f7f4968e999ee52b0d36f850167993615d38f6f3697000b5a"
+  },
+  {
+    "path": "configs/p2_transfer/reference.py",
+    "sha256": "341f11998acf616958d516a8e0f2e1bed6f8cf7f6716434325598b7d1a69ff94"
+  },
+  {
+    "path": "configs/p2_transfer/student_24e.py",
+    "sha256": "fda32e42c2305451ca7e7f22c27a9422b837a4877bee239de70c0bec247c6cb9"
+  },
+  {
+    "path": "configs/precision24/f0_24e.py",
+    "sha256": "589d7c4383e848ce4aee9b7811f266ac54c9415cd90f6b83d913be754bd37f97"
+  },
+  {
+    "path": "configs/precision24/f0_minimal_3e.py",
+    "sha256": "cbbb04d725ffd21758d8d973d0ae7fdc68461448d9513182988ea563e1188df8"
+  },
+  {
+    "path": "configs/precision24/f0_smoke.py",
+    "sha256": "4554b4a8e6851f0e5432ca86b8c79abdbc8fc186ec50850a3a35b7899426a9bb"
+  },
+  {
+    "path": "configs/precision24/f1_24e.py",
+    "sha256": "17202f228f29b3935e360a985b4a50b708cda54accdea57264ea1b3c0f51617e"
+  },
+  {
+    "path": "configs/precision24/f1_final_smoke.py",
+    "sha256": "145c68ecb9dfc1ee29f4e9b3703385d0c6aa309f4775f85fb46af7f9cfee6068"
+  },
+  {
+    "path": "configs/precision24/f1_smoke.py",
+    "sha256": "160fa04f310669e06ea46a4086f6e3f7e4eb38b9b73f0281ca54177aa816e352"
+  },
+  {
+    "path": "configs/precision24/f2_24e.py",
+    "sha256": "5ca86f25ebe30a105a64cd2fcedc10da09fb41a6cb6c8009ed03b244a35b56e0"
+  },
+  {
+    "path": "configs/precision24/f2_smoke.py",
+    "sha256": "49e4ec234702debfc0e66ada4beb6b08e79d600c7d1d1addfb2989a7b3df0841"
+  },
+  {
+    "path": "configs/pretrain_smoke.py",
+    "sha256": "990b89e7ab17fa63788a7a560f398003545947b573f0c69fe73291bef24b01a1"
+  },
+  {
+    "path": "configs/scale_v1/s1_3e.py",
+    "sha256": "7727b34e13ab0240d93a867f0953a85663aee531948dcc4594a780e21ab58eae"
+  },
+  {
+    "path": "configs/scale_v1/s1_smoke.py",
+    "sha256": "78743cd4a73e8c6f6d1f2ed21d3c5958a20f06dac25c08f5847d6608b31a2d5d"
+  },
+  {
+    "path": "configs/scale_v1/s2_3e.py",
+    "sha256": "2c5c0039f7b40b60fe14307f511ecf73a55f69bcfe02ff79edc282a4b60fe70c"
+  },
+  {
+    "path": "configs/scale_v1/s2_smoke.py",
+    "sha256": "b70a39f834adb779a9152fa15495956a83d8fdef39a1b4f589f0df95e49aad4b"
+  },
+  {
+    "path": "configs/server/aitodv2_standard_24e.py",
+    "sha256": "55ec61f7e29814938ead0fe5719a04a98cdac41db7ee0b432513f49d3a923925"
+  },
+  {
+    "path": "configs/server/aitodv2_update_24e.py",
+    "sha256": "d7f27774955a0ec17bf7f0f4541427f4fb0833c4bc48a1d02ad67e1186b5ab1b"
+  },
+  {
+    "path": "configs/server/aitodv2_update_smoke.py",
+    "sha256": "8e320e624997ec66879251727c6d20f04fe30962db2a8bdf97788bdeb5190973"
+  },
+  {
+    "path": "configs/server/visdrone_standard_24e.py",
+    "sha256": "3f79933faf9a49a1d5f753ac0b88da521656227c6a70b13dd9fd4717ca7ffcd2"
+  },
+  {
+    "path": "configs/visdrone/aqfc_r50_5scale_24e.py",
+    "sha256": "ebf5bef0dd34811554b025945555ecfc6c70d43b88de5bc99ab988d417f322f9"
+  },
+  {
+    "path": "datasets/__init__.py",
+    "sha256": "e4f2485dadf2ebd15b4e34510ff7d9a667acb2ca000cd7ed058e2145c748cd07"
+  },
+  {
+    "path": "datasets/checked_fast_eval.py",
+    "sha256": "33b168d2dca391a49fed4548a1ef5297c4ecf09299d01e35ab854661e189b9d1"
+  },
+  {
+    "path": "datasets/coco.py",
+    "sha256": "e1dd8d3c015096a8ac758bab521ad2d323131002e6e87225c1ffb21044ecbb1a"
+  },
+  {
+    "path": "datasets/coco_eval.py",
+    "sha256": "9dbe9171b061e9af06cc97d265779034ac8d2d32327282aec63647c398ef36b6"
+  },
+  {
+    "path": "datasets/coco_panoptic.py",
+    "sha256": "ee59f541b8b75dd1e0cb96e67247f69b828b42a9c401ebf0df077ba51bf14759"
+  },
+  {
+    "path": "datasets/copy_paste.py",
+    "sha256": "6fe185e89ccb4148025d2dbf0a27d7942fab20f40db190dd1ec6efb86bbddfc5"
+  },
+  {
+    "path": "datasets/data_util.py",
+    "sha256": "fa10a7a156c3c17c20135c06ff07de2133df3ca875090ca9c793a60833148af1"
+  },
+  {
+    "path": "datasets/dataset.py",
+    "sha256": "282f5b4b8880450c58a968fd60b3f8024350bc429adf6485884548ec20efe9d6"
+  },
+  {
+    "path": "datasets/mosaic.py",
+    "sha256": "f1584c4c20dca16b5394519de6a4144f420bbe1ff83e7ff738186db44f99bd21"
+  },
+  {
+    "path": "datasets/native_resize.py",
+    "sha256": "b6fed501d5637a51fba456f6438f4e90ac2e23642344380d63d70a068fcaf728"
+  },
+  {
+    "path": "datasets/panoptic_eval.py",
+    "sha256": "538ab7e551688e4b8af5efd7fbd51de800b55d2f8575817f1bdac55983941878"
+  },
+  {
+    "path": "datasets/random_crop.py",
+    "sha256": "9dc9ebbf6f47aa919b90b220bb1595be734e066a65225cc9ec842d16291908dc"
+  },
+  {
+    "path": "datasets/sltransform.py",
+    "sha256": "ff385682e08b170b7eb9aec69e4c03a05bc9ca8fe44e48ba361f829b560a9781"
+  },
+  {
+    "path": "datasets/transforms.py",
+    "sha256": "3257fc69dd2b8386bcb9211b2e06893a0aa861e6a3007d9b41a13fb75da4698f"
+  },
+  {
+    "path": "datasets/visdrone2coco.py",
+    "sha256": "ba8b4b8e1703dcf148140b2f29bf8f622317d42c8d1213dd434592d7fe55baa7"
+  },
+  {
+    "path": "datasets/visdrone_eval.py",
+    "sha256": "47488684dda3206638b5e137be8fe21bf1f5ebccdaecf988efc0575acefa8f54"
+  },
+  {
+    "path": "engine.py",
+    "sha256": "86990f31b17f81561316baf95af9ca07513f4df8eca80519c13593bbf70d3752"
+  },
+  {
+    "path": "main.py",
+    "sha256": "70adc19be75d0a6980dae4ba82b97aff457b83c01c17c37dd3012e8395093c50"
+  },
+  {
+    "path": "models/__init__.py",
+    "sha256": "172ce691645d10b409b2aa0c6d3826eab49197fdc2162bb3e128e617cb673b4b"
+  },
+  {
+    "path": "models/aqfcdetr/__init__.py",
+    "sha256": "c210c68dece48be8d53e12940b2f7d3829125852fd470bd53a73243c15d452db"
+  },
+  {
+    "path": "models/aqfcdetr/attention.py",
+    "sha256": "4b0c74962b309dbee998783c2ca3ea1c9363e496f4b925f991f5112a1b47d102"
+  },
+  {
+    "path": "models/aqfcdetr/backbone.py",
+    "sha256": "0147380a919514a604c4ab26904a9cbd6faf88a1299b4b4c3b726047db4d9cac"
+  },
+  {
+    "path": "models/aqfcdetr/dn_components.py",
+    "sha256": "61a86640e343b58de1f80a088fca0bbe777d160de1c13e282019e166be3cbb2e"
+  },
+  {
+    "path": "models/aqfcdetr/feature_calibrator.py",
+    "sha256": "634333f59d03ef72cfbd14fb4a8a09565b41de72e084b26a7ecbdd725c76dafa"
+  },
+  {
+    "path": "models/aqfcdetr/joint_modules.py",
+    "sha256": "093d489f32a116f972061f003eae923887c4b8a4c88a694cfc2aff9d63c28adf"
+  },
+  {
+    "path": "models/aqfcdetr/matcher.py",
+    "sha256": "6564eaa9a2126d28789ca1571faf0c2eb1797c7587a7a113f8591a1169fac8ad"
+  },
+  {
+    "path": "models/aqfcdetr/model.py",
+    "sha256": "f2349736b4418381585d614784b4efe5ca637a83c73c8c04e50c2cde9a51cecc"
+  },
+  {
+    "path": "models/aqfcdetr/ops/functions/__init__.py",
+    "sha256": "e1a39c1cf23562b11d696d81f95cf8bef368c48149b681d1eadc7f6d188edd3a"
+  },
+  {
+    "path": "models/aqfcdetr/ops/functions/ms_deform_attn_func.py",
+    "sha256": "dd9906037ce7dc45b9ef6f39d4934bb4dddefc3e09049024496827714b6738bc"
+  },
+  {
+    "path": "models/aqfcdetr/ops/modules/__init__.py",
+    "sha256": "3a40cdcd146fc93c3f4ba9702924582f6502e5fcd1ceccf687e9d0e6ff2d7b5f"
+  },
+  {
+    "path": "models/aqfcdetr/ops/modules/ms_deform_attn.py",
+    "sha256": "38bd572d3e03f4a3b39b8aad0d4e229ebf8bb9d56e35eb1c2e80edae5feaabff"
+  },
+  {
+    "path": "models/aqfcdetr/ops/setup.py",
+    "sha256": "af9e6773108f440f9902ba6272cf829f300adbfa5b4c57e853f40791fcbf7e2a"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/cpu/ms_deform_attn_cpu.cpp",
+    "sha256": "d7f7c3d2df2484f3905005e13c8dc12dd943fd4451a59a059bda367eefa4dccd"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/cpu/ms_deform_attn_cpu.h",
+    "sha256": "b9114ab52ea7610184b3eb9672731c3d1a7ce92e69bfdec6cf661ae988416aef"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/cuda/ms_deform_attn_cuda.cpp",
+    "sha256": "9ddaca18532dced7d35473a11eef940d494eadf208bfa260a11b979f860fcae9"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/cuda/ms_deform_attn_cuda.cu",
+    "sha256": "e547e741ed6e99d5b5f33ab51fe0ffa7b1486332d554fa8010d335287911a4da"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/cuda/ms_deform_attn_cuda.h",
+    "sha256": "c9cd9345e0881dfeebbfa5e98b6e6990a3d415a430bcbaaba3706ce5a2379401"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/cuda/ms_deform_im2col_cuda.cuh",
+    "sha256": "136729520587cbf0593209d692af61a1e8af5909bcf34b8bacb8844878496bad"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/ms_deform_attn.h",
+    "sha256": "04e9ed2d61d56c24f3564526812e61193cf79bd69d5265277c0fefec78d2f127"
+  },
+  {
+    "path": "models/aqfcdetr/ops/src/vision.cpp",
+    "sha256": "8dec032236873cee3ae86921dabbbb02c62ffd95ddbb83aef0b1b856771e8a61"
+  },
+  {
+    "path": "models/aqfcdetr/ops/test.py",
+    "sha256": "6066519322d749265c9983117ba8b012b35b6fbd46505d5b7842751eeb706942"
+  },
+  {
+    "path": "models/aqfcdetr/p2_transfer.py",
+    "sha256": "0c7198627471f2979c31be8b55ed60b3c2790118dfe494424dc72902a696d625"
+  },
+  {
+    "path": "models/aqfcdetr/position_encoding.py",
+    "sha256": "fac739a516e2a561547e2889f14dfc4565e75d5d57b9de32441f68ac1118c26f"
+  },
+  {
+    "path": "models/aqfcdetr/precision_modules.py",
+    "sha256": "e8ad1a89391433e18e856652abac8f64ca01ef77bd63cbc964453d0f84245900"
+  },
+  {
+    "path": "models/aqfcdetr/proposal_selection.py",
+    "sha256": "82624c0ea0400f5e8d06ad1226d5adb635df50c145368b59d159847da81a45ba"
+  },
+  {
+    "path": "models/aqfcdetr/protected_selection.py",
+    "sha256": "150537f731830b9148c3ba909e5b7d6dfa022f6a2c85aaa78d987d3e5ef8c74e"
+  },
+  {
+    "path": "models/aqfcdetr/query_allocator.py",
+    "sha256": "d5bd7fe36fb682cf2c3e13a9874c67faaf0ea1df9b9acb138ec0d46f38268e4d"
+  },
+  {
+    "path": "models/aqfcdetr/segmentation.py",
+    "sha256": "4275df453d8951be81e1247676a319d61b19976320d7122698c90fbe95614b55"
+  },
+  {
+    "path": "models/aqfcdetr/spatial_selection.py",
+    "sha256": "90a319d34a22bd5e2a8cccade95bbc90c9d2aadaec03548b99054e44fe5791cb"
+  },
+  {
+    "path": "models/aqfcdetr/transformer.py",
+    "sha256": "b9fe919e7365a49fb83d3e26144f07964e103c93aefbb6a83d176cef0331b29d"
+  },
+  {
+    "path": "models/aqfcdetr/transformer_deformable.py",
+    "sha256": "1918bcb9a093435d906b0118b73be2847ea847aaabc1d42318839aa29047aaf2"
+  },
+  {
+    "path": "models/aqfcdetr/utils.py",
+    "sha256": "b6603b0d8e259b255297561d8563959a62dacecaf635c23d862dc4153c74ab7d"
+  },
+  {
+    "path": "models/registry.py",
+    "sha256": "3d0d7c2ffb64ad5c1da57201623b0a0baca865f55f8026216a3a930830ea5253"
+  },
+  {
+    "path": "util/__init__.py",
+    "sha256": "9e535c45af09ac24ef8d5631a151f77febafe72a92ad6bfeb2d941f0c4a54e35"
+  },
+  {
+    "path": "util/box_loss.py",
+    "sha256": "573d78428ba4f9d22c50b13368a33d708c057eedc82a7bb5ac69186ba732c019"
+  },
+  {
+    "path": "util/box_ops.py",
+    "sha256": "b572c71ffb74c9db1017c11f1d2b909ff7378ea3a8c8367962a6e1e1e2a4b229"
+  },
+  {
+    "path": "util/checkpoint.py",
+    "sha256": "e5128c189363ee8ad3b1705b1143fafb4740b7b14fa8561f7a7fe64e6d2d0881"
+  },
+  {
+    "path": "util/checkpoint_migration.py",
+    "sha256": "f4a0e5dc09bd63597542c770a60c7496517455c76c0acb5fcc67e3da44e2c7a8"
+  },
+  {
+    "path": "util/coco_id2name.json",
+    "sha256": "9ec815d5be49c3e676082b6892f6f66f97abc796610774bbd53208f8f2997b08"
+  },
+  {
+    "path": "util/config_validation.py",
+    "sha256": "3ff8701c3275c8437f33626faf653ba6d21d05b886973e08ba6b6648ac78a457"
+  },
+  {
+    "path": "util/dataset_paths.py",
+    "sha256": "090ce7eb2a467c83b5203057a56fd234faecfffd4bfbfa2c455a71cf9848c6c8"
+  },
+  {
+    "path": "util/density_targets.py",
+    "sha256": "bf4d63033bd79cf6926763d9c9ea54535ecc868e7d91a8cf03d330a2436506b7"
+  },
+  {
+    "path": "util/dome_transfer.py",
+    "sha256": "282426a48f28a72e3faf16d3308359472f5902814b6ca9a7ed2a48a31e9d12d3"
+  },
+  {
+    "path": "util/edge_logwh.py",
+    "sha256": "2674aa37bb7b63e2b11de1bf77b5b15275bea2f1a679873993bb813697e6ff4d"
+  },
+  {
+    "path": "util/epoch_boundary.py",
+    "sha256": "b386144c3e344f1f9568b2a48b617a73e0e9aa6f99e2c653f02ff673ea874019"
+  },
+  {
+    "path": "util/error_analysis.py",
+    "sha256": "e4753fc5f519211241f2ab614380d7b690eba3eda4fb977d58eed6ee533c0953"
+  },
+  {
+    "path": "util/experiment.py",
+    "sha256": "02c7889a645d586afaa16d786d090c340bb7d953e78b815bf4a02741542e00a4"
+  },
+  {
+    "path": "util/factor_diagnostics.py",
+    "sha256": "ffdc78258666367319ea2e123873fc00a828a09e3f01ae439d177b7092380295"
+  },
+  {
+    "path": "util/geometry_loss.py",
+    "sha256": "96974793a729dc2bbb482dee204611636e5e2b5ec6f9f02680660e16bd42aef8"
+  },
+  {
+    "path": "util/get_param_dicts.py",
+    "sha256": "537724333d812d84c6d8278a1b0a20118b567c0caeab78e814ffb84979b1c3fa"
+  },
+  {
+    "path": "util/incremental.py",
+    "sha256": "92dd918a4f053357740a9a986b27e0b1661d30724efda885491390333ddfb82e"
+  },
+  {
+    "path": "util/incremental_checkpoint.py",
+    "sha256": "cc48e5abb7d552071e6853e04790782fcce391c22ac39cd69edfd250699438dd"
+  },
+  {
+    "path": "util/inference_runner.py",
+    "sha256": "2dd0ea12e672c81281e72fc10b3fef8512f26899e871030140c7f1e0a4386191"
+  },
+  {
+    "path": "util/joint_runtime.py",
+    "sha256": "559eb62fc1c9e439f3407eb592eca400dfcefc95112a8746f007a26758d86fbd"
+  },
+  {
+    "path": "util/legacy_joint.py",
+    "sha256": "b523f440681e7d22c050e523cf6a3918ee5d3b8e65d576ad9428b138976b88ae"
+  },
+  {
+    "path": "util/logger.py",
+    "sha256": "51aa569f90461ffb4bc0764ac64c7c54c98b4e9425ecbc780310c042e956f599"
+  },
+  {
+    "path": "util/misc.py",
+    "sha256": "aa9d0d14f078ed71252c99d54e95f20761f61691ee7fedd1e53cd689099a8dc1"
+  },
+  {
+    "path": "util/p2_transfer.py",
+    "sha256": "f261395f94e057c071b51871b19971291977e27bd272debc88e3a4c47574ef55"
+  },
+  {
+    "path": "util/paired_head_errors.py",
+    "sha256": "85e1d90672d8a9d779d128c9974321342feebeb28f928d65734f41d7f6ffe7ee"
+  },
+  {
+    "path": "util/plot_utils.py",
+    "sha256": "e01b015bd37fb663854bc97e374bf5126a639465deab4ebcd324a93b16febbad"
+  },
+  {
+    "path": "util/precision24.py",
+    "sha256": "4b142034839ab00ac6ccdb4c91c55325d90ae8e04e9da4a107ed4ad1c3c7dc49"
+  },
+  {
+    "path": "util/prediction_export.py",
+    "sha256": "024fce9f0fd60c1f15a3cba24cbf40047948d1d138637c65dd22f3844a9006eb"
+  },
+  {
+    "path": "util/profiling.py",
+    "sha256": "2f5328288ecd8fe43a7da44e59b923adbd2cf3902dd7b74a2e997a92ca21d554"
+  },
+  {
+    "path": "util/runtime.py",
+    "sha256": "187158092eee73201e21411c61b3794de7bbc6efa102d8510efa19f1f098f3cb"
+  },
+  {
+    "path": "util/slconfig.py",
+    "sha256": "2ef6bebedc9118d34737db9d851d2547a6523ef393eaa93ae952c3b18aa6be3f"
+  },
+  {
+    "path": "util/slio.py",
+    "sha256": "0b6e7921914dfa45a0fe58a1ae6032aba1e741eb2f2ff66fa5ea3a339fd94a6f"
+  },
+  {
+    "path": "util/static_data_path.py",
+    "sha256": "7435e70273a1b44d0975155014c5ca00b0d15d90cec7745e8357daf7cf58fd58"
+  },
+  {
+    "path": "util/time_counter.py",
+    "sha256": "de96b9483ab4a18eee29f1c70826d541880d8bd8e5268b4b674cbe0b76475c85"
+  },
+  {
+    "path": "util/utils.py",
+    "sha256": "0f9095ff64477df0689e14ee92380d6d9e1febf0fabaa61eaa7fa1cd923d23b5"
+  },
+  {
+    "path": "util/vis_utils.py",
+    "sha256": "e8744a0e2e39ddec6728efcedc409ac17c26a7b379b1f095fda4db8c4a3ea3c9"
+  },
+  {
+    "path": "util/visualizer.py",
+    "sha256": "413e522452a7765b25be6f125ae24b310e39ca9f411a1b9881232cdc2ea129ae"
+  }
+]

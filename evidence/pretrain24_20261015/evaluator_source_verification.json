@@ -1,0 +1,22 @@
+[
+  {
+    "path": "cocoapi-aitod/aitodpycocotools/aitodpycocotools/coco.py",
+    "server_installed_lf_sha256": "ebc2121fa38435988101555f5db72914b69de8cb19eb14c75063099c13c7225d",
+    "match_after_lf_normalization": true
+  },
+  {
+    "path": "cocoapi-aitod/aitodpycocotools/aitodpycocotools/cocoeval.py",
+    "server_installed_lf_sha256": "1c883984a668bf7342958dbf22b910826d151f24739f281fe31818ea7a8da326",
+    "match_after_lf_normalization": true
+  },
+  {
+    "path": "cocoapi-aitod/aitodpycocotools/aitodpycocotools/mask.py",
+    "server_installed_lf_sha256": "740b28dcd153da3ff576186995179510acfbfef3c058b93e0e318221045bc035",
+    "match_after_lf_normalization": true
+  },
+  {
+    "path": "cocoapi-aitod/aitodpycocotools/aitodpycocotools/__init__.py",
+    "server_installed_lf_sha256": "d7e2d11ea4fddb3cb4dd3ec95848c96c38897a23fd5beec71e44c266b98a78c4",
+    "match_after_lf_normalization": true
+  }
+]
